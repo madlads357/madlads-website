@@ -1,0 +1,184 @@
+@import "tailwindcss";
+
+/* Design tokens — mirror the "Mad Lads / Color" and "Mad Lads / Space" variables in Figma. */
+@theme {
+  --color-paper: #f6f1e8;
+  --color-surface: #ffffff;
+  --color-sunken: #ede6da;
+  --color-hero: #f24a5c;
+  --color-ink: #111111;
+  --color-muted: #5c574f;
+  --color-red: #f62038; /* brand red: logo, big display words, accents */
+  --color-accent: #c41129; /* accessible red for small text and buttons (WCAG AA on white & paper) */
+  --color-line: #e2dacc;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --spacing-page: 5rem; /* 80px side padding on desktop */
+  --spacing-section: 7.5rem; /* 120px section rhythm */
+}
+
+/* Text styles — mirror the Figma text styles. */
+@utility t-display-xl {
+  font-weight: 700;
+  font-size: clamp(3.5rem, 9vw, 8rem);
+  line-height: 0.92;
+  letter-spacing: -0.05em;
+}
+@utility t-display-l {
+  font-weight: 700;
+  font-size: clamp(2.75rem, 6vw, 5.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+@utility t-h2 {
+  font-weight: 700;
+  font-size: clamp(2.25rem, 4vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+@utility t-h3 {
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+@utility t-body-l {
+  font-size: 1.25rem;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+}
+@utility t-eyebrow {
+  font-weight: 600;
+  font-size: 0.75rem;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+  }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: var(--color-red);
+    color: white;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-red);
+    outline-offset: 3px;
+  }
+}
+
+/* Scrollbars — thin and warm instead of the default grey bar. */
+@layer base {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: #d6ccbb transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #d6ccbb;
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #b3a690;
+    background-clip: content-box;
+  }
+}
+/* Inner panels: the bar only shows while hovering the panel. */
+@utility thin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  &:hover {
+    scrollbar-color: #d6ccbb transparent;
+  }
+}
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.97) translateY(-4px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* Marquee — endless strip (content is rendered twice, we slide by half). */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@utility animate-marquee {
+  animation: marquee var(--marquee-duration, 60s) linear infinite;
+}
+
+/* Scroll reveal — pure CSS (scroll-driven animations), no JavaScript.
+   Browsers without support simply show the content. Never use it above the fold. */
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(48px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@utility reveal {
+  @supports (animation-timeline: view()) {
+    animation: reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 22%;
+  }
+}
+
+/* Entrance motion — subtle, and off for people who ask for less motion.
+   Transform only (no fade): fading from opacity 0 would delay the Largest Contentful Paint. */
+@keyframes rise {
+  from {
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@utility animate-rise {
+  animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
