@@ -12,7 +12,9 @@ const external = [
 export function Footer() {
   return (
     <footer className="border-t border-line bg-surface px-4 pt-20 pb-10 md:px-page md:pt-24">
-      <LogoHorizontal className="h-auto w-full max-w-[620px] text-red" />
+      <div className="overflow-hidden">
+        <LogoHorizontal className="reveal-rise h-auto w-full max-w-[620px] text-red" />
+      </div>
 
       <div className="mt-14 flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
         <ul className="flex flex-wrap gap-x-8 gap-y-3">

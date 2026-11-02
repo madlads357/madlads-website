@@ -3,7 +3,7 @@
 The new website for [Mad Lads](https://madlads.com), the Solana collection by Backpack:
 a homepage, the **Lore** page, and an explorer for **all 9,971 Mad Lads** with search and trait filters.
 
-**Stack:** Next.js 16 (App Router, static pages) · React 19 · TypeScript · Tailwind CSS 4 · Geist font
+**Stack:** Next.js 16 (App Router, static pages) · React 19 · TypeScript · Tailwind CSS 4 · Lenis · Geist font
 **Design:** [Figma file](https://www.figma.com/design/yJT0LFzcDQkT3OaeJuCl3S/MadLads) — tokens, components and the homepage
 
 ---
@@ -37,7 +37,7 @@ npm run dev          # http://localhost:3000
 
 ```
 app/                 Routes, root layout, global styles (design tokens), favicon
-components/          UI components (Nav, Button, Section, ArtCard, Faq, Marquee, MadLadsExplorer…)
+components/          UI components (Nav, Button, Section, ArtCard, Faq, Marquee, ScrollWords, SmoothScroll, MadLadsExplorer…)
 data/                Editable content: lore, art, news, links, homepage preview Lads
 lib/madlads.ts       Collection loading + image URL helpers
 public/
@@ -88,6 +88,25 @@ Nothing is downloaded in advance — images are requested **by number**, only wh
   re-encodes to AVIF/WebP (~9 KB per tile). If the CDN fails, the tile falls back to the S3 original.
   See `thumbImage()` in `lib/madlads.ts`.
 - **Allowed image hosts** are listed in `next.config.ts` (`images.remotePatterns`).
+
+## Motion
+
+Almost all motion is **pure CSS** ([scroll-driven animations](https://developer.mozilla.org/docs/Web/CSS/CSS_scroll-driven_animations)),
+defined as utilities in `app/globals.css`. Browsers without support show the content without animation, and
+everything is off when the visitor asks for reduced motion.
+
+| Utility | Effect | Used on |
+| --- | --- | --- |
+| `reveal` (+ `--i` for stagger) | Fade & rise into view, items one after another | Section headers, cards, perks, stats, FAQ |
+| `reveal-curtain` + `reveal-zoom` | Image unveils from the bottom and settles from a slight zoom | Art, lore, news images |
+| `scroll-words` / `ScrollWords` | Sentence lights up word by word while scrolling | Manifesto |
+| `scroll-drift`, `scroll-push`, `scroll-darken` | Hero content drifts up, background pushes back and darkens | Homepage hero |
+| `scroll-progress` | Reading progress bar | Lore page |
+| `reveal-rise`, `reveal-slide` | Big elements rise / slide into place | Footer logo, statements |
+| `animate-marquee` | Endless strip | Lads marquee |
+
+**Smooth scrolling:** [Lenis](https://github.com/darkroomengineering/lenis) (`components/SmoothScroll.tsx`) on the homepage
+and the Lore page. Nested scroll areas can opt out with `data-lenis-prevent`.
 
 ## Performance & accessibility
 

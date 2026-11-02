@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import { lads, ladImage, type Lad } from "@/data/lads";
 import { SearchIcon } from "./Icons";
 
@@ -67,7 +67,7 @@ export function RosterPreview() {
 
       <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:gap-3 lg:grid-cols-5">
         {shown.map((l, i) => (
-          <li key={l.id}>
+          <li key={l.id} className="reveal" style={{ "--i": i % 5 } as CSSProperties}>
             <figure className="group relative aspect-[4/5] overflow-hidden rounded-[4px] bg-sunken">
               <Image
                 src={ladImage(l.id)}

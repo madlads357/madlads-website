@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 
 // Unfolding accordion (inspired by easyui's "Unfold Accordion"). One item open at a time,
 // smooth height animation via grid rows, + turns into × when open.
@@ -12,7 +12,11 @@ export function Faq({ items }: { items: { q: string; a: string }[] }) {
         const isOpen = open === i;
         const id = `faq-${i}`;
         return (
-          <li key={it.q} className={`rounded-2xl transition-colors duration-300 ${isOpen ? "bg-surface shadow-[0_12px_32px_-20px_rgba(17,17,17,0.35)]" : "bg-surface/60 hover:bg-surface"}`}>
+          <li
+            key={it.q}
+            style={{ "--i": i } as CSSProperties}
+            className={`reveal rounded-2xl transition-colors duration-300 ${isOpen ? "bg-surface shadow-[0_12px_32px_-20px_rgba(17,17,17,0.35)]" : "bg-surface/60 hover:bg-surface"}`}
+          >
             <h3>
               <button
                 type="button"

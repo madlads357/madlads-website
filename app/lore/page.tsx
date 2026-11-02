@@ -6,6 +6,8 @@ import { Button } from "@/components/Button";
 import { LogoStacked } from "@/components/Logo";
 import { chapters, loreIntro } from "@/data/lore";
 import { links } from "@/data/site";
+import { SmoothScroll } from "@/components/SmoothScroll";
+import type { CSSProperties } from "react";
 
 export const metadata: Metadata = {
   title: "Lore",
@@ -17,6 +19,9 @@ const strip = [1070, 4144, 7245, 9866, 5655, 2784];
 export default function LorePage() {
   return (
     <>
+      <SmoothScroll />
+      {/* Reading progress — follows the page scroll (CSS scroll timeline) */}
+      <div className="scroll-progress fixed inset-x-0 top-0 z-[60] h-[3px] bg-red" aria-hidden />
       <Nav />
       <main id="main" className="pt-[72px] md:pt-[88px]">
         {/* Hero */}
@@ -46,8 +51,8 @@ export default function LorePage() {
 
         {/* Art strip */}
         <div className="grid grid-cols-3 gap-2 px-4 pb-10 md:grid-cols-6 md:gap-3 md:px-page" aria-hidden>
-          {strip.map((id) => (
-            <div key={id} className="relative aspect-[4/5] overflow-hidden rounded-[4px] bg-sunken">
+          {strip.map((id, i) => (
+            <div key={id} className="reveal relative aspect-[4/5] overflow-hidden rounded-[4px] bg-sunken" style={{ "--i": i } as CSSProperties}>
               <Image src={`/lads/${id}.jpg`} alt="" fill sizes="(min-width: 768px) 16vw, 33vw" className="object-cover" />
             </div>
           ))}
@@ -56,11 +61,13 @@ export default function LorePage() {
         {/* Chapters */}
         <div className="flex flex-col gap-24 px-4 py-20 md:gap-36 md:px-page md:py-section">
           {chapters.map((c, i) => (
-            <article id={c.slug} key={c.slug} className="reveal grid items-center gap-10 lg:grid-cols-[560px_1fr] lg:gap-20">
-              <div className={`relative aspect-[560/680] overflow-hidden rounded-[4px] bg-sunken ${i % 2 ? "lg:order-2" : ""}`}>
-                <Image src={c.image.src} alt={c.image.alt} fill sizes="(min-width: 1024px) 560px, 100vw" className="object-cover" />
+            <article id={c.slug} key={c.slug} className="grid items-center gap-10 lg:grid-cols-[560px_1fr] lg:gap-20">
+              <div className={`reveal-curtain relative aspect-[560/680] overflow-hidden rounded-[4px] bg-sunken ${i % 2 ? "lg:order-2" : ""}`}>
+                <div className="reveal-zoom absolute inset-0">
+                  <Image src={c.image.src} alt={c.image.alt} fill sizes="(min-width: 1024px) 560px, 100vw" className="object-cover" />
+                </div>
               </div>
-              <div className="flex flex-col gap-5">
+              <div className="reveal flex flex-col gap-5" style={{ "--i": 1 } as CSSProperties}>
                 <p className="t-eyebrow text-accent">Chapter {c.number}</p>
                 <h2 className="text-[clamp(2.75rem,5vw,4.5rem)] leading-[0.95] font-bold tracking-[-0.04em]">{c.title}</h2>
                 <p className="font-semibold text-muted">{c.dates}</p>
@@ -85,13 +92,13 @@ export default function LorePage() {
         <section className="relative isolate overflow-hidden bg-accent px-4 py-24 text-white md:px-page md:py-32">
           <LogoStacked className="absolute top-1/2 -right-20 -z-10 h-[140%] w-auto -translate-y-1/2 text-ink opacity-25" title="" />
           <p className="t-eyebrow">The motto</p>
-          <p className="mt-6 text-[clamp(4rem,14vw,12rem)] leading-[0.85] font-bold tracking-[-0.05em]">Fock it.</p>
+          <p className="reveal-slide mt-6 text-[clamp(4rem,14vw,12rem)] leading-[0.85] font-bold tracking-[-0.05em]">Fock it.</p>
           <p className="t-body-l mt-6 max-w-[520px]">It’s the description of every single Mad Lad onchain. The rest of the story is still being written.</p>
         </section>
 
         {/* Keep reading */}
         <section className="flex flex-col gap-8 px-4 py-20 md:flex-row md:items-end md:justify-between md:px-page md:py-section">
-          <div className="flex max-w-[640px] flex-col gap-4">
+          <div className="reveal flex max-w-[640px] flex-col gap-4">
             <p className="t-eyebrow text-accent">Keep reading</p>
             <h2 className="t-h2">The story continues every month in Mad News.</h2>
           </div>

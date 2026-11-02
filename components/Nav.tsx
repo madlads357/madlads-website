@@ -41,7 +41,8 @@ export function Nav({ overHero = false }: { overHero?: boolean }) {
             if (pathname === "/") {
               e.preventDefault();
               const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-              window.scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
+              if (window.__lenis) window.__lenis.scrollTo(0, { duration: 1.4 });
+              else window.scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
               history.replaceState(null, "", "/");
             }
           }}

@@ -153,7 +153,168 @@
   @supports (animation-timeline: view()) {
     animation: reveal linear both;
     animation-timeline: view();
-    animation-range: entry 0% cover 22%;
+    /* --i staggers items in a grid: each one starts a little later */
+    animation-range: entry calc(var(--i, 0) * 6%) cover calc(22% + var(--i, 0) * 6%);
+  }
+}
+
+/* Image curtain: unveils from the bottom while settling from a slight zoom.
+   Put it on the image wrapper (overflow hidden); the image inside gets `reveal-zoom`. */
+@keyframes curtain {
+  from {
+    clip-path: inset(100% 0 0 0 round 12px);
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 0);
+  }
+}
+@keyframes settle {
+  from {
+    transform: scale(1.18);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@utility reveal-curtain {
+  @supports (animation-timeline: view()) {
+    animation: curtain cubic-bezier(0.3, 0.7, 0.2, 1) both;
+    animation-timeline: view();
+    animation-range: entry 5% cover 35%;
+  }
+}
+@utility reveal-zoom {
+  @supports (animation-timeline: view()) {
+    animation: settle linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 60%;
+  }
+}
+
+/* Words that light up one by one as the paragraph scrolls through the viewport.
+   Parent: `scroll-words` (defines the timeline). Each word: inline animation-range. */
+/* Dim state stays readable: #8f877c on white ≈ 3.5:1, enough for large text (WCAG AA). */
+@keyframes word-on {
+  from {
+    color: #8f877c;
+  }
+  to {
+    color: var(--color-ink);
+  }
+}
+@utility scroll-words {
+  view-timeline-name: --words;
+}
+@utility scroll-word {
+  @supports (animation-timeline: view()) {
+    animation: word-on linear both;
+    animation-timeline: --words;
+  }
+}
+
+/* Hero: content drifts up and fades as the page scrolls away from it. */
+@keyframes drift-out {
+  to {
+    transform: translateY(-90px);
+    opacity: 0;
+  }
+}
+@keyframes push-back {
+  to {
+    transform: scale(1.08);
+  }
+}
+@keyframes darken {
+  to {
+    opacity: 0.55;
+  }
+}
+@utility scroll-darken {
+  opacity: 0;
+  @supports (animation-timeline: scroll()) {
+    animation: darken linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 90vh;
+  }
+}
+@utility scroll-drift {
+  @supports (animation-timeline: scroll()) {
+    animation: drift-out linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 80vh;
+  }
+}
+@utility scroll-push {
+  @supports (animation-timeline: scroll()) {
+    animation: push-back linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 100vh;
+  }
+}
+
+/* "Scroll" cue in the hero: a light runs down a thin line. */
+@keyframes scroll-cue {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(200%);
+  }
+}
+
+/* Reading progress bar (scaleX follows the page scroll). */
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@utility scroll-progress {
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  @supports (animation-timeline: scroll()) {
+    animation: grow-x linear both;
+    animation-timeline: scroll(root);
+  }
+}
+
+/* Big element rising into place (footer logo, statements). */
+@keyframes rise-in {
+  from {
+    transform: translateY(35%);
+    opacity: 0.2;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@utility reveal-rise {
+  @supports (animation-timeline: view()) {
+    animation: rise-in cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 40%;
+  }
+}
+
+/* Horizontal slide for big statements. */
+@keyframes slide-in {
+  from {
+    transform: translateX(-12%);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@utility reveal-slide {
+  @supports (animation-timeline: view()) {
+    animation: slide-in cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 35%;
   }
 }
 
