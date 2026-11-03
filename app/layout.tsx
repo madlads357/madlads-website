@@ -3,17 +3,17 @@ import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import { ScrollToTopOnNavigate } from "@/components/ScrollToTopOnNavigate";
 import { introDecideScript } from "@/components/intro/Intro";
+import { siteUrl } from "@/lib/site-url";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://madlads.com"),
+  metadataBase: new URL(siteUrl),
   title: { default: "Mad Lads — Everyone’s mad here.", template: "%s — Mad Lads" },
   description: "10,000 Mad Lads on Solana. The collection by Backpack.",
   openGraph: {
     title: "Mad Lads",
     description: "10,000 Mad Lads on Solana. The collection by Backpack.",
-    url: "https://madlads.com",
+    url: siteUrl,
     siteName: "Mad Lads",
-    images: [{ url: "/og.jpg", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image", site: "@madladsnft" },
 };

@@ -18,7 +18,7 @@ import { BeyondTheScreen } from "@/components/BeyondTheScreen";
 import type { CSSProperties } from "react";
 import { honoraries, king, moreOneOfOnes, specials } from "@/data/art";
 import { chapters } from "@/data/lore";
-import { news } from "@/data/news";
+import { getLatestNews } from "@/lib/news";
 import { links } from "@/data/site";
 
 export default function Home() {
@@ -295,13 +295,14 @@ function Holders() {
 }
 
 /* ---------------------------------------------------------------- News */
-function News() {
+async function News() {
+  const news = await getLatestNews(3);
   return (
     <Section id="news">
       <SectionHeader
         eyebrow="06 / News"
         title="News"
-        text="Drops, updates and moments from the Mad Lads world."
+        text="The latest issues of Mad News — drops, updates and moments from the Mad Lads world."
         action={
           <Button href={links.newsletter} variant="secondary" external>
             View all news →
@@ -312,13 +313,14 @@ function News() {
         {news.map((n, i) => (
           <li key={n.href} className="reveal" style={{ "--i": i } as CSSProperties}>
             <a href={n.href} target="_blank" rel="noopener noreferrer" className="group flex flex-col gap-4">
-              <div className="reveal-curtain relative aspect-[5/3] overflow-hidden rounded-[4px] bg-sunken">
+              <div className="reveal-curtain relative aspect-[3/2] overflow-hidden rounded-[4px] bg-sunken">
                 <div className="reveal-zoom absolute inset-0">
-                  <Image src={n.image} alt="" fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover object-[50%_45%] transition-transform duration-700 group-hover:scale-[1.04]" />
+                  <Image src={n.image} alt={`Cover of ${n.title}`} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
                 </div>
               </div>
               <span className="t-eyebrow text-muted">{n.date}</span>
               <span className="t-h3 group-hover:text-accent">{n.title}</span>
+              {n.subtitle && <span className="-mt-2 text-muted">{n.subtitle}</span>}
             </a>
           </li>
         ))}

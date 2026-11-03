@@ -1,0 +1,42 @@
+// Latest Mad News issues, fetched from the Substack archive API at build time and refreshed
+// in the background every 6 hours (ISR). Falls back to the static list in data/news.ts if
+// Substack is unreachable, so the homepage always builds.
+import { news as fallback, type NewsItem } from "@/data/news";
+
+const ARCHIVE = "https://news.madlads.com/api/v1/archive?sort=new&offset=0&limit=12";
+export const NEWS_REVALIDATE = 60 * 60 * 6;
+
+type SubstackPost = {
+  title?: string;
+  subtitle?: string | null;
+  post_date?: string;
+  canonical_url?: string;
+  cover_image?: string | null;
+  audience?: string;
+  type?: string;
+};
+
+const fmtDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+
+export async function getLatestNews(limit = 3): Promise<NewsItem[]> {
+  try {
+    const res = await fetch(ARCHIVE, { next: { revalidate: NEWS_REVALIDATE }, headers: { Accept: "application/json" } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const posts = (await res.json()) as SubstackPost[];
+    const items = posts
+      .filter((p) => p.title && p.canonical_url && p.post_date && p.audience !== "only_paid")
+      .slice(0, limit)
+      .map((p) => ({
+        date: fmtDate(p.post_date!),
+        title: p.title!,
+        subtitle: p.subtitle || undefined,
+        href: p.canonical_url!,
+        image: p.cover_image || fallback[0].image,
+      }));
+    return items.length ? items : fallback.slice(0, limit);
+  } catch (e) {
+    console.warn("[news] Falling back to static news:", (e as Error).message);
+    return fallback.slice(0, limit);
+  }
+}

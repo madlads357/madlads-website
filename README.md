@@ -58,7 +58,7 @@ Most text lives in `data/`, not in the components:
 | --- | --- |
 | Lore chapters | `data/lore.ts` |
 | 1/1s, honoraries, previews & specials | `data/art.ts` |
-| News cards | `data/news.ts` |
+| News cards | Automatic — latest 3 issues from the Mad News Substack (`lib/news.ts`, refreshed every 6 h). `data/news.ts` is only the fallback |
 | Real-life photos, meetup videos, cities (“Beyond the screen”) | `data/irl.ts` (photos in `public/irl`) |
 | Nav links, socials, marketplaces, press kit, Matrica URL | `data/site.ts` |
 | Homepage sections, FAQ, stats, manifesto | `app/page.tsx` |
@@ -128,15 +128,22 @@ Lighthouse (mobile) on a local production build: Home 92–100, Lore 95, Mad Lad
 - Scroll reveals use CSS scroll-driven animations (no JavaScript); all motion respects `prefers-reduced-motion`.
 - Two reds: brand red for large elements, a darker accessible red for small text and buttons.
 
+## Link previews, 404 & site address
+
+- **Link previews** (X, Discord, WhatsApp…): one branded 1200×630 image per page, generated at build time —
+  `app/**/opengraph-image.tsx` + `twitter-image.tsx`, shared renderer in `lib/og.tsx`.
+- **404:** `app/not-found.tsx`.
+- **Site address** for absolute links (`lib/site-url.ts`): Vercel’s production domain is used automatically.
+  Once madlads.com points to this site, set `NEXT_PUBLIC_SITE_URL=https://madlads.com` in Vercel.
+
 ## Roadmap
 
 - **Matrica login** + holder area (needs a Matrica app / API key from the team) — `links.matricaLogin` in `data/site.ts`
 - Copy review with the community manager: lore, manifesto, FAQ, perks, press facts, press email
-- Fetch news automatically from the Mad News Substack (`news.madlads.com/api/v1/archive`)
 - Deploy (e.g. Vercel) and measure with PageSpeed Insights
 
 ## Credits & rights
 
-Mad Lads artwork, logos and the honorary 1/1s belong to the Mad Lads / Backpack team.
+Mad Lads artwork, logos and the honorary 1/1s belong to the Mad Lads / Backpack team; usage rights for all content on the site are confirmed by the team.
 The hero video comes from the [Mad Lads Culture Hub](https://www.madlads-hub.xyz/); event photos from Mad News and meetup videos from the Backpack Exchange YouTube channel; sketches and previews by
-[@yannpenno](https://x.com/yannpenno). Confirm usage rights with the team before going public.
+[@yannpenno](https://x.com/yannpenno).

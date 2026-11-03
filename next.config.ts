@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "madlads.s3.us-west-2.amazonaws.com", pathname: "/images/**" },
       { protocol: "https", hostname: "madlads.s3.us-west-2.amazonaws.com", pathname: "/honoraries/**" },
       { protocol: "https", hostname: "i.ytimg.com", pathname: "/vi/**" }, // YouTube thumbnails (meetup videos)
+      { protocol: "https", hostname: "substackcdn.com", pathname: "/image/**" }, // Mad News covers
     ],
     minimumCacheTTL: 60 * 60 * 24 * 30, // Lads never change: cache optimized images for 30 days
   },

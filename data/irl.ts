@@ -2,7 +2,7 @@
 // Photos: Mad News newsletter (news.madlads.com), stored in /public/irl.
 // Videos: "Community Meetups" playlist on the Backpack Exchange YouTube channel
 // (https://www.youtube.com/playlist?list=PL5McVW5kQe0rKlmLqLqhpiWKtHBLQLOk_).
-// Captions only state what the sources say. TODO: confirm with the community manager.
+// Captions only state what the sources say. Usage rights confirmed by the team.
 
 export type IrlPhoto = { src: string; alt: string; caption: string; where: string; w: number; h: number };
 export type IrlVideo = { id: string; title: string; where: string };
