@@ -5,9 +5,10 @@ import { MadLadsExplorer } from "@/components/MadLadsExplorer";
 
 export const metadata: Metadata = {
   title: "The Mad Lads",
+  alternates: { canonical: "/madlads" },
   description: "Explore all 9,971 Mad Lads: search by number and filter by type, background, clothing and every other trait.",
   openGraph: { title: "All 9,971 Mad Lads", description: "Explore every Mad Lad: search by number and filter by type, background, clothing and every other trait." },
-  twitter: { card: "summary_large_image", title: "All 9,971 Mad Lads", description: "Explore every Mad Lad: search by number and filter by type, background, clothing and every other trait." },
+  twitter: { card: "summary_large_image", site: "@MadLads", title: "All 9,971 Mad Lads", description: "Explore every Mad Lad: search by number and filter by type, background, clothing and every other trait." },
 };
 
 export default function MadLadsPage() {

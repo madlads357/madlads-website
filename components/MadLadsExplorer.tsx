@@ -431,7 +431,8 @@ function Thumb({ id, priority, sizes }: { id: number; priority?: boolean; sizes?
       fill
       sizes={sizes ?? "(min-width: 1536px) 18vw, (min-width: 1280px) 22vw, (min-width: 640px) 30vw, 48vw"}
       quality={70}
-      priority={priority}
+      loading={priority ? "eager" : undefined}
+      fetchPriority={priority ? "high" : undefined}
       onError={() => src !== originalImage(id) && setSrc(originalImage(id))}
       className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05]"
     />

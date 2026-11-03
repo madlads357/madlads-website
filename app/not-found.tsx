@@ -38,7 +38,7 @@ export default function NotFound() {
           <div className="relative mx-auto w-full max-w-[420px]">
             <div className="absolute -inset-6 -z-10 rotate-6 rounded-3xl bg-red/90" aria-hidden />
             <figure className="relative aspect-[4/5] -rotate-3 overflow-hidden rounded-2xl ring-1 ring-black/10 shadow-[0_30px_60px_-25px_rgba(17,17,17,0.6)]">
-              <Image src="/lads/1846.jpg" alt="Mad Skull #1846 looking unimpressed" fill priority sizes="(min-width: 1024px) 420px, 80vw" className="object-cover" />
+              <Image src="/lads/1846.jpg" alt="Mad Skull #1846 looking unimpressed" fill loading="eager" fetchPriority="high" sizes="(min-width: 1024px) 420px, 80vw" className="object-cover" />
               <figcaption className="absolute bottom-3 left-3 rounded-full bg-white px-3 py-1.5 text-xs font-semibold">#1846 · also lost</figcaption>
             </figure>
           </div>

@@ -12,9 +12,10 @@ import type { CSSProperties } from "react";
 
 export const metadata: Metadata = {
   title: "Lore",
+  alternates: { canonical: "/lore" },
   description: loreIntro,
   openGraph: { title: "Lore | Mad Lads", description: "From a chaotic mint in April 2023 to the Backpack token in 2026: the Mad Lads story, told in chapters." },
-  twitter: { card: "summary_large_image", title: "Lore | Mad Lads", description: "From a chaotic mint in April 2023 to the Backpack token in 2026: the Mad Lads story, told in chapters." },
+  twitter: { card: "summary_large_image", site: "@MadLads", title: "Lore | Mad Lads", description: "From a chaotic mint in April 2023 to the Backpack token in 2026: the Mad Lads story, told in chapters." },
 };
 
 const strip = [1070, 4144, 7245, 9866, 5655, 2784];

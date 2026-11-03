@@ -623,3 +623,11 @@ html[data-intro]:not([data-intro-out]) .animate-rise {
     transform: none !important;
   }
 }
+
+/* Terms & Privacy body text */
+.legal-prose { display: flex; flex-direction: column; gap: 1rem; font-size: 17px; line-height: 1.65; color: var(--color-muted); }
+.legal-prose strong { color: var(--color-ink); font-weight: 600; }
+.legal-prose ul { display: flex; flex-direction: column; gap: 0.5rem; padding-left: 1.25rem; list-style: disc; }
+.legal-prose li::marker { color: var(--color-accent); }
+.legal-prose a { color: var(--color-ink); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--color-line); }
+.legal-prose a:hover { color: var(--color-accent); text-decoration-color: currentColor; }

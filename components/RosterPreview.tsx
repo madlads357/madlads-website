@@ -74,7 +74,6 @@ export function RosterPreview() {
                 alt={`Mad Lad #${l.id}, ${l.type}${l.gender === "Female" ? " Lassie" : ""}, ${l.background} background`}
                 fill
                 sizes="(min-width: 1024px) 16vw, (min-width: 640px) 25vw, 33vw"
-                priority={i < 5}
                 className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06] group-hover:-rotate-1"
               />
               <figcaption className="absolute bottom-2 left-2 rounded-[3px] bg-white px-2 py-1 text-xs font-semibold">

@@ -73,7 +73,10 @@ export function Footer() {
 
       <div className="mt-14 flex flex-col gap-2 border-t border-line pt-6 text-sm text-muted md:flex-row md:justify-between">
         <p>© {new Date().getFullYear()} Mad Lads. A Backpack collection.</p>
-        <p>Terms · Privacy</p>
+        <p className="flex gap-4">
+          <Link href="/terms" className="hover:text-ink">Terms</Link>
+          <Link href="/privacy" className="hover:text-ink">Privacy</Link>
+        </p>
       </div>
     </footer>
   );

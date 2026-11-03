@@ -17,10 +17,13 @@ import { Intro } from "@/components/intro/Intro";
 import { BeyondTheScreen } from "@/components/BeyondTheScreen";
 import { LadTrail } from "@/components/LadTrail";
 import type { CSSProperties } from "react";
+import type { Metadata } from "next";
 import { honoraries, king, moreOneOfOnes, specials } from "@/data/art";
 import { chapters } from "@/data/lore";
 import { getLatestNews } from "@/lib/news";
 import { links } from "@/data/site";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 export default function Home() {
   return (
@@ -54,10 +57,9 @@ function Hero() {
           and stays alone for people who prefer reduced motion. */}
       {/* Background: pushes back slightly and darkens as you scroll away (CSS scroll timeline) */}
       <div className="scroll-push absolute inset-0 -z-10">
-        <Image src="/video/hero-poster.jpg" alt="" fill priority sizes="100vw" className="object-cover" />
+        <Image src="/video/hero-poster.jpg" alt="" fill loading="eager" fetchPriority="high" sizes="100vw" className="object-cover" />
         <video
           className="absolute inset-0 h-full w-full object-cover motion-reduce:hidden"
-          src="/video/hero.mp4"
           poster="/video/hero-poster.jpg"
           autoPlay
           muted
@@ -65,7 +67,11 @@ function Hero() {
           playsInline
           preload="auto"
           aria-hidden
-        />
+        >
+          {/* AV1 (470KB) where supported, H.264 (970KB) everywhere else */}
+          <source src="/video/hero-av1.mp4" type='video/mp4; codecs="av01.0.08M.08"' />
+          <source src="/video/hero.mp4" type="video/mp4" />
+        </video>
       </div>
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/70 via-black/20 to-black/30" />
       <div className="scroll-darken absolute inset-0 -z-10 bg-black" aria-hidden />
