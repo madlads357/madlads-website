@@ -30,15 +30,15 @@ export default function Home() {
       <Nav overHero />
       <main id="main">
         <Hero />
-        <Roster />
         <Manifesto />
         <LadsMarquee />
         <LoreTeaser />
         <Art />
+        <BackpackBand />
+        <Roster />
         <Holders />
         <BeyondTheScreen />
         <News />
-        <BackpackBand />
         <FaqSection />
       </main>
       <Footer />
@@ -103,7 +103,7 @@ function Roster() {
   return (
     <Section id="madlads" className="grid gap-12 lg:grid-cols-[280px_1fr]">
       <div className="flex flex-col gap-5">
-        <p className="t-eyebrow text-accent">01 / Mad Lads</p>
+        <p className="t-eyebrow text-accent">04 / Mad Lads</p>
         <h2 className="t-h2">
           The Mad
           <br />
@@ -125,7 +125,7 @@ function Roster() {
 function Manifesto() {
   return (
     <Section tone="surface">
-      <p className="t-eyebrow text-accent">02 / Manifesto</p>
+      <p className="t-eyebrow text-accent">01 / Manifesto</p>
       <h2 className="t-display-l reveal-slide mt-8">
         We’re not angry.
         <br />
@@ -161,7 +161,7 @@ function LoreTeaser() {
   return (
     <Section id="lore">
       <SectionHeader
-        eyebrow="03 / Lore"
+        eyebrow="02 / Lore"
         title="The story so far"
         text="How a crew of misfits took over Solana, told in chapters."
         action={<Button href="/lore">Read the Lore</Button>}
@@ -197,7 +197,7 @@ function Art() {
   return (
     <Section id="art" tone="surface">
       <SectionHeader
-        eyebrow="04 / Art"
+        eyebrow="03 / Art"
         title="Art"
         text="The 1/1s the team drew for legends and friends, plus previews, sketches and special pieces from the Mad Lads universe."
         action={

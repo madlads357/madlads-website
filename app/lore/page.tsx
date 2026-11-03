@@ -7,13 +7,14 @@ import { LogoStacked } from "@/components/Logo";
 import { chapters, loreIntro } from "@/data/lore";
 import { links } from "@/data/site";
 import { SmoothScroll } from "@/components/SmoothScroll";
+import { ChapterMedia } from "@/components/lore/ChapterMedia";
 import type { CSSProperties } from "react";
 
 export const metadata: Metadata = {
   title: "Lore",
   description: loreIntro,
-  openGraph: { title: "Lore | Mad Lads", description: "From a wild mint in April 2023 to the flagship of Backpack: the Mad Lads story, told in chapters." },
-  twitter: { card: "summary_large_image", title: "Lore | Mad Lads", description: "From a wild mint in April 2023 to the flagship of Backpack: the Mad Lads story, told in chapters." },
+  openGraph: { title: "Lore | Mad Lads", description: "From a chaotic mint in April 2023 to the Backpack token in 2026: the Mad Lads story, told in chapters." },
+  twitter: { card: "summary_large_image", title: "Lore | Mad Lads", description: "From a chaotic mint in April 2023 to the Backpack token in 2026: the Mad Lads story, told in chapters." },
 };
 
 const strip = [1070, 4144, 7245, 9866, 5655, 2784];
@@ -37,7 +38,7 @@ export default function LorePage() {
           <p className="t-body-l mt-8 max-w-[640px] text-muted">{loreIntro}</p>
 
           <nav aria-label="Chapters" className="mt-12 border-y border-line">
-            <ol className="grid grid-cols-2 md:grid-cols-5">
+            <ol className="grid grid-cols-2 sm:grid-cols-3">
               {chapters.map((c) => (
                 <li key={c.slug}>
                   <a href={`#${c.slug}`} className="group flex flex-col gap-1.5 py-5 pr-4">
@@ -63,7 +64,8 @@ export default function LorePage() {
         {/* Chapters */}
         <div className="flex flex-col gap-24 px-4 py-20 md:gap-36 md:px-page md:py-section">
           {chapters.map((c, i) => (
-            <article id={c.slug} key={c.slug} className="grid items-center gap-10 lg:grid-cols-[560px_1fr] lg:gap-20">
+            <article id={c.slug} key={c.slug} className="scroll-mt-28">
+            <div className="grid items-center gap-10 lg:grid-cols-[560px_1fr] lg:gap-20">
               <div className={`reveal-curtain relative aspect-[560/680] overflow-hidden rounded-[4px] bg-sunken ${i % 2 ? "lg:order-2" : ""}`}>
                 <div className="reveal-zoom absolute inset-0">
                   <Image src={c.image.src} alt={c.image.alt} fill sizes="(min-width: 1024px) 560px, 100vw" className="object-cover" />
@@ -86,6 +88,13 @@ export default function LorePage() {
                   })}
                 </ul>
               </div>
+            </div>
+              {/* Photos, press and posts from that time */}
+              {c.media.length > 0 && (
+                <div className="mt-12 md:mt-16">
+                  <ChapterMedia media={c.media} label={`Chapter ${c.number} · ${c.dates}`} />
+                </div>
+              )}
             </article>
           ))}
         </div>

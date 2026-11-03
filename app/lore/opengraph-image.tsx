@@ -11,7 +11,7 @@ export default function Image() {
   return renderOg({
     eyebrow: "Lore",
     title: "The story so far.",
-    subtitle: "From a wild mint in April 2023 to the flagship of Backpack, told in chapters.",
+    subtitle: "From a chaotic mint in 2023 to the Backpack token, told in chapters.",
     images: [readFile(join(process.cwd(), "public/lads/1846.jpg"))],
   });
 }
