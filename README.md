@@ -30,7 +30,7 @@ npm run dev          # http://localhost:3000
 | Route | File | Content |
 | --- | --- | --- |
 | `/` | `app/page.tsx` | Hero (video), Mad Lads preview, manifesto + stats, Lads marquee, lore teaser, art (1/1s & specials), holders, news, Backpack, press, FAQ |
-| `/lore` | `app/lore/page.tsx` | “The story so far” — 5 chapters from the mint (2023) to today |
+| `/lore` | `app/lore/page.tsx` | “The story so far” — 5 chapters from the mint (2023) to today, then **Beyond the screen**: real-life photos (pinned horizontal reel) and meetup videos |
 | `/madlads` | `app/madlads/page.tsx` | Explorer: 9,971 Lads, number search, 16 trait filters, sort, detail view |
 
 ## Project structure
@@ -44,6 +44,7 @@ public/
   data/madlads.json  Metadata of the whole collection (generated)
   lads/              20 preview Lads used on the homepage
   art/               Pieces that only exist outside the collection (newsletter, merch, sketches)
+  irl/               Real-life event photos (Mad News)
   video/             Hero background video + poster
 brand/media-kit/     Official logos (Mad Lads Media Kit) — source of components/Logo.tsx
 scripts/             build-madlads-data.mjs
@@ -58,6 +59,7 @@ Most text lives in `data/`, not in the components:
 | Lore chapters | `data/lore.ts` |
 | 1/1s, honoraries, previews & specials | `data/art.ts` |
 | News cards | `data/news.ts` |
+| Real-life photos, meetup videos, cities (“Beyond the screen”) | `data/irl.ts` (photos in `public/irl`) |
 | Nav links, socials, marketplaces, press kit, Matrica URL | `data/site.ts` |
 | Homepage sections, FAQ, stats, manifesto | `app/page.tsx` |
 
@@ -104,6 +106,13 @@ everything is off when the visitor asks for reduced motion.
 | `scroll-progress` | Reading progress bar | Lore page |
 | `reveal-rise`, `reveal-slide` | Big elements rise / slide into place | Footer logo, statements |
 | `animate-marquee` | Endless strip | Lads marquee |
+| `.reel` | Pinned section, photos glide sideways while scrolling down (desktop); swipe row on phones | Beyond the screen |
+
+**Intro (“Bolt strike”, ~1.8 s):** `components/intro/`. Plays every time the homepage is opened or reloaded
+(not on in-site navigation, never for reduced motion): the logo’s lightning bolt draws itself, the letters snap in,
+red flash, curtain up onto the hero. A tiny inline script in `app/layout.tsx` decides before the first paint, the
+sequence itself is CSS (“Intro loader” in `globals.css`). Click, any key or “Skip intro” skips it. Switch it off with
+`INTRO_ENABLED` in `components/intro/Intro.tsx`.
 
 **Smooth scrolling:** [Lenis](https://github.com/darkroomengineering/lenis) (`components/SmoothScroll.tsx`) on the homepage
 and the Lore page. Nested scroll areas can opt out with `data-lenis-prevent`.
@@ -129,5 +138,5 @@ Lighthouse (mobile) on a local production build: Home 92–100, Lore 95, Mad Lad
 ## Credits & rights
 
 Mad Lads artwork, logos and the honorary 1/1s belong to the Mad Lads / Backpack team.
-The hero video comes from the [Mad Lads Culture Hub](https://www.madlads-hub.xyz/); sketches and previews by
+The hero video comes from the [Mad Lads Culture Hub](https://www.madlads-hub.xyz/); event photos from Mad News and meetup videos from the Backpack Exchange YouTube channel; sketches and previews by
 [@yannpenno](https://x.com/yannpenno). Confirm usage rights with the team before going public.

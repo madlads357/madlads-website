@@ -13,6 +13,8 @@ import { CountUp } from "@/components/CountUp";
 import { Faq } from "@/components/Faq";
 import { ScrollWords } from "@/components/ScrollWords";
 import { SmoothScroll } from "@/components/SmoothScroll";
+import { Intro } from "@/components/intro/Intro";
+import { BeyondTheScreen } from "@/components/BeyondTheScreen";
 import type { CSSProperties } from "react";
 import { honoraries, king, moreOneOfOnes, specials } from "@/data/art";
 import { chapters } from "@/data/lore";
@@ -22,6 +24,7 @@ import { links } from "@/data/site";
 export default function Home() {
   return (
     <>
+      <Intro />
       <SmoothScroll />
       <Nav overHero />
       <main id="main">
@@ -32,6 +35,7 @@ export default function Home() {
         <LoreTeaser />
         <Art />
         <Holders />
+        <BeyondTheScreen />
         <News />
         <BackpackBand />
         <Press />

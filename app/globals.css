@@ -252,6 +252,177 @@
   }
 }
 
+/* Pinned horizontal reel: the section is tall, its inner viewport sticks, and the track
+   slides sideways while you scroll down. Desktop + supporting browsers only; elsewhere
+   (phones, Firefox, reduced motion) it is a normal swipeable row. */
+@keyframes reel {
+  to {
+    transform: translateX(calc(-100% + 100vw));
+  }
+}
+@keyframes reel-drift {
+  from {
+    transform: scale(1.16) translateX(6%);
+  }
+  to {
+    transform: scale(1.16) translateX(-6%);
+  }
+}
+/* Default (phones, Firefox, reduced motion): the photo row swipes horizontally with snap. */
+.reel-mask {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.reel-mask::-webkit-scrollbar {
+  display: none;
+}
+.reel-track > * {
+  scroll-snap-align: start;
+}
+@supports (animation-timeline: view()) {
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    .reel {
+      height: var(--reel-height, 380vh);
+      view-timeline-name: --reel;
+    }
+    .reel-viewport {
+      position: sticky;
+      top: 0;
+      height: 100svh;
+      /* start below the fixed nav (88px), and never clip the top if content is taller */
+      padding-top: 88px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: safe center;
+    }
+    .reel-mask {
+      overflow: visible;
+      /* soft fade at the screen edges */
+      mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+    }
+    .reel-track {
+      animation: reel linear both;
+      animation-timeline: --reel;
+      animation-range: contain 0% contain 100%;
+    }
+    /* depth: each photo drifts inside its frame as the reel moves */
+    .reel-parallax {
+      animation: reel-drift linear both;
+      animation-timeline: --reel;
+      animation-range: contain 0% contain 100%;
+    }
+    .reel-progress {
+      transform-origin: 0 50%;
+      animation: grow-x linear both;
+      animation-timeline: --reel;
+      animation-range: contain 0% contain 100%;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------- Intro loader
+   An inline script sets html[data-intro] before the first paint, so the
+   overlay shows immediately (no flash of the page). The component then plays the
+   sequence and sets data-intro-out to reveal the site. See components/intro. */
+.intro {
+  display: none;
+}
+html[data-intro] {
+  overflow: hidden;
+}
+html[data-intro] .intro-bolt {
+  display: grid;
+}
+/* the hero headline waits for the curtain, then rises */
+html[data-intro]:not([data-intro-out]) .animate-rise {
+  animation-play-state: paused;
+}
+
+/* 1 · Bolt strike */
+@keyframes bolt-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes bolt-fill {
+  to {
+    fill: var(--color-red);
+    stroke: var(--color-red);
+  }
+}
+@keyframes bolt-ink {
+  to {
+    fill: var(--color-ink);
+    stroke: var(--color-ink);
+  }
+}
+@keyframes letter-in {
+  from {
+    opacity: 0;
+    transform: translate(-6px, 10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes flash-red {
+  to {
+    background-color: var(--color-red);
+  }
+}
+@keyframes curtain-up {
+  to {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+.intro-bolt {
+  background: var(--color-ink);
+  clip-path: inset(0 0 0 0);
+  animation:
+    flash-red 120ms 1000ms ease-out forwards,
+    curtain-up 560ms 1250ms cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+.intro-bolt .bolt {
+  fill: transparent;
+  stroke: var(--color-red);
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation:
+    bolt-draw 560ms 120ms cubic-bezier(0.65, 0, 0.35, 1) forwards,
+    bolt-fill 160ms 640ms ease-out forwards,
+    bolt-ink 120ms 1000ms ease-out forwards;
+}
+.intro-bolt .letter {
+  fill: #fff;
+  opacity: 0;
+  transform-box: fill-box;
+  animation:
+    letter-in 260ms cubic-bezier(0.2, 0.9, 0.3, 1.3) forwards,
+    bolt-ink 120ms 1000ms ease-out forwards;
+  animation-delay: calc(560ms + var(--i) * 55ms), 1000ms;
+}
+.intro-bolt .intro-mark {
+  animation: punch 1800ms ease-out forwards;
+}
+@keyframes punch {
+  0%,
+  52% {
+    transform: scale(1);
+  }
+  58% {
+    transform: scale(1.06);
+  }
+  72%,
+  100% {
+    transform: scale(1);
+  }
+}
+
 /* "Scroll" cue in the hero: a light runs down a thin line. */
 @keyframes scroll-cue {
   from {

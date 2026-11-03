@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { LogoHorizontal } from "./Logo";
 import { CloseIcon, MenuIcon } from "./Icons";
@@ -13,6 +13,7 @@ export function Nav({ overHero = false }: { overHero?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -37,13 +38,22 @@ export function Nav({ overHero = false }: { overHero?: boolean }) {
           className="shrink-0"
           aria-label="Mad Lads — back to top"
           onClick={(e) => {
-            // Already on the homepage: glide back to the hero instead of doing nothing.
-            if (pathname === "/") {
-              e.preventDefault();
-              const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-              if (window.__lenis) window.__lenis.scrollTo(0, { duration: 1.4 });
-              else window.scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
-              history.replaceState(null, "", "/");
+            // Always lands on the hero: on the homepage it glides back up (even with a #hash in
+            // the URL, or while smooth scroll is paused); elsewhere it navigates home, at the top.
+            e.preventDefault();
+            setOpen(false);
+            if (pathname !== "/") {
+              router.push("/", { scroll: true });
+              return;
+            }
+            if (window.location.hash) window.history.replaceState(window.history.state, "", "/");
+            const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            const lenis = window.__lenis;
+            if (lenis && !reduce) {
+              lenis.start();
+              lenis.scrollTo(0, { duration: 1.2, force: true });
+            } else {
+              window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
             }
           }}
         >
