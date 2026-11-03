@@ -12,7 +12,7 @@ export type Chapter = {
 };
 
 export const loreIntro =
-  "From a wild mint in April 2023 to the flagship of Backpack — how a crew of 10,000 misfits took over Solana. Told in chapters, as it happened.";
+  "From a wild mint in April 2023 to the flagship of Backpack: how a crew of 10,000 misfits took over Solana. Told in chapters, as it happened.";
 
 export const chapters: Chapter[] = [
   {
@@ -20,7 +20,7 @@ export const chapters: Chapter[] = [
     number: "01",
     title: "The Mint",
     dates: "April 2023",
-    body: "Coral — the team behind the Backpack wallet — drops 10,000 Mad Lads as the first collection of executable NFTs (xNFTs). The mint is pure chaos: more than 10,000 people pack the Twitter Space to follow it live. A community of builders, degens and Solana OGs is born overnight.",
+    body: "Coral, the team behind the Backpack wallet, drops 10,000 Mad Lads as the first collection of executable NFTs (xNFTs). The mint is pure chaos: more than 10,000 people pack the Twitter Space to follow it live. A community of builders, degens and Solana OGs is born overnight.",
     moments: [
       "Mar 27, 2023 — The Mad Validator goes live, later passing 500k staked SOL",
       "Apr 2023 — 10,000 Lads, Lassies and Skulls minted on Solana",
@@ -33,7 +33,7 @@ export const chapters: Chapter[] = [
     number: "02",
     title: "Soul & Skulls",
     dates: "Summer 2023",
-    body: "Armani Ferrante explains “soul abstraction”: every Lad gets its own soulbound inventory, so rewards and airdrops live on the NFT itself. Staking goes live, Sunday Streams become a ritual, and the rare Skulls — under 1% of the collection — start their reign.",
+    body: "Armani Ferrante explains “soul abstraction”: every Lad gets its own soulbound inventory, so rewards and airdrops live on the NFT itself. Staking goes live, Sunday Streams become a ritual, and the rare Skulls (under 1% of the collection) start their reign.",
     moments: [
       "Jun 2023 — Meltem Demirors and Toly receive the first honorary 1/1s",
       "Jun 2023 — Staking and soulbound inventory go live",
@@ -74,7 +74,7 @@ export const chapters: Chapter[] = [
     slug: "brick-by-brick",
     number: "05",
     title: "Brick by brick",
-    dates: "2025 — 2026",
+    dates: "2025–2026",
     body: "Backpack spreads its wings: Backpack EU, new seasons, Mad Lads jackets shipping to holders, and finally the Backpack token. In April 2026 the Lads celebrate three years — and the story is just getting started.",
     moments: [
       "2025 — Backpack EU launches, Seasons 1 to 4 reward the community",

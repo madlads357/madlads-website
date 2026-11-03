@@ -40,7 +40,7 @@ export const moreOneOfOnes: ArtPiece[] = [
 
 export const specials = {
   cards: { src: "/art/special_playing-cards.png", kind: "Special", name: "Mad Lads playing cards", alt: "Mad Lads playing card deck and box" },
-  preview: { src: "/art/preview_art-of-mad-lads.png", kind: "Preview", name: "The Art of Mad Lads — by @yannpenno", alt: "Sketch and colored artwork of a Lassie with a sword" },
-  sketches: { src: "/art/sketches_yannpenno.png", kind: "Sketches", name: "Character studies — by @yannpenno", alt: "Pencil character studies of Lassies" },
+  preview: { src: "/art/preview_art-of-mad-lads.png", kind: "Preview", name: "The Art of Mad Lads, by @yannpenno", alt: "Sketch and colored artwork of a Lassie with a sword" },
+  sketches: { src: "/art/sketches_yannpenno.png", kind: "Sketches", name: "Character studies by @yannpenno", alt: "Pencil character studies of Lassies" },
   merch: { src: "/art/merch_jacket.jpg", kind: "Merch", name: "Mad Lads jacket & goodies", alt: "Mad Lads jacket, socks and plush toys on a pool table" },
 } satisfies Record<string, ArtPiece>;

@@ -36,7 +36,7 @@ export function Nav({ overHero = false }: { overHero?: boolean }) {
         <Link
           href="/"
           className="shrink-0"
-          aria-label="Mad Lads — back to top"
+          aria-label="Mad Lads, back to top"
           onClick={(e) => {
             // Always lands on the hero: on the homepage it glides back up (even with a #hash in
             // the URL, or while smooth scroll is paused); elsewhere it navigates home, at the top.

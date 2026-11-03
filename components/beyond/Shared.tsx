@@ -17,7 +17,7 @@ export function BeyondHeader({ className = "", row = false }: { className?: stri
         </h2>
       </div>
       <p className={`t-body-l text-white/70 ${row ? "md:max-w-[420px] md:pb-2" : ""}`}>
-        From Shibuya to the summit of Mt Fuji, the Lads show up for real — meetups, booths, parties, even a wedding.
+        From Shibuya to the summit of Mt Fuji, the Lads show up for real: meetups, booths, parties, even a wedding.
       </p>
     </header>
   );

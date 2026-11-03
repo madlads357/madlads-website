@@ -71,7 +71,7 @@ export function RosterPreview() {
             <figure className="group relative aspect-[4/5] overflow-hidden rounded-[4px] bg-sunken">
               <Image
                 src={ladImage(l.id)}
-                alt={`Mad Lad #${l.id} — ${l.type}${l.gender === "Female" ? " Lassie" : ""}, ${l.background} background`}
+                alt={`Mad Lad #${l.id}, ${l.type}${l.gender === "Female" ? " Lassie" : ""}, ${l.background} background`}
                 fill
                 sizes="(min-width: 1024px) 16vw, (min-width: 640px) 25vw, 33vw"
                 priority={i < 5}
@@ -85,7 +85,7 @@ export function RosterPreview() {
         ))}
         {shown.length === 0 && (
           <li className="col-span-full py-12 text-center text-muted">
-            Not in this preview — press Enter to search all 9,971 Mad Lads.
+            Not in this preview. Press Enter to search all 9,971 Mad Lads.
           </li>
         )}
       </ul>

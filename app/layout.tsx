@@ -7,7 +7,7 @@ import { siteUrl } from "@/lib/site-url";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: { default: "Mad Lads — Everyone’s mad here.", template: "%s — Mad Lads" },
+  title: { default: "Mad Lads | Everyone’s mad here.", template: "%s | Mad Lads" },
   description: "10,000 Mad Lads on Solana. The collection by Backpack.",
   openGraph: {
     title: "Mad Lads",

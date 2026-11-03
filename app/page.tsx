@@ -140,7 +140,7 @@ function Manifesto() {
       <dl className="mt-16 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line md:grid-cols-4">
         {[
           { to: 1000, label: "Lassies in the crew" },
-          { to: 99, label: "Skulls — under 1%" },
+          { to: 99, label: "Skulls, under 1%" },
           { to: 16, label: "Traits to explore" },
           { to: 3, label: "Years of Mad", suffix: "+" },
         ].map((s, i) => (
@@ -163,7 +163,7 @@ function LoreTeaser() {
       <SectionHeader
         eyebrow="03 / Lore"
         title="The story so far"
-        text="How a crew of misfits took over Solana — told in chapters."
+        text="How a crew of misfits took over Solana, told in chapters."
         action={<Button href="/lore">Read the Lore</Button>}
       />
       <ul className="grid gap-8 md:grid-cols-3">
@@ -276,7 +276,7 @@ function Holders() {
       <div className="reveal mt-12 grid items-center gap-5 rounded-lg bg-surface p-6 md:p-8 lg:grid-cols-[300px_1fr_1fr_1fr]">
         <div className="flex flex-col gap-4">
           <p className="t-h3">Holder-only</p>
-          <p className="text-muted">A preview of what’s behind the wall. Connect through Matrica — no wallet pop-ups.</p>
+          <p className="text-muted">A preview of what’s behind the wall. Connect through Matrica, no wallet pop-ups.</p>
           <div>
             <Button href={links.matricaLogin}>Login with Matrica</Button>
           </div>
@@ -302,7 +302,7 @@ async function News() {
       <SectionHeader
         eyebrow="06 / News"
         title="News"
-        text="The latest issues of Mad News — drops, updates and moments from the Mad Lads world."
+        text="The latest issues of Mad News: drops, updates and moments from the Mad Lads world."
         action={
           <Button href={links.newsletter} variant="secondary" external>
             View all news →
@@ -340,7 +340,7 @@ function BackpackBand() {
       </h2>
       <div className="reveal flex flex-col gap-5" style={{ "--i": 1 } as CSSProperties}>
         <p className="t-body-l text-muted">
-          Mad Lads is the flagship collection of Backpack — the wallet and exchange built for the next generation of onchain culture.
+          Mad Lads is the flagship collection of Backpack, the wallet and exchange built for the next generation of onchain culture.
         </p>
         <a href={links.backpack} target="_blank" rel="noopener noreferrer" className="font-semibold text-accent underline underline-offset-4">
           Learn about Backpack ↗
@@ -389,7 +389,7 @@ function Press() {
 const faq = [
   {
     q: "What is Mad Lads?",
-    a: "A collection of 10,000 illustrated characters — Lads, Lassies and a few Skulls — on Solana. It launched in April 2023 as the first collection of executable NFTs (xNFTs), made by Coral, the team behind Backpack.",
+    a: "A collection of 10,000 illustrated characters (Lads, Lassies and a few Skulls) on Solana. It launched in April 2023 as the first collection of executable NFTs (xNFTs), made by Coral, the team behind Backpack.",
   },
   {
     q: "What is the link with Backpack?",
@@ -407,7 +407,7 @@ const faq = [
         <a href={links.foxySwap} target="_blank" rel="noopener noreferrer" className="font-medium text-ink underline underline-offset-2 hover:text-accent">
           FoxySwap
         </a>{" "}
-        by the Famous Fox Federation: both sides lock their items and the swap only happens when both agree. Never send a Lad directly to someone, and never trust a DM offering a deal — the team will never message you first.
+        by the Famous Fox Federation: both sides lock their items and the swap only happens when both agree. Never send a Lad directly to someone, and never trust a DM offering a deal. The team will never message you first.
       </>
     ),
   },
@@ -417,7 +417,7 @@ const faq = [
   },
   {
     q: "What are the honoraries and 1/1s?",
-    a: "One-of-one pieces the team drew for legends and friends of the community — from Meltem Demirors and Toly to Iggy Azalea — plus special Lads made for raffles and collaborations.",
+    a: "One-of-one pieces the team drew for legends and friends of the community, like Meltem Demirors, Toly and Iggy Azalea. Some special Lads were also made for raffles and collaborations.",
   },
   {
     q: "I’m a journalist. Where are the brand assets?",

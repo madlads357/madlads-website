@@ -23,7 +23,7 @@ export default function NotFound() {
             </h1>
             <p className="t-h2 max-w-[560px]">This Lad got lost.</p>
             <p className="t-body-l max-w-[520px] text-muted">
-              Fock it — the page you’re looking for doesn’t exist, moved, or was never minted. Head back home or go find a Lad who knows the way.
+              Fock it. The page you’re looking for doesn’t exist, moved, or was never minted. Head back home or go find a Lad who knows the way.
             </p>
             <div className="mt-2 flex flex-wrap gap-3">
               <Button href="/">Back home</Button>
