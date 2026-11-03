@@ -400,6 +400,18 @@ const faq = [
     a: "Mad Lads trade on NFT marketplaces such as Magic Eden and Tensor. Always check you are on the verified Mad Lads collection before buying.",
   },
   {
+    q: "How do I trade a Lad peer-to-peer safely?",
+    a: (
+      <>
+        Only use{" "}
+        <a href={links.foxySwap} target="_blank" rel="noopener noreferrer" className="font-medium text-ink underline underline-offset-2 hover:text-accent">
+          FoxySwap
+        </a>{" "}
+        by the Famous Fox Federation: both sides lock their items and the swap only happens when both agree. Never send a Lad directly to someone, and never trust a DM offering a deal — the team will never message you first.
+      </>
+    ),
+  },
+  {
     q: "What does “Login with Matrica” do?",
     a: "Matrica checks which Mad Lads you hold through the wallets you have linked to your Matrica account. You unlock holder content without connecting a wallet or signing anything on this site.",
   },

@@ -7,6 +7,7 @@ const external = [
   { label: "Discord", href: links.discord },
   { label: "Magic Eden", href: links.magicEden },
   { label: "Tensor", href: links.tensor },
+  { label: "FoxySwap (P2P)", href: links.foxySwap },
 ];
 
 export function Footer() {

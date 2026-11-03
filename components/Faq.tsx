@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 
 // Unfolding accordion (inspired by easyui's "Unfold Accordion"). One item open at a time,
 // smooth height animation via grid rows, + turns into × when open.
-export function Faq({ items }: { items: { q: string; a: string }[] }) {
+export function Faq({ items }: { items: { q: string; a: ReactNode }[] }) {
   const [open, setOpen] = useState<number | null>(0);
   return (
     <ul className="flex flex-col gap-3">
