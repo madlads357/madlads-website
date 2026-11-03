@@ -45,6 +45,14 @@ export function Button({ href, variant = "primary", children, className = "", ex
       </a>
     );
   }
+  // Server routes (e.g. /api/auth/login) get a plain link: <Link> may prefetch them, which would start a login.
+  if (href.startsWith("/api/")) {
+    return (
+      <a href={href} className={cls} {...rest}>
+        {content}
+      </a>
+    );
+  }
   return (
     <Link href={href} className={cls} {...rest}>
       {content}

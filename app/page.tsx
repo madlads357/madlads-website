@@ -7,7 +7,8 @@ import { Section, SectionHeader } from "@/components/Section";
 import { RosterPreview } from "@/components/RosterPreview";
 import { ArtCard } from "@/components/ArtCard";
 import { LogoStacked } from "@/components/Logo";
-import { CrownIcon, GiftIcon, LockIcon, TicketIcon, UsersIcon } from "@/components/Icons";
+import { LockIcon } from "@/components/Icons";
+import { perks } from "@/data/holders";
 import { LadsMarquee } from "@/components/Marquee";
 import { CountUp } from "@/components/CountUp";
 import { Faq } from "@/components/Faq";
@@ -262,13 +263,6 @@ function SubHeader({ label, note }: { label: string; note: string }) {
 }
 
 /* ------------------------------------------------------------- Holders */
-const perks = [
-  { Icon: CrownIcon, title: "Exclusive content", text: "Holder-only art, lore and behind the scenes." },
-  { Icon: TicketIcon, title: "Early access", text: "First in line for drops, events and new releases." },
-  { Icon: GiftIcon, title: "Holder perks", text: "Special rewards, collabs and surprises." },
-  { Icon: UsersIcon, title: "The inner circle", text: "A tighter crew of Lads building what’s next." },
-];
-
 function Holders() {
   return (
     <Section id="holders" tone="sunken">

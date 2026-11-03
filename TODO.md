@@ -29,6 +29,12 @@ Both are placeholders in `data/site.ts`:
 - [ ] Optional: turn on Vercel Speed Insights to see real visitors’ load times.
       It sets no cookies, but mention it on the Privacy page (“Data from your visit”) if you enable it.
 
-# Later
-- [ ] Matrica login and the holder area (the Culture Hub moves in there).
-      Update the Privacy page (“Holder area”) and the Terms before the login goes live.
+# Matrica login (built, switched off, waiting for access)
+Every setting is described in `.env.example`.
+- [ ] Request API access on business.matrica.io. Ask for the client ID and secret, the Mad Lads collection ID (Matrica's own ID), token lifetimes and rate limits.
+- [ ] Register the callback URLs with Matrica: `https://madlads.com/api/auth/callback` and `http://localhost:3000/api/auth/callback`.
+- [ ] In Vercel, set `MATRICA_CLIENT_ID`, `MATRICA_CLIENT_SECRET`, `MATRICA_COLLECTION_ID` and `SESSION_SECRET`.
+- [ ] Test a real login with a wallet that holds a Lad. Check that the Lad numbers come out right (`ladNumber` in `lib/auth/matrica.ts`).
+- [ ] Update the Privacy page (“Holder area”, “Cookies and local storage”) and the Terms (“Holder area”): login cookie, data received from Matrica.
+- [ ] Go live: set `NEXT_PUBLIC_HOLDERS_LIVE=1` and redeploy. The login buttons then open `/holders`.
+- [ ] Decide what goes in the holder area (Culture Hub, perks).

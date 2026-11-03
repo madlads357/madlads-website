@@ -8,7 +8,8 @@ export const nav = [
 ];
 
 export const links = {
-  matricaLogin: "#holders", // TODO: Matrica OAuth sign-in URL
+  // Login buttons: the holder area once NEXT_PUBLIC_HOLDERS_LIVE=1, the homepage Holders section until then.
+  matricaLogin: process.env.NEXT_PUBLIC_HOLDERS_LIVE === "1" ? "/holders" : "/#holders",
   newsletter: "https://news.madlads.com/",
   backpack: "https://backpack.exchange/",
   x: "https://x.com/MadLads",

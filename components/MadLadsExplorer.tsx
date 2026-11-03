@@ -49,7 +49,7 @@ const fmt = (n: number) => n.toLocaleString("en-US");
 type VTDocument = Document & { startViewTransition?: (update: () => void) => { finished: Promise<void> } };
 const HERO = "lad-hero";
 let namedTile: HTMLElement | null = null; // tile still carrying the name from the last close
-function morph(update: () => void, before?: HTMLElement | null, after?: () => HTMLElement | null) {
+export function morph(update: () => void, before?: HTMLElement | null, after?: () => HTMLElement | null) {
   const doc = document as VTDocument;
   if (namedTile) namedTile.style.viewTransitionName = ""; // two elements with one name would cancel the morph
   namedTile = null;
@@ -66,7 +66,7 @@ function morph(update: () => void, before?: HTMLElement | null, after?: () => HT
     namedTile = null;
   });
 }
-const inView = (el: Element | null) => {
+export const inView = (el: Element | null) => {
   const r = el?.getBoundingClientRect();
   return r && r.bottom > 0 && r.top < window.innerHeight ? (el as HTMLElement) : null;
 };
@@ -439,7 +439,7 @@ function Thumb({ id, priority, sizes }: { id: number; priority?: boolean; sizes?
   );
 }
 
-function Tile({ id, label, priority, onOpen, compact }: { id: number; label?: string; priority?: boolean; onOpen?: (el: HTMLElement) => void; compact?: boolean }) {
+export function Tile({ id, label, priority, onOpen, compact }: { id: number; label?: string; priority?: boolean; onOpen?: (el: HTMLElement) => void; compact?: boolean }) {
   const body = (
     <>
       <Thumb id={id} priority={priority} sizes={compact ? "(min-width: 1536px) 12vw, (min-width: 1024px) 16vw, 30vw" : undefined} />
@@ -785,7 +785,7 @@ function FilterSheet({ children, onClose, onReset, total, active }: { children: 
 }
 
 /* ------------------------------------------------------------ Detail */
-function LadDialog({
+export function LadDialog({
   lad,
   data,
   onClose,
@@ -798,7 +798,7 @@ function LadDialog({
   onClose: () => void;
   onPrev?: () => void;
   onNext?: () => void;
-  onFilter: (ti: number, vi: number) => void;
+  onFilter?: (ti: number, vi: number) => void; // without it, traits are shown but not clickable
 }) {
   const id = lad[0];
   const [full, setFull] = useState(false);
@@ -867,12 +867,7 @@ function LadDialog({
               const pct = (share[ti] / total) * 100;
               return (
                 <div key={t.name}>
-                  <button
-                    type="button"
-                    onClick={() => onFilter(ti, vi)}
-                    title={`See every Lad with ${t.name}: ${t.values[vi]}`}
-                    className="flex h-full w-full flex-col gap-1 rounded-xl bg-surface p-3 text-left ring-1 ring-line transition-all hover:-translate-y-0.5 hover:ring-ink"
-                  >
+                  <TraitCard onClick={onFilter && (() => onFilter(ti, vi))} title={`See every Lad with ${t.name}: ${t.values[vi]}`}>
                     <dt className="t-eyebrow text-muted">{t.name}</dt>
                     <dd className="font-semibold leading-tight">{t.values[vi]}</dd>
                     <dd className="mt-auto pt-1">
@@ -881,18 +876,30 @@ function LadDialog({
                       </span>
                       <span className="mt-1 block text-[11px] text-muted">{share[ti] === 1 ? "1 of 1" : `${fmt(share[ti])} Lads · ${pct.toFixed(pct < 1 ? 2 : 1)}%`}</span>
                     </dd>
-                  </button>
+                  </TraitCard>
                 </div>
               );
             })}
           </dl>
-          <p className="text-xs text-muted">Tip: use ← → to browse, Esc to close. Click a trait to see every Lad that has it.</p>
+          <p className="text-xs text-muted">Tip: use ← → to browse, Esc to close.{onFilter && " Click a trait to see every Lad that has it."}</p>
           <a href={originalImage(id)} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-accent underline underline-offset-4">
             Open full-resolution image ↗
           </a>
         </div>
       </div>
     </div>
+  );
+}
+
+// A trait in the dialog: a button that filters the grid, or a plain card when there's no grid to filter.
+function TraitCard({ onClick, title, children }: { onClick?: () => void; title: string; children: ReactNode }) {
+  const cls = "flex h-full w-full flex-col gap-1 rounded-xl bg-surface p-3 text-left ring-1 ring-line";
+  return onClick ? (
+    <button type="button" onClick={onClick} title={title} className={`${cls} transition-all hover:-translate-y-0.5 hover:ring-ink`}>
+      {children}
+    </button>
+  ) : (
+    <div className={cls}>{children}</div>
   );
 }
 
