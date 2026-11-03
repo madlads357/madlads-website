@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { flushSync } from "react-dom";
 import { loadCollection, originalImage, thumbImage, type Collection } from "@/lib/madlads";
 import { CloseIcon, SearchIcon } from "./Icons";
 
@@ -41,6 +42,34 @@ const QUICK: { key: Quick; label: string }[] = [
 ];
 
 const fmt = (n: number) => n.toLocaleString("en-US");
+
+/* Card → detail morph with the View Transitions API. The clicked tile and the dialog image
+   share the name "lad-hero" (never both at once), so the browser animates one into the other.
+   Browsers without the API, and reduced motion, just open/close instantly. */
+type VTDocument = Document & { startViewTransition?: (update: () => void) => { finished: Promise<void> } };
+const HERO = "lad-hero";
+let namedTile: HTMLElement | null = null; // tile still carrying the name from the last close
+function morph(update: () => void, before?: HTMLElement | null, after?: () => HTMLElement | null) {
+  const doc = document as VTDocument;
+  if (namedTile) namedTile.style.viewTransitionName = ""; // two elements with one name would cancel the morph
+  namedTile = null;
+  if (!doc.startViewTransition || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return update();
+  if (before) before.style.viewTransitionName = HERO;
+  const t = doc.startViewTransition(() => {
+    if (before) before.style.viewTransitionName = "";
+    flushSync(update);
+    namedTile = after?.() ?? null;
+    if (namedTile) namedTile.style.viewTransitionName = HERO;
+  });
+  t.finished.finally(() => {
+    if (namedTile) namedTile.style.viewTransitionName = "";
+    namedTile = null;
+  });
+}
+const inView = (el: Element | null) => {
+  const r = el?.getBoundingClientRect();
+  return r && r.bottom > 0 && r.top < window.innerHeight ? (el as HTMLElement) : null;
+};
 const PLACEHOLDER: number[][] = Array.from({ length: 20 }, (_, i) => [i + 1]);
 
 /* ------------------------------------------------------------ URL sync */
@@ -206,6 +235,13 @@ export function MadLadsExplorer() {
 
   const openIndex = open ? results.findIndex((l) => l[0] === open) : -1;
   const openLad = open ? (openIndex >= 0 ? results[openIndex] : data?.lads.find((l) => l[0] === open)) : undefined;
+  const openLadFrom = (id: number, tile: HTMLElement) => morph(() => setOpen(id), tile);
+  const closeLad = () =>
+    morph(
+      () => setOpen(null),
+      null,
+      () => inView(document.querySelector(`[data-lad="${open}"]`)),
+    );
   const step = (d: number) => {
     if (openIndex < 0) return;
     const next = results[openIndex + d];
@@ -346,7 +382,7 @@ export function MadLadsExplorer() {
                     </li>
                   )}
                   <li>
-                    <Tile id={l[0]} label={data?.traits[typeIdx].values[l[typeIdx + 1]]} priority={i < 4} onOpen={() => setOpen(l[0])} compact={density === "compact"} />
+                    <Tile id={l[0]} label={data?.traits[typeIdx].values[l[typeIdx + 1]]} priority={i < 4} onOpen={(el) => openLadFrom(l[0], el)} compact={density === "compact"} />
                   </li>
                 </Fragment>
               ))}
@@ -357,35 +393,18 @@ export function MadLadsExplorer() {
         </div>
       </div>
 
-      {/* Mobile filter drawer */}
+      {/* Mobile filters: bottom sheet (drag the handle down, tap outside or Esc to close) */}
       {drawer && (
-        <div className="fixed inset-0 z-[70] flex lg:hidden" role="dialog" aria-modal="true" aria-label="Filters">
-          <button type="button" className="flex-1 bg-black/40 backdrop-blur-sm" aria-label="Close filters" onClick={() => setDrawer(false)} />
-          <div className="flex w-[90%] max-w-sm flex-col rounded-l-2xl bg-paper shadow-2xl">
-            <div className="flex items-center justify-between px-5 pt-5 pb-3">
-              <p className="t-h3">Filters</p>
-              <button type="button" onClick={() => setDrawer(false)} aria-label="Close filters" className="grid size-10 place-items-center rounded-full hover:bg-sunken">
-                <CloseIcon className="size-5" />
-              </button>
-            </div>
-            <div className="thin-scroll flex-1 overflow-y-auto px-5">{panel}</div>
-            <div className="flex gap-3 border-t border-line p-4">
-              <button type="button" onClick={clearAll} className="h-12 flex-1 rounded-xl border-[1.5px] border-ink font-semibold">
-                Reset
-              </button>
-              <button type="button" onClick={() => setDrawer(false)} className="h-12 flex-[1.4] rounded-xl bg-accent font-semibold text-white">
-                Show {fmt(results.length)} Lads
-              </button>
-            </div>
-          </div>
-        </div>
+        <FilterSheet onClose={() => setDrawer(false)} onReset={clearAll} total={results.length} active={activeCount}>
+          {panel}
+        </FilterSheet>
       )}
 
       {openLad && data && (
         <LadDialog
           lad={openLad}
           data={data}
-          onClose={() => setOpen(null)}
+          onClose={closeLad}
           onPrev={openIndex > 0 ? () => step(-1) : undefined}
           onNext={openIndex >= 0 && openIndex < results.length - 1 ? () => step(1) : undefined}
           onFilter={(ti, vi) => {
@@ -419,7 +438,7 @@ function Thumb({ id, priority, sizes }: { id: number; priority?: boolean; sizes?
   );
 }
 
-function Tile({ id, label, priority, onOpen, compact }: { id: number; label?: string; priority?: boolean; onOpen?: () => void; compact?: boolean }) {
+function Tile({ id, label, priority, onOpen, compact }: { id: number; label?: string; priority?: boolean; onOpen?: (el: HTMLElement) => void; compact?: boolean }) {
   const body = (
     <>
       <Thumb id={id} priority={priority} sizes={compact ? "(min-width: 1536px) 12vw, (min-width: 1024px) 16vw, 30vw" : undefined} />
@@ -442,7 +461,7 @@ function Tile({ id, label, priority, onOpen, compact }: { id: number; label?: st
   const cls =
     "group relative block aspect-[4/5] w-full overflow-hidden rounded-xl bg-sunken text-left ring-1 ring-black/5 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_18px_40px_-18px_rgba(17,17,17,0.45)] focus-visible:-translate-y-1";
   return onOpen ? (
-    <button type="button" onClick={onOpen} className={cls} aria-label={`Open Mad Lad #${id}`}>
+    <button type="button" data-lad={id} onClick={(e) => onOpen(e.currentTarget)} className={cls} aria-label={`Open Mad Lad #${id}`}>
       {body}
     </button>
   ) : (
@@ -691,6 +710,79 @@ function LongList({
   );
 }
 
+/* ------------------------------------------------------------ Filter sheet (mobile) */
+function FilterSheet({ children, onClose, onReset, total, active }: { children: ReactNode; onClose: () => void; onReset: () => void; total: number; active: number }) {
+  const sheet = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ y: number; dy: number } | null>(null);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  const setY = (y: number, animate: boolean) => {
+    const el = sheet.current;
+    if (!el) return;
+    el.style.transition = animate ? "transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1)" : "none";
+    el.style.transform = y ? `translateY(${y}px)` : "";
+  };
+  const down = (e: React.PointerEvent) => {
+    drag.current = { y: e.clientY, dy: 0 };
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+  };
+  const move = (e: React.PointerEvent) => {
+    if (!drag.current) return;
+    drag.current.dy = Math.max(0, e.clientY - drag.current.y);
+    setY(drag.current.dy, false);
+  };
+  const up = () => {
+    const dy = drag.current?.dy ?? 0;
+    drag.current = null;
+    if (dy > 110) {
+      setY(window.innerHeight, true);
+      setTimeout(onClose, 200);
+    } else setY(0, true);
+  };
+
+  return (
+    <div className="fixed inset-0 z-[70] flex flex-col justify-end lg:hidden" role="dialog" aria-modal="true" aria-label="Filters">
+      <button type="button" className="absolute inset-0 animate-[fade-in_200ms_ease-out] bg-black/40 backdrop-blur-sm" aria-label="Close filters" onClick={onClose} />
+      <div
+        ref={sheet}
+        data-lenis-prevent
+        className="relative flex max-h-[86svh] animate-[sheet-up_320ms_cubic-bezier(0.2,0.7,0.2,1)] flex-col rounded-t-3xl bg-paper shadow-[0_-20px_50px_-20px_rgba(0,0,0,0.4)]"
+      >
+        {/* Drag handle + header */}
+        <div className="cursor-grab touch-none px-5 pt-3 pb-3 select-none" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
+          <span className="mx-auto block h-1.5 w-11 rounded-full bg-line" aria-hidden />
+          <div className="mt-3 flex items-center justify-between">
+            <p className="t-h3">
+              Filters {active > 0 && <span className="ml-1 align-middle text-sm font-semibold text-accent">{active} active</span>}
+            </p>
+            <button type="button" onClick={onClose} onPointerDown={(e) => e.stopPropagation()} aria-label="Close filters" className="grid size-10 place-items-center rounded-full hover:bg-sunken">
+              <CloseIcon className="size-5" />
+            </button>
+          </div>
+        </div>
+        <div className="thin-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-5">{children}</div>
+        <div className="flex gap-3 border-t border-line p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <button type="button" onClick={onReset} className="h-12 flex-1 rounded-xl border-[1.5px] border-ink font-semibold">
+            Reset
+          </button>
+          <button type="button" onClick={onClose} className="h-12 flex-[1.4] rounded-xl bg-accent font-semibold text-white">
+            Show {fmt(total)} Lads
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ------------------------------------------------------------ Detail */
 function LadDialog({
   lad,
@@ -742,7 +834,7 @@ function LadDialog({
     <div className="fixed inset-0 z-[80] grid place-items-center p-3 md:p-6" role="dialog" aria-modal="true" aria-label={`Mad Lad #${id}`}>
       <button type="button" className="absolute inset-0 bg-black/70 backdrop-blur-sm" aria-label="Close" onClick={onClose} />
       <div className="relative grid max-h-[94svh] w-full max-w-5xl animate-[pop_200ms_ease-out] overflow-y-auto rounded-2xl bg-paper shadow-2xl md:grid-cols-[1.05fr_1fr] md:overflow-hidden">
-        <div className="relative aspect-[4/5] bg-sunken">
+        <div className="relative aspect-[4/5] bg-sunken" style={{ viewTransitionName: HERO }}>
           <Thumb id={id} sizes="(min-width: 768px) 50vw, 100vw" />
           {/* Plain <img>: the 5 MB original fades in over the optimized thumbnail. */}
           <img

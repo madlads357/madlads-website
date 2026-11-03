@@ -29,7 +29,7 @@ npm run dev          # http://localhost:3000
 
 | Route | File | Content |
 | --- | --- | --- |
-| `/` | `app/page.tsx` | Hero (video), Mad Lads preview, manifesto + stats, Lads marquee, lore teaser, art (1/1s & specials), holders, news, Backpack, press, FAQ |
+| `/` | `app/page.tsx` | Hero (video), Mad Lads preview, manifesto + stats, Lads marquee, lore teaser, art (1/1s & specials), holders, news, Backpack, FAQ |
 | `/lore` | `app/lore/page.tsx` | “The story so far” — 5 chapters from the mint (2023) to today, then **Beyond the screen**: real-life photos (pinned horizontal reel) and meetup videos |
 | `/madlads` | `app/madlads/page.tsx` | Explorer: 9,971 Lads, number search, 16 trait filters, sort, detail view |
 
@@ -139,7 +139,7 @@ Lighthouse (mobile) on a local production build: Home 92–100, Lore 95, Mad Lad
 ## Roadmap
 
 - **Matrica login** + holder area (needs a Matrica app / API key from the team) — `links.matricaLogin` in `data/site.ts`
-- Copy review with the community manager: lore, manifesto, FAQ, perks, press facts, press email
+- Copy review with the community manager: lore, manifesto, FAQ, perks, press email
 - Deploy (e.g. Vercel) and measure with PageSpeed Insights
 
 ## Credits & rights

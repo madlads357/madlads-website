@@ -5,7 +5,6 @@ export const nav = [
   { label: "Lore", href: "/lore" },
   { label: "Art", href: "/#art" },
   { label: "Holders", href: "/#holders" },
-  { label: "Press", href: "/#press" },
 ];
 
 export const links = {

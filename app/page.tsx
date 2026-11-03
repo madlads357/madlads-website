@@ -15,6 +15,7 @@ import { ScrollWords } from "@/components/ScrollWords";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { Intro } from "@/components/intro/Intro";
 import { BeyondTheScreen } from "@/components/BeyondTheScreen";
+import { LadTrail } from "@/components/LadTrail";
 import type { CSSProperties } from "react";
 import { honoraries, king, moreOneOfOnes, specials } from "@/data/art";
 import { chapters } from "@/data/lore";
@@ -38,7 +39,6 @@ export default function Home() {
         <BeyondTheScreen />
         <News />
         <BackpackBand />
-        <Press />
         <FaqSection />
       </main>
       <Footer />
@@ -209,16 +209,16 @@ function Art() {
 
       <SubHeader label="The 1/1s" note="Honoraries and tributes, drawn by the team." />
       <div className="grid gap-5 lg:grid-cols-2">
-        <ArtCard piece={king} imageClass="aspect-[4/5] lg:aspect-auto lg:h-[768px]" sizes="(min-width: 1024px) 50vw, 100vw" />
+        <ArtCard holo piece={king} imageClass="aspect-[4/5] lg:aspect-auto lg:h-[768px]" sizes="(min-width: 1024px) 50vw, 100vw" />
         <div className="grid grid-cols-2 gap-x-5 gap-y-6">
           {honoraries.map((p, i) => (
-            <ArtCard key={p.name} i={i + 1} piece={p} imageClass="aspect-[4/5] lg:aspect-auto lg:h-[316px]" />
+            <ArtCard holo key={p.name} i={i + 1} piece={p} imageClass="aspect-[4/5] lg:aspect-auto lg:h-[316px]" />
           ))}
         </div>
       </div>
       <div className="mt-6 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
         {moreOneOfOnes.map((p, i) => (
-          <ArtCard key={p.name} i={i} piece={p} imageClass="aspect-[4/5]" sizes="(min-width: 1024px) 16vw, 50vw" />
+          <ArtCard holo key={p.name} i={i} piece={p} imageClass="aspect-[4/5]" sizes="(min-width: 1024px) 16vw, 50vw" />
         ))}
       </div>
 
@@ -232,7 +232,10 @@ function Art() {
           <ArtCard piece={specials.sketches} imageClass="aspect-square" sizes="(min-width: 1024px) 33vw, 50vw" />
           <ArtCard i={1} piece={specials.merch} imageClass="aspect-[3/4] lg:aspect-auto lg:h-[420px]" sizes="(min-width: 1024px) 25vw, 50vw" />
           <div className="reveal relative isolate flex min-h-[360px] flex-col justify-end gap-4 overflow-hidden rounded-[4px] bg-paper p-8 md:col-span-2 md:p-10 lg:col-span-1" style={{ "--i": 2 } as CSSProperties}>
-            <LogoStacked className="reveal-rise absolute -top-10 -right-24 -z-10 h-[560px] w-auto text-ink opacity-[0.09]" title="" />
+            {/* Faint logo watermark. The opacity sits on the wrapper: the rise animation ends at opacity 1. */}
+            <div className="pointer-events-none absolute -top-10 -right-24 -z-10 opacity-[0.09]" aria-hidden>
+              <LogoStacked className="reveal-rise h-[560px] w-auto text-ink" title="" />
+            </div>
             <p className="t-eyebrow text-accent">Behind the art</p>
             <p className="text-[40px] leading-none font-bold tracking-[-0.03em]">Every Lad starts as a sketch.</p>
             <p className="t-body-l text-muted">Previews, studies and special pieces from the artists who shape the Mad Lads universe.</p>
@@ -332,55 +335,24 @@ async function News() {
 /* ------------------------------------------------------- Backpack band */
 function BackpackBand() {
   return (
-    <section className="grid items-center gap-10 border-y border-line bg-paper px-4 py-20 md:px-page md:py-24 lg:grid-cols-2 lg:gap-20">
-      <h2 className="t-display-l reveal-slide">
+    // Moving the mouse over the band leaves a trail of random Mad Lads (desktop)
+    <LadTrail className="border-y border-line bg-paper">
+    <section className="flex min-h-[min(88svh,820px)] flex-col justify-center gap-12 px-4 py-28 md:px-page md:py-40">
+      <h2 className="t-display-xl reveal-slide">
         Part of the
         <br />
         <span className="text-red">Backpack</span> family.
       </h2>
-      <div className="reveal flex flex-col gap-5" style={{ "--i": 1 } as CSSProperties}>
-        <p className="t-body-l text-muted">
+      <div className="reveal flex max-w-[620px] flex-col items-start gap-7 lg:ml-auto" style={{ "--i": 1 } as CSSProperties}>
+        <p className="text-[clamp(1.25rem,2vw,1.625rem)] leading-[1.35] font-medium tracking-[-0.01em] text-muted">
           Mad Lads is the flagship collection of Backpack, the wallet and exchange built for the next generation of onchain culture.
         </p>
-        <a href={links.backpack} target="_blank" rel="noopener noreferrer" className="font-semibold text-accent underline underline-offset-4">
+        <Button href={links.backpack} external>
           Learn about Backpack ↗
-        </a>
+        </Button>
       </div>
     </section>
-  );
-}
-
-/* --------------------------------------------------------------- Press */
-const facts = [
-  ["10,000", "Lads, Lassies & Skulls"],
-  ["2023", "Launched by Coral"],
-  ["Solana", "Home chain"],
-  ["#1", "Backpack’s flagship"],
-];
-
-function Press() {
-  return (
-    <Section id="press">
-      <SectionHeader eyebrow="07 / Press" title="Press" text="Key facts, brand assets and contacts for coverage." />
-      <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
-        <dl className="grid grid-cols-2 gap-10 md:flex md:gap-16">
-          {facts.map(([v, l], i) => (
-            <div key={l} className="reveal flex flex-col-reverse gap-1.5" style={{ "--i": i } as CSSProperties}>
-              <dt className="text-muted">{l}</dt>
-              <dd className="t-h2">{v}</dd>
-            </div>
-          ))}
-        </dl>
-        <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-          <Button href={links.pressKit} external>
-            Download press kit
-          </Button>
-          <Button href={links.pressEmail} variant="secondary" external>
-            press@madlads.com
-          </Button>
-        </div>
-      </div>
-    </Section>
+    </LadTrail>
   );
 }
 
@@ -421,7 +393,7 @@ const faq = [
   },
   {
     q: "I’m a journalist. Where are the brand assets?",
-    a: "The press kit has the official logos in every format. For interviews, artwork or anything else, contact the team through the press address in the Press section.",
+    a: "The press kit, linked in the footer, has the official logos in every format. For interviews, artwork or anything else, write to press@madlads.com.",
   },
 ];
 
@@ -430,7 +402,7 @@ function FaqSection() {
     <Section id="faq" tone="sunken">
       <div className="grid gap-12 lg:grid-cols-[1fr_1.6fr] lg:gap-20">
         <div className="flex flex-col gap-4 lg:sticky lg:top-32 lg:self-start">
-          <p className="t-eyebrow text-accent">08 / FAQ</p>
+          <p className="t-eyebrow text-accent">07 / FAQ</p>
           <h2 className="t-h2">Questions, answered.</h2>
           <p className="t-body-l text-muted">New to the Lads, or writing about them? Start here.</p>
         </div>

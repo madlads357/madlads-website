@@ -503,6 +503,112 @@ html[data-intro]:not([data-intro-out]) .animate-rise {
 @utility animate-rise {
   animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
+/* ------------------------------------------------------------------
+   Holo cards (components/HoloTilt.tsx): tilt + foil shine on the 1/1s.
+   JS only writes --mx/--my (pointer, %), --rx/--ry (tilt) and --hyp (0 center → 1 edge).
+   ------------------------------------------------------------------ */
+.holo {
+  perspective: 1000px;
+}
+.holo-card {
+  position: relative;
+  border-radius: 4px;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition:
+    transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 0.6s ease;
+}
+.holo[data-active] .holo-card {
+  transition:
+    transform 0.15s ease-out,
+    box-shadow 0.3s ease;
+  box-shadow: 0 34px 60px -32px rgba(17, 17, 17, 0.6);
+}
+.holo-foil,
+.holo-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: 4px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.holo-foil {
+  background: repeating-linear-gradient(115deg, #ff7a8a 0%, #ffd66b 7%, #7cf2c8 14%, #6bb6ff 21%, #c58bff 28%, #ff7a8a 35%);
+  background-size: 400% 400%;
+  background-position: var(--mx, 50%) var(--my, 50%);
+  mix-blend-mode: color-dodge;
+  filter: brightness(0.7) saturate(1.3);
+}
+.holo[data-active] .holo-foil {
+  opacity: calc(0.22 + var(--hyp, 0) * 0.3);
+}
+.holo-glare {
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 50%);
+  mix-blend-mode: overlay;
+}
+.holo[data-active] .holo-glare {
+  opacity: 1;
+}
+/* Touch screens: no tilt, one shine sweep as the card scrolls into view. */
+@media (hover: none) {
+  @supports (animation-timeline: view()) {
+    .holo-glare {
+      opacity: 1;
+      background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.55) 50%, transparent 62%);
+      background-size: 260% 100%;
+      animation: holo-sweep linear both;
+      animation-timeline: view();
+      animation-range: entry 80% cover 60%;
+    }
+  }
+}
+@keyframes holo-sweep {
+  from {
+    background-position: 130% 0;
+  }
+  to {
+    background-position: -30% 0;
+  }
+}
+
+/* Lad trail (components/LadTrail.tsx) */
+.lad-trail-img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: clamp(96px, 9vw, 140px);
+  aspect-ratio: 4 / 5;
+  border-radius: 10px;
+  object-fit: cover;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: 0 18px 36px -18px rgba(17, 17, 17, 0.55);
+  will-change: transform, opacity;
+}
+
+/* Explorer: card → detail morph (View Transitions API, components/MadLadsExplorer.tsx) */
+::view-transition-group(lad-hero) {
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+}
+
+/* Explorer: mobile filter bottom sheet */
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -512,5 +618,8 @@ html[data-intro]:not([data-intro-out]) .animate-rise {
   *::after {
     animation: none !important;
     transition: none !important;
+  }
+  .holo-card {
+    transform: none !important;
   }
 }

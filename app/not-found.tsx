@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/Button";
+import { LadTrail } from "@/components/LadTrail";
 
 export const metadata: Metadata = {
   title: "Page not found",
@@ -14,7 +15,8 @@ export default function NotFound() {
   return (
     <>
       <Nav />
-      <main id="main" className="relative isolate overflow-hidden pt-[72px] md:pt-[88px]">
+      <LadTrail>
+      <main id="main" className="relative pt-[72px] md:pt-[88px]">
         <section className="grid min-h-[calc(100svh-88px)] items-center gap-12 px-4 py-16 md:px-page lg:grid-cols-[1.2fr_1fr] lg:gap-20">
           <div className="flex flex-col gap-6">
             <p className="t-eyebrow text-accent">Error 404</p>
@@ -42,6 +44,7 @@ export default function NotFound() {
           </div>
         </section>
       </main>
+      </LadTrail>
       <Footer />
     </>
   );
