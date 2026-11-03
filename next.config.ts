@@ -1,6 +1,21 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false, // don't advertise the framework
+  // Basic security headers on every page. No Content-Security-Policy yet: the site uses inline
+  // scripts (intro, structured data) and YouTube embeds, so a CSP needs its own careful pass.
+  headers: async () => [
+    {
+      source: "/:path*",
+      headers: [
+        { key: "Strict-Transport-Security", value: "max-age=63072000" }, // HTTPS only, this domain (subdomains are not ours to decide)
+        { key: "X-Content-Type-Options", value: "nosniff" },
+        { key: "X-Frame-Options", value: "SAMEORIGIN" }, // no embedding the site in other sites' frames (clickjacking)
+        { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+        { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), browsing-topics=()" },
+      ],
+    },
+  ],
   images: {
     formats: ["image/avif", "image/webp"],
     qualities: [70, 75],

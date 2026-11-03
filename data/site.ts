@@ -1,9 +1,9 @@
 // Site-wide links and navigation. Placeholder URLs are marked TODO.
 
 export const nav = [
-  { label: "Mad Lads", href: "/madlads" },
   { label: "Lore", href: "/lore" },
   { label: "Art", href: "/#art" },
+  { label: "Mad Lads", href: "/madlads" },
   { label: "Holders", href: "/#holders" },
 ];
 
