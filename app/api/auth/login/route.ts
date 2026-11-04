@@ -8,9 +8,17 @@ export async function GET(request: Request) {
   const mode = authMode();
 
   if (mode === "mock") {
-    // Development only: skip Matrica. ?as=none tests the "no Lad found" screen.
-    const none = new URL(request.url).searchParams.get("as") === "none";
-    await setSession({ name: "Test Lad", lads: none ? [] : [1070, 2784, 4144, 5655, 7245, 8420, 9866] });
+    // Development only: skip Matrica. ?as=none tests the "no Lad found" screen, ?as=whale a holder with 40 Lads.
+    const as = new URL(request.url).searchParams.get("as");
+    const test = [1070, 2784, 4144, 5655, 7245, 8420, 9866];
+    const whale = [...test, ...Array.from({ length: 33 }, (_, i) => 101 + i * 293)];
+    await setSession({
+      name: "Test Lad",
+      handle: "testlad",
+      since: "2023-04-21",
+      roles: ["OG", "Mad Coach"],
+      lads: as === "none" ? [] : as === "whale" ? whale : test,
+    });
     redirect("/holders");
   }
   if (mode === "off") redirect("/holders");

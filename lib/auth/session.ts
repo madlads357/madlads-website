@@ -3,11 +3,14 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:crypto";
 import { cookies } from "next/headers";
 import { sessionSecret } from "./config";
+import { HINT, type HeaderHint } from "./hint";
 
 export type HolderSession = {
   name: string; // Matrica username
-  avatar?: string; // Matrica profile picture
   lads: number[]; // Mad Lad numbers held in the wallets linked to Matrica
+  handle?: string; // X or Discord handle, for the passport (not filled by the real login yet)
+  since?: string; // "holder since" date, ISO (later: from Helius)
+  roles?: string[]; // Mad Lads Discord role names (later: from Matrica, filtered by the server ID)
   exp: number; // expiry, ms since epoch
 };
 
@@ -49,11 +52,18 @@ export async function getSession(): Promise<HolderSession | null> {
 
 export async function setSession(s: Omit<HolderSession, "exp">) {
   const exp = Date.now() + SESSION_HOURS * 3600_000;
-  (await cookies()).set(SESSION, seal({ ...s, lads: s.lads.slice(0, MAX_LADS), exp }), { ...base, maxAge: SESSION_HOURS * 3600 });
+  const store = await cookies();
+  store.set(SESSION, seal({ ...s, lads: s.lads.slice(0, MAX_LADS), exp }), { ...base, maxAge: SESSION_HOURS * 3600 });
+  // Readable by the page (not httpOnly): only what the header shows, so pages stay prebuilt.
+  // It proves nothing: the holder area always checks the encrypted session above.
+  const hint: HeaderHint = { name: s.name, lad: s.lads[0] ?? null };
+  store.set(HINT, JSON.stringify(hint), { ...base, httpOnly: false, maxAge: SESSION_HOURS * 3600 }); // Next encodes the value
 }
 
 export async function clearSession() {
-  (await cookies()).delete(SESSION);
+  const store = await cookies();
+  store.delete(SESSION);
+  store.delete(HINT);
 }
 
 export async function setLoginFlow(flow: LoginFlow) {

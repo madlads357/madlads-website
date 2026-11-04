@@ -3,11 +3,10 @@ import type { ReactNode } from "react";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/Button";
-import { LockIcon } from "@/components/Icons";
 import { authMode } from "@/lib/auth/config";
 import { getSession, type HolderSession } from "@/lib/auth/session";
 import { perks } from "@/data/holders";
-import { HolderLads } from "@/components/HolderLads";
+import { HolderProfile } from "@/components/holder/HolderProfile";
 
 // The holder area. Reads the login cookie, so it is rendered on every request (not prebuilt).
 export const metadata: Metadata = {
@@ -105,49 +104,16 @@ function NoLads({ session }: { session: HolderSession }) {
   );
 }
 
+// The profile: welcome, the holder's Lads, and the backpack the objects fall out of.
 function Holder({ session }: { session: HolderSession }) {
-  const n = session.lads.length;
   return (
-    <>
-      <header className="flex flex-col gap-8 px-4 pt-16 pb-12 md:flex-row md:items-end md:justify-between md:px-page md:pt-24 md:pb-16">
-        <div className="flex flex-col gap-6">
-          <p className="t-eyebrow text-accent">Holders</p>
-          <div className="flex items-center gap-5">
-            {session.avatar && (
-              // Matrica profile picture: plain <img>, its host isn't known in advance
-              <img src={session.avatar} alt="" className="size-16 rounded-full object-cover ring-1 ring-line md:size-20" />
-            )}
-            <h1 className="t-display-l">Welcome back, {session.name}.</h1>
-          </div>
-          <p className="t-body-l text-muted">
-            You hold <span className="font-semibold text-ink">{n}</span> Mad {n === 1 ? "Lad" : "Lads"}. Fock it.
-          </p>
-        </div>
-        <Logout />
-      </header>
-
-      <section className="px-4 pb-20 md:px-page" aria-label="Your Mad Lads">
-        <HolderLads ids={session.lads} />
-      </section>
-
-      {/* TODO: the Culture Hub and the holder perks move in here. */}
-      <section className="bg-sunken px-4 py-20 md:px-page md:py-section">
-        <p className="t-eyebrow text-accent">Coming to the holder area</p>
-        <h2 className="t-h2 mt-4">More is on the way.</h2>
-        <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {perks.map(({ Icon, title, text }) => (
-            <li key={title} className="flex flex-col gap-3 rounded-lg bg-surface p-6">
-              <Icon className="size-8" />
-              <p className="text-xl font-semibold tracking-tight">{title}</p>
-              <p className="text-muted">{text}</p>
-              <span className="mt-auto inline-flex items-center gap-2 pt-2 text-sm font-semibold text-muted">
-                <LockIcon className="size-4" /> Soon
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </>
+    <HolderProfile
+      name={session.name}
+      handle={session.handle}
+      since={session.since}
+      roles={session.roles}
+      lads={session.lads}
+    />
   );
 }
 

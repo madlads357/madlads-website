@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { flushSync } from "react-dom";
+import { useDialogFocus } from "@/lib/useDialogFocus";
 import { loadCollection, originalImage, thumbImage, type Collection } from "@/lib/madlads";
 import { CloseIcon, SearchIcon } from "./Icons";
 
@@ -31,7 +32,7 @@ const SWATCH: Record<string, string> = {
 };
 
 /* Quick groups shown as pills above the grid. */
-const ONE_OF_ONE_TYPES = ["King", "Oracle", "Glitch", "Mother", "Cowgirl"];
+export const ONE_OF_ONE_TYPES = ["King", "Oracle", "Glitch", "Mother", "Cowgirl"];
 type Quick = "all" | "lads" | "lassies" | "skulls" | "oneofones";
 const QUICK: { key: Quick; label: string }[] = [
   { key: "all", label: "All" },
@@ -452,11 +453,6 @@ export function Tile({ id, label, priority, onOpen, compact }: { id: number; lab
           {label === "Skull" ? "Skull" : "1/1"}
         </span>
       ) : null}
-      {label && !compact && (
-        <span className="absolute right-2 bottom-2 translate-y-1 rounded-full bg-black/50 px-2.5 py-1 text-xs font-medium text-white opacity-0 backdrop-blur transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-          {label}
-        </span>
-      )}
     </>
   );
   const cls =
@@ -792,6 +788,7 @@ export function LadDialog({
   onPrev,
   onNext,
   onFilter,
+  action,
 }: {
   lad: number[];
   data: Collection;
@@ -799,9 +796,13 @@ export function LadDialog({
   onPrev?: () => void;
   onNext?: () => void;
   onFilter?: (ti: number, vi: number) => void; // without it, traits are shown but not clickable
+  action?: ReactNode; // an extra button above the tip (e.g. "Use as passport photo" in the holder area)
 }) {
   const id = lad[0];
   const [full, setFull] = useState(false);
+  const swipeX = useRef<number | null>(null); // touch: swipe the picture left/right to browse
+  const dialog = useRef<HTMLDivElement>(null);
+  useDialogFocus(dialog);
   useEffect(() => setFull(false), [id]);
 
   useEffect(() => {
@@ -832,10 +833,24 @@ export function LadDialog({
   );
 
   return (
-    <div className="fixed inset-0 z-[80] grid place-items-center p-3 md:p-6" role="dialog" aria-modal="true" aria-label={`Mad Lad #${id}`}>
+    <div ref={dialog} className="fixed inset-0 z-[80] grid place-items-center p-3 md:p-6" role="dialog" aria-modal="true" aria-label={`Mad Lad #${id}`}>
       <button type="button" className="absolute inset-0 bg-black/70 backdrop-blur-sm" aria-label="Close" onClick={onClose} />
       <div className="relative grid max-h-[94svh] w-full max-w-5xl animate-[pop_200ms_ease-out] overflow-y-auto rounded-2xl bg-paper shadow-2xl md:grid-cols-[1.05fr_1fr] md:overflow-hidden">
-        <div className="relative aspect-[4/5] bg-sunken" style={{ viewTransitionName: HERO }}>
+        <div
+          className="relative aspect-[4/5] touch-pan-y bg-sunken"
+          style={{ viewTransitionName: HERO }}
+          onPointerDown={(e) => {
+            if (e.pointerType !== "mouse") swipeX.current = e.clientX;
+          }}
+          onPointerUp={(e) => {
+            if (swipeX.current === null) return;
+            const dx = e.clientX - swipeX.current;
+            swipeX.current = null;
+            if (dx > 50) onPrev?.();
+            if (dx < -50) onNext?.();
+          }}
+          onPointerCancel={() => (swipeX.current = null)}
+        >
           <Thumb id={id} sizes="(min-width: 768px) 50vw, 100vw" />
           {/* Plain <img>: the 5 MB original fades in over the optimized thumbnail. */}
           <img
@@ -856,7 +871,7 @@ export function LadDialog({
               <p className="t-eyebrow text-accent">Mad Lads</p>
               <h2 className="t-h2 mt-2 tabular-nums">#{id}</h2>
             </div>
-            <button type="button" onClick={onClose} aria-label="Close" className="grid size-10 place-items-center rounded-full bg-surface ring-1 ring-line hover:ring-ink">
+            <button type="button" onClick={onClose} aria-label="Close" data-autofocus className="grid size-10 place-items-center rounded-full bg-surface ring-1 ring-line hover:ring-ink">
               <CloseIcon className="size-5" />
             </button>
           </div>
@@ -881,7 +896,12 @@ export function LadDialog({
               );
             })}
           </dl>
-          <p className="text-xs text-muted">Tip: use ← → to browse, Esc to close.{onFilter && " Click a trait to see every Lad that has it."}</p>
+          {action}
+          <p className="text-xs text-muted">
+            {/* keyboard tip on computers, touch tip on phones and tablets */}
+            <span className="pointer-coarse:hidden">Tip: use ← → to browse, Esc to close.{onFilter && " Click a trait to see every Lad that has it."}</span>
+            <span className="hidden pointer-coarse:inline">Tip: swipe the picture to browse, tap outside to close.{onFilter && " Tap a trait to see every Lad that has it."}</span>
+          </p>
           <a href={originalImage(id)} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-accent underline underline-offset-4">
             Open full-resolution image ↗
           </a>

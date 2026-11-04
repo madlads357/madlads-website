@@ -1,0 +1,183 @@
+/* The backpack profile (components/holder/HolderProfile.tsx).
+   Each object falls out of the bag as its slot scrolls into view: the scroll drives the animation.
+   Three nested elements: sideways (eased out, thrown), down (gravity), and spin/grow/squash on landing.
+   --fx / --fy = distance from the slot to the bag's opening, --d = scroll during the fall,
+   --col = position in its row; all measured in JS (HolderProfile.tsx, measure()). */
+
+.bag-slot {
+  --fx: 0px;
+  --fy: -60vh;
+  --d: 0px;
+}
+.bag-spin {
+  transform: rotate(var(--r, 0deg)); /* resting angle, also without scroll animations */
+  transform-origin: 50% 85%;
+}
+
+@supports (animation-timeline: view()) {
+  .bag-slot {
+    view-timeline: --slot block;
+  }
+  .bag-fall-x,
+  .bag-fall-y,
+  .bag-spin {
+    animation-timeline: --slot;
+    animation-fill-mode: both;
+    animation-duration: auto;
+    /* From "slot top reaches the bottom of the screen" to "slot fully on screen", so it lands below the
+       bag's opening. Objects in the same row leave the bag one after another (--col, set in JS). */
+    animation-range: entry calc(var(--col, 0) * 12%) entry 100%;
+  }
+  .bag-fall-x {
+    animation-name: bag-x;
+  }
+  .bag-fall-y {
+    animation-name: bag-y;
+    animation-timing-function: linear;
+  }
+  .bag-spin {
+    animation-name: bag-spin;
+  }
+
+  /* the bag sways a little while you scroll, as if things were moving inside */
+  .bag-wiggle {
+    transform-origin: 62% 8%;
+    animation: bag-wiggle linear both;
+    animation-timeline: scroll(root);
+  }
+}
+
+/* Sideways: thrown out of the bag, fast first then slowing (ease-out). */
+@keyframes bag-x {
+  from {
+    transform: translateX(var(--fx));
+    animation-timing-function: cubic-bezier(0.2, 0.55, 0.4, 1);
+  }
+  to {
+    transform: none;
+  }
+}
+/* Down: on screen the object falls with gravity, y = mouth + (landing - mouth) * p².
+   The page scrolls up meanwhile, so the transform is that path minus the slot's own movement:
+   T(p) = fy * (1 - p²) + d * (p - p²), with d = how far the page scrolls during the fall. */
+@keyframes bag-y {
+  0% {
+    transform: translateY(var(--fy));
+  }
+  20% {
+    transform: translateY(calc(var(--fy) * 0.96 + var(--d) * 0.16));
+  }
+  40% {
+    transform: translateY(calc(var(--fy) * 0.84 + var(--d) * 0.24));
+  }
+  60% {
+    transform: translateY(calc(var(--fy) * 0.64 + var(--d) * 0.24));
+  }
+  80% {
+    transform: translateY(calc(var(--fy) * 0.36 + var(--d) * 0.16));
+  }
+  90% {
+    transform: translateY(calc(var(--fy) * 0.19 + var(--d) * 0.09));
+  }
+  100% {
+    transform: none;
+  }
+}
+/* Grows out of the bag while spinning, then squashes a little on landing. */
+@keyframes bag-spin {
+  0% {
+    opacity: 0;
+    transform: scale(0.25) rotate(-38deg);
+  }
+  10% {
+    opacity: 1;
+  }
+  86% {
+    transform: scale(1) rotate(calc(var(--r, 0deg) + 7deg));
+  }
+  94% {
+    transform: scale(1.07, 0.9) rotate(calc(var(--r, 0deg) - 2deg));
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(var(--r, 0deg));
+  }
+}
+@keyframes bag-wiggle {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+  8%,
+  28%,
+  48%,
+  68%,
+  88% {
+    rotate: 1.6deg;
+  }
+  18%,
+  38%,
+  58%,
+  78% {
+    rotate: -1.6deg;
+  }
+}
+
+/* The bag hops (two quick jumps every 6 s) until the visitor scrolls. Uses `translate`, so it
+   adds up with the scroll sway (`rotate`) on the same element. */
+.bag-hop {
+  animation: bag-hop 6s ease-in-out 1s infinite;
+}
+@supports (animation-timeline: view()) {
+  .bag-hop.bag-wiggle {
+    animation: bag-wiggle linear both, bag-hop 6s ease-in-out 1s infinite;
+    animation-timeline: scroll(root), auto;
+  }
+}
+@keyframes bag-hop {
+  0%,
+  10%,
+  100% {
+    translate: 0 0;
+  }
+  3% {
+    translate: 0 -22px;
+  }
+  6% {
+    translate: 0 0;
+  }
+  8% {
+    translate: 0 -9px;
+  }
+}
+
+/* The Lads unfolding from the hand into the grid (components/holder/HolderLads.tsx) */
+::view-transition-group(*.hl-card) {
+  animation-duration: 0.55s;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Objects lift and tilt on hover */
+.bag-object {
+  transition: transform 0.4s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+.bag-object img {
+  filter: drop-shadow(0 16px 14px rgba(17, 17, 17, 0.2));
+}
+.group:hover .bag-object,
+.group:focus-visible .bag-object {
+  transform: translateY(-8px) rotate(-3deg) scale(1.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bag-fall-x,
+  .bag-fall-y,
+  .bag-spin,
+  .bag-wiggle,
+  .bag-hop {
+    animation: none !important;
+  }
+  .bag-object {
+    transition: none;
+  }
+}

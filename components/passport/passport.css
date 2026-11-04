@@ -1,0 +1,214 @@
+/* Lads Passport (components/passport/Passport.tsx).
+   Desktop: a booklet; the cover turns on its spine and becomes the left page (identity),
+   the stamps page sits underneath on the right. Mobile: one card that flips, stamps below.
+   Sizes inside the pages use cqw (percent of the page width), so everything scales together. */
+
+.pp {
+  --pp-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.pp-book {
+  position: relative;
+  margin-inline: auto;
+  perspective: 2400px;
+  transition: transform 0.9s var(--pp-ease);
+}
+
+.pp-cover {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.9s var(--pp-ease);
+}
+.pp-cover:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 6px;
+}
+
+.pp-face,
+.pp-page {
+  container-type: inline-size;
+  overflow: hidden;
+}
+.pp-face {
+  position: absolute;
+  inset: 0;
+  display: block;
+  backface-visibility: hidden;
+}
+.pp-front {
+  border-radius: 6px 16px 16px 6px;
+  box-shadow:
+    inset 10px 0 18px -10px rgba(0, 0, 0, 0.45),
+    0 30px 60px -30px rgba(40, 4, 8, 0.65),
+    0 8px 18px -8px rgba(40, 4, 8, 0.35);
+}
+.pp-back {
+  transform: rotateY(180deg);
+  border-radius: 16px 6px 6px 16px;
+  box-shadow: 0 24px 50px -30px rgba(17, 17, 17, 0.45);
+}
+.pp-page {
+  border-radius: 6px 16px 16px 6px;
+  box-shadow: 0 24px 50px -30px rgba(17, 17, 17, 0.45);
+}
+/* fold shadows along the spine */
+.pp-back::after,
+.pp-right::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  width: 9%;
+  pointer-events: none;
+  z-index: 1;
+}
+.pp-back::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(60, 40, 20, 0.16), transparent);
+}
+.pp-right::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(60, 40, 20, 0.16), transparent);
+}
+
+/* Desktop: the open spread is two pages wide; closed, it slides right so the cover is centered. */
+@media (min-width: 48rem) {
+  .pp-book {
+    width: min(100%, 900px, calc((100svh - 200px) * 1.408)); /* fits the window height */
+    aspect-ratio: 176 / 125;
+    transform: translateX(-25%);
+  }
+  .pp[data-open] .pp-book {
+    transform: none;
+  }
+  .pp-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+  }
+  .pp-cover {
+    width: 50%;
+    transform-origin: left center;
+  }
+  .pp:not([data-open]) .pp-cover:hover {
+    transform: rotateY(-9deg); /* the cover lifts a little: a hint that it opens */
+  }
+  .pp[data-open] .pp-cover {
+    transform: rotateY(-180deg);
+  }
+}
+
+/* Mobile: a single page that flips; the stamps page appears under it once open. */
+@media (max-width: 47.99rem) {
+  .pp-book {
+    width: min(100%, 420px, calc((100svh - 160px) * 0.704));
+    aspect-ratio: 88 / 125;
+  }
+  .pp-cover {
+    width: 100%;
+    transform-origin: center;
+  }
+  .pp[data-open] .pp-cover {
+    transform: rotateY(180deg);
+  }
+  .pp-back {
+    border-radius: 16px;
+  }
+  .pp-mobile-stamps {
+    position: relative;
+    width: min(100%, 420px);
+    aspect-ratio: 88 / 125;
+    margin: 24px auto 0;
+    border-radius: 16px;
+  }
+  .pp:not([data-open]) .pp-mobile-stamps {
+    display: none;
+  }
+}
+
+/* Paper and cover materials */
+.pp-paper {
+  background: #f6f1e8 url(/passport/paper.jpg) 0 0 / 420px;
+}
+.pp-paper-grain {
+  position: relative;
+}
+.pp-paper-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* grey version of the paper grain (luminosity), multiplied over the red: texture without tint */
+  background: #fff url(/passport/paper.jpg) 0 0 / 300px;
+  background-blend-mode: luminosity;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+.pp-emboss {
+  filter: drop-shadow(0 -1px 0 rgba(0, 0, 0, 0.4)) drop-shadow(0 1.5px 0 rgba(255, 255, 255, 0.2));
+}
+
+/* Ink: the worn texture cuts gaps into each stamp; multiply lets the paper show through. */
+.pp-ink {
+  -webkit-mask: url(/passport/ink.webp) var(--mx, 0) var(--my, 0) / 240px repeat;
+  mask: url(/passport/ink.webp) var(--mx, 0) var(--my, 0) / 240px repeat;
+  mix-blend-mode: multiply;
+}
+.pp-front .pp-ink {
+  mix-blend-mode: normal;
+  opacity: 0.85;
+}
+.pp-ink-red {
+  color: #d11a2e;
+}
+.pp-ink-black {
+  color: #1d1b1a;
+}
+.pp-ink-blue {
+  color: #27408f;
+}
+.pp-ink-gold {
+  filter: drop-shadow(0 1px 1px rgba(90, 63, 8, 0.35));
+}
+
+/* Stamps land one after another once the passport is open. */
+.pp-stamp {
+  transform: rotate(var(--r, 0deg));
+  opacity: 0;
+}
+.pp[data-open] .pp-stamp {
+  animation: pp-thump 420ms cubic-bezier(0.3, 1.5, 0.5, 1) both;
+  animation-delay: calc(800ms + var(--i, 0) * 140ms);
+}
+@keyframes pp-thump {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--r, 0deg)) scale(1.9);
+  }
+  55% {
+    opacity: 1;
+    transform: rotate(var(--r, 0deg)) scale(0.93);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(var(--r, 0deg)) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pp-book,
+  .pp-cover {
+    transition: none;
+  }
+  .pp[data-open] .pp-stamp {
+    animation: none;
+    opacity: 1;
+  }
+}

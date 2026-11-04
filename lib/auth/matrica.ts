@@ -3,6 +3,7 @@
 import { MatricaOAuthClient } from "@matrica/oauth-sdk";
 import { matricaConfig } from "./config";
 import { MAX_LADS, type HolderSession } from "./session";
+import { holderSince } from "@/lib/helius";
 
 const client = () => {
   const c = matricaConfig();
@@ -16,7 +17,7 @@ export async function loginUrl(state: string) {
   return { url: `${url}&state=${encodeURIComponent(state)}`, verifier: codeVerifier };
 }
 
-// "Mad Lads #1234" → 1234. TODO: confirm the name format Matrica returns for Mad Lads.
+// "Mad Lads #1234" → 1234 (the on-chain name format, checked via Helius; Matrica should return the same).
 const ladNumber = (name: string) => {
   const m = name.match(/#\s?(\d{1,5})\b/);
   return m ? Number(m[1]) : null;
@@ -38,9 +39,17 @@ export async function holderFromCode(code: string, verifier: string): Promise<Om
     if (page.data.length < take || skip + take >= page.pagination.count) break;
   }
 
+  // "Holder since" from the blockchain (Helius), over the Solana wallets linked to Matrica.
+  // TODO (first real login): confirm UserWallet.id is the wallet address.
+  let since: string | undefined;
+  if (lads.length && process.env.HELIUS_API_KEY) {
+    const wallets = await session.getUserWallets().catch(() => []);
+    since = (await holderSince(wallets.filter((w) => w.networkSymbol === "SOL").map((w) => w.id))) ?? undefined;
+  }
+
   return {
     name: profile?.profile?.name || profile?.username || "Mad Lad",
-    avatar: profile?.profile?.pfp ?? undefined,
     lads: [...new Set(lads)].sort((a, b) => a - b),
+    since,
   };
 }

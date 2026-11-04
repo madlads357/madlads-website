@@ -37,4 +37,8 @@ Every setting is described in `.env.example`.
 - [ ] Test a real login with a wallet that holds a Lad. Check that the Lad numbers come out right (`ladNumber` in `lib/auth/matrica.ts`).
 - [ ] Update the Privacy page (“Holder area”, “Cookies and local storage”) and the Terms (“Holder area”): login cookie, data received from Matrica.
 - [ ] Go live: set `NEXT_PUBLIC_HOLDERS_LIVE=1` and redeploy. The login buttons then open `/holders`.
+- [x] Helius key set (local + Vercel); collection address and API responses checked.
+- [ ] At the first real Matrica login, check in `lib/auth/matrica.ts` that `UserWallet.id` is the wallet address (needed for "Days Mad").
+- [ ] Privacy page: wallet addresses are sent to Helius at login to compute "Mad since" (and the readable `ml_user` header cookie).
 - [ ] Decide what goes in the holder area (Culture Hub, perks).
+- [ ] Add the Culture Hub ticket to the backpack (`data/bag.ts`) once its image exists.

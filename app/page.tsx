@@ -337,7 +337,7 @@ function BackpackBand() {
   return (
     // Moving the mouse over the band leaves a trail of random Mad Lads (desktop)
     <LadTrail className="border-y border-line bg-paper">
-    <section className="flex min-h-[min(88svh,820px)] flex-col justify-center gap-12 px-4 py-28 md:px-page md:py-40">
+    <section className="flex flex-col justify-center gap-8 px-4 py-16 md:min-h-[min(88svh,820px)] md:gap-12 md:px-page md:py-40">
       <h2 className="t-display-xl reveal-slide">
         Part of the
         <br />
