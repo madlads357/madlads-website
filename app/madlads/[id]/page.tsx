@@ -30,14 +30,14 @@ function lad(raw: string) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const l = lad((await params).id);
-  if (!l) return { title: "Mad Lad not found" };
-  const title = `Mad Lad #${l.id}`;
+  if (!l) return { title: "MAD LADS not found" };
+  const title = `MAD LADS #${l.id}`;
   const key = l.traits
     .filter((t) => t.name !== "Type" && t.name !== "Gender")
     .slice(0, 3)
     .map((t) => `${t.name} ${t.value}`)
     .join(", ");
-  const description = `Mad Lad #${l.id}: ${[l.type, l.gender].filter(Boolean).join(", ")}. ${key}. One of ${fmt(collection().lads.length)} Mad Lads on Solana.`;
+  const description = `MAD LADS #${l.id}: ${[l.type, l.gender].filter(Boolean).join(", ")}. ${key}. One of ${fmt(collection().lads.length)} Mad Lads on Solana.`;
   return {
     title,
     description,
@@ -61,18 +61,18 @@ export default async function LadPage({ params }: Props) {
       <main id="main" className="pt-[72px] md:pt-[88px]">
         <div className="grid gap-10 px-4 py-10 md:px-page md:py-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
           <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-sunken ring-1 ring-black/5 lg:sticky lg:top-[112px] lg:self-start">
-            <Image src={originalImage(l.id)} alt={`Mad Lad #${l.id}`} fill priority quality={75} sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
+            <Image src={originalImage(l.id)} alt={`MAD LADS #${l.id}`} fill priority quality={75} sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
             {badge && <span className="absolute top-4 right-4 rounded-full bg-ink/80 px-3 py-1.5 text-xs font-semibold tracking-wide text-white uppercase backdrop-blur">{badge}</span>}
           </div>
 
           <div className="flex flex-col gap-8">
             <header className="flex flex-col gap-3">
               <Link href="/madlads" className="t-eyebrow text-accent hover:underline">
-                ← All Mad Lads
+                ← All MAD LADS
               </Link>
               <h1 className="t-display-l tabular-nums">#{l.id}</h1>
               <p className="t-body-l text-muted">
-                {[l.type, l.gender].filter(Boolean).join(" · ")} · one of {fmt(lads.length)} Mad Lads
+                {[l.type, l.gender].filter(Boolean).join(" · ")} · one of {fmt(lads.length)} MAD LADS
               </p>
             </header>
 

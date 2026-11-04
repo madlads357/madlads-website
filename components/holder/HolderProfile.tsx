@@ -43,16 +43,16 @@ export function HolderProfile({ name, handle, since, roles, lads, photo: saved }
     try {
       const local = Number(localStorage.getItem(PHOTO_KEY));
       if (lads.includes(local)) setPhoto(local);
-    } catch {}
+    } catch { }
   }, [lads, saved]);
 
   const choosePhoto = (id: number) => {
     setPhoto(id);
     try {
       localStorage.setItem(PHOTO_KEY, String(id));
-    } catch {}
+    } catch { }
     window.dispatchEvent(new CustomEvent(PHOTO_EVENT, { detail: id })); // the header picture follows
-    fetch("/api/holder/photo", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ photo: id }) }).catch(() => {}); // every device
+    fetch("/api/holder/photo", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ photo: id }) }).catch(() => { }); // every device
   };
 
   const closeWindow = useCallback(() => setWindowOpen(null), []);
@@ -74,8 +74,8 @@ export function HolderProfile({ name, handle, since, roles, lads, photo: saved }
                 <span className="text-red">{name}.</span>
               </h1>
               <dl className="flex flex-wrap items-end gap-x-10 gap-y-5">
-                {since && sinceText && <Stat value={<DaysMad since={since} />} label={`Days Mad · since ${sinceText}`} />}
-                <Stat value={n} label={n === 1 ? "Mad Lad" : "Mad Lads"} />
+                {since && sinceText && <Stat value={<DaysMad since={since} />} label={`Days MAD · since ${sinceText}`} />}
+                <Stat value={n} label={"MAD LADS"} />
               </dl>
             </header>
 

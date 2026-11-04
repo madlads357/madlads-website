@@ -36,15 +36,14 @@ export function Nav({ overHero = false }: { overHero?: boolean }) {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-        light ? "bg-transparent text-white" : "border-b border-line bg-paper/95 text-ink backdrop-blur"
-      }`}
+      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${light ? "bg-transparent text-white" : "border-b border-line bg-paper/95 text-ink backdrop-blur"
+        }`}
     >
       <nav className="mx-auto flex h-[72px] items-center justify-between px-4 md:h-[88px] md:px-page" aria-label="Main">
         <Link
           href="/"
           className="shrink-0"
-          aria-label="Mad Lads, back to top"
+          aria-label="MAD LADS, back to top"
           onClick={(e) => {
             // Always lands on the hero: on the homepage it glides back up (even with a #hash in
             // the URL, or while smooth scroll is paused); elsewhere it navigates home, at the top.
@@ -76,9 +75,8 @@ export function Nav({ overHero = false }: { overHero?: boolean }) {
           ) : (
             <a
               href={links.matricaLogin}
-              className={`rounded-[4px] px-4 py-3 text-[14px] leading-none font-semibold transition-colors md:px-6 md:py-4 md:text-[15px] ${
-                light ? "bg-white text-ink hover:bg-ink hover:text-white" : "bg-accent text-white hover:bg-ink"
-              }`}
+              className={`rounded-[4px] px-4 py-3 text-[14px] leading-none font-semibold transition-colors md:px-6 md:py-4 md:text-[15px] ${light ? "bg-white text-ink hover:bg-ink hover:text-white" : "bg-accent text-white hover:bg-ink"
+                }`}
             >
               Login with Matrica
             </a>
@@ -120,7 +118,7 @@ function Account({ user, light }: { user: HeaderHint; light: boolean }) {
     try {
       const saved = Number(localStorage.getItem(PHOTO_KEY));
       if (saved > 0) setLad(saved);
-    } catch {}
+    } catch { }
     const onPhoto = (e: Event) => setLad((e as CustomEvent<number>).detail);
     window.addEventListener(PHOTO_EVENT, onPhoto);
     return () => window.removeEventListener(PHOTO_EVENT, onPhoto);
@@ -147,9 +145,8 @@ function Account({ user, light }: { user: HeaderHint; light: boolean }) {
         aria-expanded={menu}
         aria-haspopup="menu"
         aria-label={`${user.name}, account menu`}
-        className={`flex items-center gap-2.5 rounded-full py-1 pr-3 pl-1 ring-1 transition-colors md:pr-4 ${
-          light ? "ring-white/40 hover:bg-white/10" : "ring-line hover:ring-ink"
-        }`}
+        className={`flex items-center gap-2.5 rounded-full py-1 pr-3 pl-1 ring-1 transition-colors md:pr-4 ${light ? "ring-white/40 hover:bg-white/10" : "ring-line hover:ring-ink"
+          }`}
       >
         <span className="relative block size-9 overflow-hidden rounded-full bg-sunken md:size-10">
           {lad && (
@@ -173,7 +170,7 @@ function Account({ user, light }: { user: HeaderHint; light: boolean }) {
             onSubmit={() => {
               try {
                 localStorage.removeItem(PHOTO_KEY); // the next holder on this browser starts fresh
-              } catch {}
+              } catch { }
             }}
           >
             <button type="submit" role="menuitem" className="block w-full rounded-lg px-3 py-2.5 text-left text-[15px] font-medium text-muted hover:bg-sunken hover:text-ink">
@@ -213,9 +210,8 @@ function PillNav({ items, light, pathname }: { items: typeof nav; light: boolean
     <ul ref={list} className="relative hidden items-center gap-1 lg:flex" onMouseLeave={() => moveTo(activeIndex)}>
       <li
         aria-hidden
-        className={`pointer-events-none absolute top-0 h-full rounded-full transition-all duration-300 ease-[cubic-bezier(0.3,1.4,0.5,1)] ${
-          light ? "bg-white/15" : "bg-ink/[0.06]"
-        } ${pill.visible ? "opacity-100" : "opacity-0"}`}
+        className={`pointer-events-none absolute top-0 h-full rounded-full transition-all duration-300 ease-[cubic-bezier(0.3,1.4,0.5,1)] ${light ? "bg-white/15" : "bg-ink/[0.06]"
+          } ${pill.visible ? "opacity-100" : "opacity-0"}`}
         style={{ left: pill.left, width: pill.width }}
       />
       {items.map((item, i) => {

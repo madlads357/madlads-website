@@ -2,7 +2,7 @@ import { renderPassportOg, passportOgSize } from "@/lib/passport-og";
 import { readShareLink } from "@/lib/passport-share";
 
 // Link preview of a shared passport (short link). The image itself: lib/passport-og.tsx.
-export const alt = "A Mad Lads holder's Lads Passport";
+export const alt = "A MAD LADS holder's Lads Passport";
 export const size = passportOgSize;
 export const contentType = "image/png";
 

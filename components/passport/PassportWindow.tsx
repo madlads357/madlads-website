@@ -47,7 +47,7 @@ export function PassportWindow({ data, onClose }: { data: PassportData; onClose:
         if (typeof j.views === "number") setViews(j.views);
         setCanStop(!!j.removable);
       })
-      .catch(() => {});
+      .catch(() => { });
   }, [data.photo]);
 
   // Image and video, once the passport has opened and its stamps have landed (keeps the animation smooth).
@@ -88,7 +88,7 @@ export function PassportWindow({ data, onClose }: { data: PassportData; onClose:
   }, []);
 
   const days = data.since ? Math.floor((Date.now() - new Date(data.since).getTime()) / 86_400_000) : null;
-  const message = `My Lads Passport.${days ? ` ${days.toLocaleString("en-US")} days Mad.` : ""} Fock it.`;
+  const message = `My Lads Passport.${days ? ` ${days.toLocaleString("en-US")} days MAD.` : ""} Fock it.`;
   const url = link ?? window.location.origin;
   const say = (text: string) => {
     setNote(text);

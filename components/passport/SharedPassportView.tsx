@@ -14,7 +14,7 @@ export function sharedMetadata(p: SharedPassport | null): Metadata {
   if (!p) return { title: "Lads Passport", robots: { index: false } };
   const d = days(p.since);
   const title = `${p.name}’s Lads Passport`;
-  const description = `${d ? `${d.toLocaleString("en-US")} days Mad. ` : ""}${p.count} Mad ${p.count === 1 ? "Lad" : "Lads"}. Fock it.`;
+  const description = `${d ? `${d.toLocaleString("en-US")} days MAD. ` : ""}${p.count} MAD ${p.count === 1 ? "Lad" : "Lads"}. Fock it.`;
   return {
     title,
     description,
@@ -35,8 +35,8 @@ export function SharedPassportView({ p }: { p: SharedPassport }) {
             <p className="t-eyebrow text-accent">Lads Passport</p>
             <h1 className="text-[clamp(2rem,4.5vw,3.5rem)] leading-[0.95] font-bold tracking-[-0.04em]">{p.name}’s passport.</h1>
             <p className="text-muted">
-              {d ? `${d.toLocaleString("en-US")} days Mad · ` : ""}
-              {p.count} Mad {p.count === 1 ? "Lad" : "Lads"}
+              {d ? `${d.toLocaleString("en-US")} days MAD · ` : ""}
+              {p.count} MAD LADS
             </p>
           </header>
 
@@ -47,7 +47,7 @@ export function SharedPassportView({ p }: { p: SharedPassport }) {
           <div className="flex flex-wrap justify-center gap-3">
             <Button href="/holders">Get your Lads Passport</Button>
             <Button href="/madlads" variant="secondary">
-              Explore the Mad Lads
+              Explore the MAD LADS
             </Button>
           </div>
         </section>

@@ -36,9 +36,8 @@ export function RosterPreview() {
               type="button"
               aria-pressed={active === f.label}
               onClick={() => setActive(f.label)}
-              className={`rounded-full border px-4 py-2.5 text-sm font-medium transition-colors ${
-                active === f.label ? "border-ink bg-ink text-white" : "border-line bg-surface hover:border-ink"
-              }`}
+              className={`rounded-full border px-4 py-2.5 text-sm font-medium transition-colors ${active === f.label ? "border-ink bg-ink text-white" : "border-line bg-surface hover:border-ink"
+                }`}
             >
               {f.label}
             </button>
@@ -84,7 +83,7 @@ export function RosterPreview() {
         ))}
         {shown.length === 0 && (
           <li className="col-span-full py-12 text-center text-muted">
-            Not in this preview. Press Enter to search all 9,971 Mad Lads.
+            Not in this preview. Press Enter to search all 9,971 MAD LADS.
           </li>
         )}
       </ul>

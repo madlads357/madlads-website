@@ -282,7 +282,7 @@ export function MadLadsExplorer() {
           <span className="h-6 w-px bg-line" aria-hidden />
           <label className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-xl px-3 focus-within:bg-sunken/60">
             <SearchIcon className="size-4 shrink-0 text-muted" />
-            <span className="sr-only">Find a Mad Lad by number</span>
+            <span className="sr-only">Find a MAD LADS by number</span>
             <input
               inputMode="numeric"
               placeholder="Search by number…"
@@ -324,9 +324,8 @@ export function MadLadsExplorer() {
               type="button"
               onClick={() => setQuick(key)}
               aria-pressed={quick === key}
-              className={`flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all ${
-                quick === key ? "bg-ink text-white" : "bg-surface text-ink ring-1 ring-line hover:ring-ink"
-              }`}
+              className={`flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all ${quick === key ? "bg-ink text-white" : "bg-surface text-ink ring-1 ring-line hover:ring-ink"
+                }`}
             >
               {label}
               <span className={`text-xs tabular-nums ${quick === key ? "text-white/60" : "text-muted"}`}>{data ? fmt(quickCounts[key]) : ""}</span>
@@ -366,7 +365,7 @@ export function MadLadsExplorer() {
         <div className="min-w-0">
           {data && results.length === 0 ? (
             <div className="grid place-items-center rounded-2xl border border-dashed border-line py-24 text-center">
-              <p className="t-h3">No Mad Lad matches.</p>
+              <p className="t-h3">No MAD LADS matches.</p>
               <p className="mt-2 text-muted">Try another number or remove a filter.</p>
               <button type="button" onClick={clearAll} className="mt-6 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white">
                 Reset filters
@@ -457,7 +456,7 @@ export function Tile({ id, label, priority, onOpen, compact }: { id: number; lab
   const cls =
     "group relative block aspect-[4/5] w-full overflow-hidden rounded-xl bg-sunken text-left ring-1 ring-black/5 transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_18px_40px_-18px_rgba(17,17,17,0.45)] focus-visible:-translate-y-1";
   return onOpen ? (
-    <button type="button" data-lad={id} onClick={(e) => onOpen(e.currentTarget)} className={cls} aria-label={`Open Mad Lad #${id}`}>
+    <button type="button" data-lad={id} onClick={(e) => onOpen(e.currentTarget)} className={cls} aria-label={`Open MAD LADS #${id}`}>
       {body}
     </button>
   ) : (
@@ -619,9 +618,8 @@ function Chip({ label, count, on, onClick }: { label: string; count: number; on:
       onClick={onClick}
       aria-pressed={on}
       disabled={!count && !on}
-      className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-all disabled:opacity-35 ${
-        on ? "bg-ink text-white" : "bg-surface ring-1 ring-line hover:ring-ink"
-      }`}
+      className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-all disabled:opacity-35 ${on ? "bg-ink text-white" : "bg-surface ring-1 ring-line hover:ring-ink"
+        }`}
     >
       {label}
       <span className={`text-[11px] tabular-nums ${on ? "text-white/60" : "text-muted"}`}>{fmt(count)}</span>
@@ -636,9 +634,8 @@ function Swatch({ label, color, count, on, onClick }: { label: string; color: st
       onClick={onClick}
       aria-pressed={on}
       disabled={!count && !on}
-      className={`flex items-center gap-2 rounded-xl p-1.5 pr-2.5 text-left text-[13px] transition-all disabled:opacity-35 ${
-        on ? "bg-ink text-white" : "bg-surface ring-1 ring-line hover:ring-ink"
-      }`}
+      className={`flex items-center gap-2 rounded-xl p-1.5 pr-2.5 text-left text-[13px] transition-all disabled:opacity-35 ${on ? "bg-ink text-white" : "bg-surface ring-1 ring-line hover:ring-ink"
+        }`}
     >
       <span className="size-6 shrink-0 rounded-lg ring-1 ring-black/10" style={{ background: color }} aria-hidden />
       <span className="min-w-0 flex-1 truncate font-medium">{label}</span>
@@ -831,7 +828,7 @@ export function LadDialog({
   );
 
   return (
-    <div ref={dialog} className="fixed inset-0 z-[80] grid place-items-center p-3 md:p-6" role="dialog" aria-modal="true" aria-label={`Mad Lad #${id}`}>
+    <div ref={dialog} className="fixed inset-0 z-[80] grid place-items-center p-3 md:p-6" role="dialog" aria-modal="true" aria-label={`MAD LADS #${id}`}>
       <button type="button" className="absolute inset-0 bg-black/70 backdrop-blur-sm" aria-label="Close" onClick={onClose} />
       <div className="relative grid max-h-[94svh] w-full max-w-5xl animate-[pop_200ms_ease-out] overflow-y-auto rounded-2xl bg-paper shadow-2xl md:h-[min(90svh,760px)] md:w-auto md:max-w-[94vw] md:grid-cols-[auto_minmax(340px,440px)] md:overflow-hidden">
         <div
@@ -868,7 +865,7 @@ export function LadDialog({
         <div className="flex flex-col gap-6 p-6 md:min-h-0 md:gap-5 md:p-7">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="t-eyebrow text-accent">Mad Lads</p>
+              <p className="t-eyebrow text-accent">MAD LADS</p>
               <h2 className="t-h2 mt-2 tabular-nums">#{id}</h2>
             </div>
             <button type="button" onClick={onClose} aria-label="Close" data-autofocus className="grid size-10 place-items-center rounded-full bg-surface ring-1 ring-line hover:ring-ink">

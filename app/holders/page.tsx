@@ -11,7 +11,7 @@ import { HolderProfile } from "@/components/holder/HolderProfile";
 // The holder area. Reads the login cookie, so it is rendered on every request (not prebuilt).
 export const metadata: Metadata = {
   title: "Holders",
-  description: "The Mad Lads holder area. Log in with Matrica.",
+  description: "The MAD LADS holder area. Log in with Matrica.",
   robots: { index: false }, // personal page: keep it out of search results
 };
 
@@ -55,7 +55,7 @@ function ComingSoon() {
   return (
     <>
       <Shell title="Opening soon.">
-        <p className="t-body-l text-muted">The holder area opens with Login with Matrica. Follow Mad News and X to know when it goes live.</p>
+        <p className="t-body-l text-muted">The holder area opens with Login with Matrica. Follow MAD News and X to know when it goes live.</p>
         <Button href="/" variant="secondary">
           Back home
         </Button>
@@ -70,7 +70,7 @@ function LoggedOut({ error }: { error?: string }) {
     <>
       <Shell title="For the holders.">
         <p className="t-body-l text-muted">
-          Log in with Matrica to see your Lads and unlock the holder area. No wallet pop-up and nothing to sign: Matrica only tells us which Mad Lads you hold.
+          Log in with Matrica to see your LADS and unlock the holder area. No wallet pop-up and nothing to sign: Matrica only tells us which MAD LADS you hold.
         </p>
         {error && (
           <p role="alert" className="rounded-lg bg-red/10 px-4 py-3 font-medium text-accent">
@@ -88,7 +88,7 @@ function NoLads({ session }: { session: HolderSession }) {
   return (
     <Shell title="No Lad found.">
       <p className="t-body-l text-muted">
-        Hey {session.name}, we couldn’t find a Mad Lad in the wallets linked to your Matrica account. If your Lad is in another wallet, link it on Matrica, then
+        Hey {session.name}, we couldn’t find a MAD LADS in the wallets linked to your Matrica account. If your LADS is in another wallet, link it on Matrica, then
         log in again.
       </p>
       <div className="flex flex-wrap gap-3">

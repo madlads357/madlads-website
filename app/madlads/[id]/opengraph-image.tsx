@@ -47,7 +47,7 @@ export default async function Image({ params }: { params: Promise<{ id: string }
             ))}
           </svg>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ display: "flex", color: "#f62038", fontSize: 24, fontWeight: 700, letterSpacing: 3, textTransform: "uppercase" }}>Mad Lad</div>
+            <div style={{ display: "flex", color: "#f62038", fontSize: 24, fontWeight: 700, letterSpacing: 3, textTransform: "uppercase" }}>MAD LADS</div>
             <div style={{ display: "flex", fontSize: 128, fontWeight: 700, letterSpacing: -5, lineHeight: 0.95, marginTop: 10 }}>{`#${id}`}</div>
             <div style={{ display: "flex", color: "#b9b2a6", fontSize: 30, marginTop: 14 }}>{[type, gender].filter(Boolean).join(" · ")}</div>
             <div style={{ display: "flex", flexDirection: "column", marginTop: 30, gap: 10 }}>

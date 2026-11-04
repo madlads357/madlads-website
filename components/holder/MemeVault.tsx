@@ -201,7 +201,7 @@ function Viewer({ meme, index, onClose, onStep, say }: { meme: Meme; index: numb
             <a href={meme.link} target="_blank" rel="noopener noreferrer" className="truncate font-semibold hover:text-accent">
               by @{meme.author} <span className="text-muted">↗</span>
             </a>
-            <span className="text-muted">Mad Lads meme</span>
+            <span className="text-muted">MAD LADS meme</span>
           </figcaption>
         </figure>
         <button type="button" onClick={() => onStep(1)} aria-label="Next meme" className={`${nav} max-md:hidden`}>

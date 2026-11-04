@@ -12,7 +12,7 @@ const columns: { title: string; items: FooterLink[] }[] = [
     items: [
       { label: "X", href: links.x, external: true },
       { label: "Discord", href: links.discord, external: true },
-      { label: "Mad News", href: links.newsletter, external: true },
+      { label: "MAD News", href: links.newsletter, external: true },
     ],
   },
   {

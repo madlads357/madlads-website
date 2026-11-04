@@ -40,7 +40,7 @@ export function DressingRoom({ lads, photo, onClose }: { lads: number[]; photo: 
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
-    loadCollection().then(setCollection, () => {});
+    loadCollection().then(setCollection, () => { });
     return () => {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
@@ -80,7 +80,7 @@ export function DressingRoom({ lads, photo, onClose }: { lads: number[]; photo: 
     if (Number.isInteger(n) && n >= 1 && n <= MAX_ID) {
       setLad(n);
       setQuery("");
-    } else say(`Mad Lads go from #1 to #${MAX_ID}.`);
+    } else say(`MAD LADS go from #1 to #${MAX_ID}.`);
   };
 
   // The final picture at full size: the Lad (through our image server, so the canvas can read it), then each accessory.
@@ -221,7 +221,7 @@ export function DressingRoom({ lads, photo, onClose }: { lads: number[]; photo: 
               </div>
               <form onSubmit={pick} className="flex gap-2">
                 <label className="sr-only" htmlFor="any-lad">
-                  Any Mad Lad by number
+                  Any MAD LADS by number
                 </label>
                 <input
                   id="any-lad"

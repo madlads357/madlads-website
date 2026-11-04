@@ -27,7 +27,7 @@ export function LadsMarquee() {
   }, []);
 
   return (
-    <section ref={ref} aria-label="Some of the Mad Lads" className="group overflow-hidden border-y border-line bg-paper py-8">
+    <section ref={ref} aria-label="Some of the MAD LADS" className="group overflow-hidden border-y border-line bg-paper py-8">
       <ul className="flex w-max animate-marquee gap-3 [--marquee-duration:70s] group-hover:[animation-play-state:paused]">
         {[...row, ...row].map((l, i) => (
           <li
@@ -35,7 +35,7 @@ export function LadsMarquee() {
             aria-hidden={i >= row.length}
             className="relative h-[150px] w-[120px] shrink-0 overflow-hidden rounded-xl bg-sunken ring-1 ring-black/5 md:h-[200px] md:w-[160px]"
           >
-            {visible && <Image src={ladImage(l.id)} alt={i < row.length ? `Mad Lad #${l.id}` : ""} fill sizes="160px" className="object-cover" />}
+            {visible && <Image src={ladImage(l.id)} alt={i < row.length ? `MAD LADS #${l.id}` : ""} fill sizes="160px" className="object-cover" />}
           </li>
         ))}
       </ul>
