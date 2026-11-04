@@ -110,16 +110,16 @@ function Roster() {
   return (
     <Section id="madlads" className="grid gap-12 lg:grid-cols-[280px_1fr]">
       <div className="flex flex-col gap-5">
-        <p className="t-eyebrow text-accent">04 / Mad Lads</p>
+        <p className="t-eyebrow text-accent">04 / MAD LADS</p>
         <h2 className="t-h2">
-          The Mad
+          The MAD
           <br />
-          Lads
+          LADS
         </h2>
         <p className="text-muted">10,000 unique Lads, Lassies and a few Skulls. Different backgrounds, same energy.</p>
         <div>
           <Button href="/madlads" variant="secondary">
-            Explore all Mad Lads →
+            Explore all MAD LADS →
           </Button>
         </div>
       </div>
@@ -136,12 +136,12 @@ function Manifesto() {
       <h2 className="t-display-l reveal-slide mt-8">
         We’re not angry.
         <br />
-        We’re <span className="text-red">Mad.</span>
+        We’re <span className="text-red">MAD.</span>
       </h2>
       {/* Lights up word by word as you scroll */}
       <ScrollWords
         className="mt-10 max-w-[900px] text-[clamp(1.5rem,2.8vw,2.375rem)] leading-[1.25] font-semibold tracking-[-0.02em]"
-        text="Mad Lads are a little louder, a little bolder, and a lot more themselves. A collection for the misfits, the risk-takers and everyone who keeps it Mad."
+        text="MAD LADS are a little louder, a little bolder, and a lot more themselves. A collection for the misfits, the risk-takers and everyone who keeps it Mad."
       />
       {/* Stats band (inspired by scrolltide.co) — numbers count up when they scroll into view */}
       <dl className="mt-16 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line md:grid-cols-4">
@@ -149,7 +149,7 @@ function Manifesto() {
           { to: 1000, label: "Lassies in the crew" },
           { to: 99, label: "Skulls, under 1%" },
           { to: 16, label: "Traits to explore" },
-          { to: 3, label: "Years of Mad", suffix: "+" },
+          { to: 3, label: "Years of MAD", suffix: "+" },
         ].map((s, i) => (
           <div key={s.label} className="reveal flex flex-col-reverse gap-2 bg-surface p-6 md:p-8" style={{ "--i": i } as CSSProperties}>
             <dt className="text-muted">{s.label}</dt>
@@ -209,7 +209,7 @@ function Art() {
         text="The 1/1s the team drew for legends and friends, plus previews, sketches and special pieces from the Mad Lads universe."
         action={
           <Button href={links.newsletter} variant="secondary" external>
-            See them all on Mad News ↗
+            See them all on MAD News ↗
           </Button>
         }
       />
@@ -245,7 +245,7 @@ function Art() {
             </div>
             <p className="t-eyebrow text-accent">Behind the art</p>
             <p className="text-[40px] leading-none font-bold tracking-[-0.03em]">Every Lad starts as a sketch.</p>
-            <p className="t-body-l text-muted">Previews, studies and special pieces from the artists who shape the Mad Lads universe.</p>
+            <p className="t-body-l text-muted">Previews, studies and special pieces from the artists who shape the MAD LADS universe.</p>
           </div>
         </div>
       </div>
@@ -305,7 +305,7 @@ async function News() {
       <SectionHeader
         eyebrow="06 / News"
         title="News"
-        text="The latest issues of Mad News: drops, updates and moments from the Mad Lads world."
+        text="The latest issues of MAD News: drops, updates and moments from the MAD world."
         action={
           <Button href={links.newsletter} variant="secondary" external>
             View all news →
@@ -345,7 +345,7 @@ function BackpackBand() {
         </h2>
         <div className="reveal flex max-w-[620px] flex-col items-start gap-7 lg:ml-auto" style={{ "--i": 1 } as CSSProperties}>
           <p className="text-[clamp(1.25rem,2vw,1.625rem)] leading-[1.35] font-medium tracking-[-0.01em] text-muted">
-            Mad Lads is the flagship collection of Backpack, the wallet and exchange built for the next generation of onchain culture.
+            MAD LADS is the flagship collection of Backpack, the wallet and exchange built for the next generation of onchain culture.
           </p>
           <Button href={links.backpack} external>
             Learn about Backpack ↗
@@ -360,16 +360,16 @@ function BackpackBand() {
 // TODO: review the answers with the community manager.
 const faq = [
   {
-    q: "What is Mad Lads?",
+    q: "What is MAD LADS?",
     a: "A collection of 10,000 illustrated characters (Lads, Lassies and a few Skulls) on Solana. It launched in April 2023 as the first collection of executable NFTs (xNFTs), made by Coral, the team behind Backpack.",
   },
   {
     q: "What is the link with Backpack?",
-    a: "Mad Lads is Backpack’s flagship collection. The same team builds the Backpack wallet and the Backpack exchange, and many holder events and rewards happen there.",
+    a: "MAD LADS is Backpack’s flagship collection. The same team builds the Backpack wallet and the Backpack exchange, and many holder events and rewards happen there.",
   },
   {
-    q: "How can I get a Mad Lad?",
-    a: "Mad Lads trade on NFT marketplaces such as Magic Eden and Tensor. Always check you are on the verified Mad Lads collection before buying.",
+    q: "How can I get a MAD LADS?",
+    a: "MAD LADS trade on NFT marketplaces such as Magic Eden and Tensor. Always check you are on the verified MAD LADS collection before buying.",
   },
   {
     q: "How do I trade a Lad peer-to-peer safely?",
@@ -385,7 +385,7 @@ const faq = [
   },
   {
     q: "What does “Login with Matrica” do?",
-    a: "Matrica checks which Mad Lads you hold through the wallets you have linked to your Matrica account. You unlock holder content without connecting a wallet or signing anything on this site.",
+    a: "Matrica checks which MAD LADS you hold through the wallets you have linked to your Matrica account. You unlock holder content without connecting a wallet or signing anything on this site.",
   },
   {
     q: "What are the honoraries and 1/1s?",
@@ -404,7 +404,7 @@ function FaqSection() {
         <div className="flex flex-col gap-4 lg:sticky lg:top-32 lg:self-start">
           <p className="t-eyebrow text-accent">07 / FAQ</p>
           <h2 className="t-h2">Questions, answered.</h2>
-          <p className="t-body-l text-muted">New to the Lads, or writing about them? Start here.</p>
+          <p className="t-body-l text-muted">New to the LADS, or writing about them? Start here.</p>
         </div>
         <Faq items={faq} />
       </div>
