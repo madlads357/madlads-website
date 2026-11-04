@@ -113,6 +113,7 @@ function Holder({ session }: { session: HolderSession }) {
       since={session.since}
       roles={session.roles}
       lads={session.lads}
+      photo={session.photo}
     />
   );
 }

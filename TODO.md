@@ -35,11 +35,13 @@ Every setting is described in `.env.example`.
 - [ ] Register the callback URLs with Matrica: `https://madlads.com/api/auth/callback` and `http://localhost:3000/api/auth/callback`.
 - [ ] In Vercel, set `MATRICA_CLIENT_ID`, `MATRICA_CLIENT_SECRET`, `MATRICA_COLLECTION_ID` and `SESSION_SECRET`.
 - [ ] Test a real login with a wallet that holds a Lad. Check that the Lad numbers come out right (`ladNumber` in `lib/auth/matrica.ts`).
-- [ ] Update the Privacy page (“Holder area”, “Cookies and local storage”) and the Terms (“Holder area”): login cookie, data received from Matrica.
+- [x] Privacy page and Terms updated for the holder area (cookies, Matrica, Helius, database, share links). Still needs the legal review above.
 - [ ] Go live: set `NEXT_PUBLIC_HOLDERS_LIVE=1` and redeploy. The login buttons then open `/holders`.
 - [x] Helius key set (local + Vercel); collection address and API responses checked.
 - [ ] At the first real Matrica login, check in `lib/auth/matrica.ts` that `UserWallet.id` is the wallet address (needed for "Days Mad").
-- [ ] Privacy page: wallet addresses are sent to Helius at login to compute "Mad since" (and the readable `ml_user` header cookie).
-- [ ] Privacy page: shared passport links (/passport/…) make the passport public (name, handle, Lad, Lads held, Mad since, stamps) for anyone with the link, for one year.
-- [ ] Decide what goes in the holder area (Culture Hub, perks).
+- [x] Database (Neon) connected; tables created with `npm run db:setup` (db/schema.sql).
+- [ ] If production uses a different Neon database or branch than .env.local, run `npm run db:setup` against it once (with its DATABASE_URL).
+- [ ] Passport role stamps: get the Mad Lads Discord server ID from the CM and set `MADLADS_DISCORD_SERVER_ID` in Vercel. Optional: `MADLADS_STAMP_ROLES` = the roles that earn a stamp, most important first (e.g. "OG,Mad Coach").
+- [ ] At the first real login, check that Matrica returns the X handle and the Discord roles with the scopes asked (`socials.twitter socials.discord`, in `lib/auth/config.ts`).
+- [ ] Decide what else goes in the holder area. Done: memes (the meme vault, 326 memes moved from the hub). Still on the hub: playlist, mini-games.
 - [ ] Add the Culture Hub ticket to the backpack (`data/bag.ts`) once its image exists.

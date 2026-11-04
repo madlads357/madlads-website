@@ -22,7 +22,14 @@ export const matricaConfig = () => ({
   clientSecret: env.MATRICA_CLIENT_SECRET || undefined,
   collectionId: env.MATRICA_COLLECTION_ID ?? "",
   redirectUri: `${siteUrl}/api/auth/callback`, // must be registered in the Matrica developer settings
-  scope: "profile wallets nfts",
+  // socials.*: the X handle (passport) and the Discord account its roles come from
+  scope: "profile wallets nfts socials.twitter socials.discord",
+  // Roles: only from the Mad Lads Discord server, and (if listed) only these names earn a passport stamp
+  discordServerId: env.MADLADS_DISCORD_SERVER_ID ?? "",
+  stampRoles: (env.MADLADS_STAMP_ROLES ?? "")
+    .split(",")
+    .map((r) => r.trim())
+    .filter(Boolean),
 });
 
 // Key used to encrypt the session cookies. In mock mode a fixed development key is fine.

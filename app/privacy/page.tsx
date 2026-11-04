@@ -3,15 +3,16 @@ import Link from "next/link";
 import { LegalPage, type LegalSection } from "@/components/LegalPage";
 import { links } from "@/data/site";
 
-// TODO: legal review before launch (Backpack legal). Update the "Holder area" section before Matrica login goes live.
-// Keep this page true to the code: if analytics, cookies or a login are added, this page must change too.
+// TODO: legal review before launch (Backpack legal).
+// Keep this page true to the code: if analytics, cookies, stored data or outside services change, this page must too.
+// What the code does today: lib/auth (login, cookies), lib/helius.ts, lib/db.ts + db/schema.sql, lib/passport-share.ts.
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "What data madlads.com collects (very little) and how it is used.",
   alternates: { canonical: "/privacy" },
 };
 
-const UPDATED = "November 3, 2026";
+const UPDATED = "November 4, 2026";
 
 const ext = (href: string, label: string) => (
   <a href={href} target="_blank" rel="noopener noreferrer">
@@ -31,8 +32,8 @@ const sections: LegalSection[] = [
         </p>
         <ul>
           <li>You don’t need an account or a wallet to browse the site.</li>
-          <li>We don’t use advertising, tracking cookies or analytics tools.</li>
-          <li>We don’t sell your data.</li>
+          <li>Holders can log in with Matrica to reach the holder area. That is the only time we receive data about you.</li>
+          <li>We don’t use advertising, tracking cookies or analytics tools, and we don’t sell your data.</li>
         </ul>
       </>
     ),
@@ -57,9 +58,24 @@ const sections: LegalSection[] = [
     id: "cookies",
     title: "Cookies and local storage",
     body: (
-      <p>
-        The site sets no cookies and stores nothing in your browser. That’s why there is no cookie banner.
-      </p>
+      <>
+        <p>Browsing the site sets no cookies. Cookies only appear when you log in to the holder area, and they are all needed for the login to work:</p>
+        <ul>
+          <li>
+            <strong>ml_login</strong>: keeps a one-time code while you log in on Matrica. Deleted as soon as you come back, or after 10 minutes.
+          </li>
+          <li>
+            <strong>ml_session</strong>: keeps you logged in (encrypted, unreadable by the page). Deleted when you log out, or after 8 hours.
+          </li>
+          <li>
+            <strong>ml_user</strong>: your name and the number of your passport Lad, so the menu bar can show them. Same lifetime as ml_session.
+          </li>
+        </ul>
+        <p>
+          The site also remembers your chosen passport photo in your browser’s storage, as a fallback. None of this is used for tracking, which is why there is
+          no cookie banner.
+        </p>
+      </>
     ),
   },
   {
@@ -92,10 +108,54 @@ const sections: LegalSection[] = [
     id: "holders",
     title: "Holder area",
     body: (
-      <p>
-        A holder-only area with Matrica login is coming. Signing in will mean sharing your public wallet address so we can check which Mad Lads you hold. We
-        will update this policy, with exactly what is collected and why, before the login goes live.
-      </p>
+      <>
+        <p>
+          You log in with {ext("https://matrica.io", "Matrica")}, which already knows your wallets and linked accounts. You choose on Matrica what to share. We ask
+          for:
+        </p>
+        <ul>
+          <li>your Matrica user ID and name;</li>
+          <li>the Mad Lads held in the wallets you linked to Matrica, and the addresses of those wallets;</li>
+          <li>your X handle, shown on your passport;</li>
+          <li>your roles on the Mad Lads Discord server, shown as stamps on your passport.</li>
+        </ul>
+        <p>
+          To work out since when you hold a Mad Lad (“Mad since”), your wallet addresses are sent to {ext("https://www.helius.dev", "Helius")}, a Solana data
+          service, which reads the public blockchain. This happens at login, at most once a week. We don’t store your wallet addresses, and we never ask you to
+          sign anything or connect a wallet.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "stored",
+    title: "What we keep",
+    body: (
+      <>
+        <p>
+          For holders who log in, our database keeps your Matrica user ID, the Lad you chose as passport photo and your “Mad since” date, so they follow you on
+          every device. The database is hosted by {ext("https://neon.com", "Neon")} in the European Union (Frankfurt).
+        </p>
+        <p>
+          The passport video and image are made in your browser. They are not uploaded to us, unless you share them yourself on another service.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "sharing",
+    title: "Sharing your passport",
+    body: (
+      <>
+        <p>
+          When you open your passport, the site prepares a public link to it (madlads.com/p/…). Anyone with that link can see your passport: your name, X handle,
+          passport Lad, number of Lads, “Mad since” and stamps. Nothing else, and never your wallet addresses.
+        </p>
+        <p>
+          We store that passport with the link and count how many times it was opened. You can stop sharing at any time from your passport (Copy, then “Stop
+          sharing my link”): the link stops working at once. Otherwise it expires after a year.
+        </p>
+      </>
     ),
   },
   {
@@ -103,8 +163,8 @@ const sections: LegalSection[] = [
     title: "Your rights",
     body: (
       <p>
-        Depending on where you live, you may have the right to ask what data we hold about you, to correct it or to delete it. Since the site collects almost
-        nothing, there is usually nothing to hand over. If you have a request, contact us and we’ll help.
+        Depending on where you live, you may have the right to ask what data we hold about you, to correct it or to delete it. If you never logged in, we hold
+        nothing about you. If you did, write to us and we’ll send or delete what is listed above. You can also stop sharing your passport yourself at any time.
       </p>
     ),
   },
@@ -128,7 +188,12 @@ export default function PrivacyPage() {
     <LegalPage
       title="Privacy Policy"
       updated={UPDATED}
-      summary={<p>The short version: no account, no tracking cookies, no analytics, no selling data. Just a website about Mad Lads.</p>}
+      summary={
+        <p>
+          The short version: browsing needs no account and sets no cookies. If you log in as a holder, we keep the little your passport needs, and you decide
+          what you share. No tracking, no analytics, no selling data.
+        </p>
+      }
       sections={sections}
     />
   );

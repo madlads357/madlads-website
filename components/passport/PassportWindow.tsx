@@ -23,7 +23,8 @@ export function PassportWindow({ data, onClose }: { data: PassportData; onClose:
   const [image, setImage] = useState<Media | null>(null);
   const [video, setVideo] = useState<Video>({ step: "waiting" });
   const [note, setNote] = useState<string | null>(null);
-  const [menu, setMenu] = useState(false);
+  const [views, setViews] = useState<number | null>(null); // how many times the public link was opened
+  const [canStop, setCanStop] = useState(false); // the link can be withdrawn (stored links only)
   useDialogFocus(root);
 
   useEffect(() => {
@@ -40,7 +41,12 @@ export function PassportWindow({ data, onClose }: { data: PassportData; onClose:
   useEffect(() => {
     fetch("/api/passport/share", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ photo: data.photo }) })
       .then((r) => (r.ok ? r.json() : null))
-      .then((j: { url?: string } | null) => j?.url && setLink(j.url))
+      .then((j: { url?: string; views?: number; removable?: boolean } | null) => {
+        if (!j?.url) return;
+        setLink(j.url);
+        if (typeof j.views === "number") setViews(j.views);
+        setCanStop(!!j.removable);
+      })
       .catch(() => {});
   }, [data.photo]);
 
@@ -128,6 +134,17 @@ export function PassportWindow({ data, onClose }: { data: PassportData; onClose:
     }
   };
 
+  // Withdraws the public link: it stops working; sharing again makes a new one.
+  const stopSharing = async () => {
+    const r = await fetch("/api/passport/share", { method: "DELETE" }).catch(() => null);
+    if (r?.ok) {
+      setLink(null);
+      setViews(null);
+      setCanStop(false);
+      say("Your link no longer works. Close and reopen your passport to make a new one.");
+    } else say("Couldn’t stop sharing. Try again.");
+  };
+
   const pill = "rounded-full px-4 py-2.5 text-sm font-semibold transition-colors disabled:cursor-default disabled:opacity-50 md:px-5";
   const primary = `${pill} bg-white text-ink hover:bg-red hover:text-white`;
   const secondary = `${pill} bg-white/10 ring-1 ring-white/25 hover:bg-white/20`;
@@ -172,52 +189,36 @@ export function PassportWindow({ data, onClose }: { data: PassportData; onClose:
       <footer className="flex flex-col items-center gap-2 px-4 pt-3 pb-[max(16px,env(safe-area-inset-bottom))]">
         {image ? (
           <div className="flex flex-wrap items-center justify-center gap-2">
+            {/* Share = the system share sheet: phones and tablets only */}
             {canShare && (
-              <button type="button" onClick={share} className={primary}>
+              <button type="button" onClick={share} className={`${primary} md:hidden`}>
                 Share
               </button>
             )}
-            <button type="button" onClick={postOnX} className={canShare ? secondary : primary}>
+            <button type="button" onClick={postOnX} className={canShare ? `${secondary} md:bg-white md:text-ink md:ring-0 md:hover:bg-red md:hover:text-white` : primary}>
               Post on X
             </button>
-            <button type="button" onClick={copyLink} disabled={!link} className={secondary}>
-              Copy link
-            </button>
-            <button type="button" onClick={copyImage} className={`${secondary} max-sm:hidden`}>
-              Copy image
-            </button>
-            <div className="relative">
-              <button type="button" onClick={() => setMenu((m) => !m)} aria-expanded={menu} aria-haspopup="menu" className={secondary}>
-                Download ▾
-              </button>
-              {menu && (
-                <div role="menu" className="absolute right-0 bottom-full mb-2 w-44 animate-[pop_160ms_ease-out] rounded-xl bg-surface p-1.5 text-ink shadow-xl">
-                  <button
-                    type="button"
-                    role="menuitem"
-                    disabled={video.step !== "ready"}
-                    onClick={() => {
-                      if (video.step === "ready") save(video);
-                      setMenu(false);
-                    }}
-                    className="block w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium hover:bg-sunken disabled:text-muted"
-                  >
-                    Video (MP4){video.step === "making" ? ` · ${Math.round(video.progress * 100)}%` : ""}
-                  </button>
-                  <button
-                    type="button"
-                    role="menuitem"
-                    onClick={() => {
-                      save(image);
-                      setMenu(false);
-                    }}
-                    className="block w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium hover:bg-sunken"
-                  >
-                    Image (PNG)
-                  </button>
-                </div>
-              )}
-            </div>
+            <Menu
+              label="Copy"
+              className={secondary}
+              items={[
+                { label: "Link", onSelect: copyLink, disabled: !link },
+                { label: "Image", onSelect: copyImage },
+                ...(link && canStop ? [{ label: "Stop sharing my link", onSelect: stopSharing, danger: true }] : []),
+              ]}
+            />
+            <Menu
+              label="Download"
+              className={secondary}
+              items={[
+                {
+                  label: `Video (MP4)${video.step === "making" ? ` · ${Math.round(video.progress * 100)}%` : ""}`,
+                  onSelect: () => video.step === "ready" && save(video),
+                  disabled: video.step !== "ready",
+                },
+                { label: "Image (PNG)", onSelect: () => save(image) },
+              ]}
+            />
           </div>
         ) : video.step === "failed" ? (
           <p className="text-sm text-white/70">Sharing isn’t available in this browser. Try Chrome, Edge or Safari.</p>
@@ -230,9 +231,58 @@ export function PassportWindow({ data, onClose }: { data: PassportData; onClose:
           </p>
         )}
         <p className="h-4 text-xs text-white/60" role="status" aria-live="polite">
-          {note}
+          {note ?? (views ? `Your passport link was opened ${views.toLocaleString("en-US")} ${views === 1 ? "time" : "times"}.` : "")}
         </p>
       </footer>
+    </div>
+  );
+}
+
+// A small drop-up menu (Copy, Download): one button, its choices above it; closes on choice, outside click or Esc.
+type MenuItem = { label: string; onSelect: () => void; disabled?: boolean; danger?: boolean };
+function Menu({ label, items, className }: { label: string; items: MenuItem[]; className: string }) {
+  const [open, setOpen] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: Event) => {
+      if (e instanceof KeyboardEvent ? e.key === "Escape" : !box.current?.contains(e.target as Node)) {
+        e.stopPropagation(); // Esc closes the menu, not the whole window
+        setOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", close);
+    document.addEventListener("keydown", close, true);
+    return () => {
+      document.removeEventListener("pointerdown", close);
+      document.removeEventListener("keydown", close, true);
+    };
+  }, [open]);
+
+  return (
+    <div ref={box} className="relative">
+      <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-haspopup="menu" className={className}>
+        {label} ▾
+      </button>
+      {open && (
+        <div role="menu" className="absolute bottom-full left-1/2 mb-2 w-52 -translate-x-1/2 animate-[pop_160ms_ease-out] rounded-xl bg-surface p-1.5 text-ink shadow-xl">
+          {items.map((item) => (
+            <button
+              key={item.label}
+              type="button"
+              role="menuitem"
+              disabled={item.disabled}
+              onClick={() => {
+                item.onSelect();
+                setOpen(false);
+              }}
+              className={`block w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium hover:bg-sunken disabled:text-muted ${item.danger ? "mt-1 border-t border-line text-accent" : ""}`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

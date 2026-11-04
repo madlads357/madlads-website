@@ -798,11 +798,10 @@ export function LadDialog({
   action?: ReactNode; // an extra button above the tip (e.g. "Use as passport photo" in the holder area)
 }) {
   const id = lad[0];
-  const [full, setFull] = useState(false);
+  const [loaded, setLoaded] = useState<number | null>(null); // which Lad's full-size image has finished loading
   const swipeX = useRef<number | null>(null); // touch: swipe the picture left/right to browse
   const dialog = useRef<HTMLDivElement>(null);
   useDialogFocus(dialog);
-  useEffect(() => setFull(false), [id]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -850,14 +849,15 @@ export function LadDialog({
           }}
           onPointerCancel={() => (swipeX.current = null)}
         >
-          <Thumb id={id} sizes="(min-width: 768px) 50vw, 100vw" />
+          {/* keyed by Lad: the preview must change with the arrows, not keep the first Lad opened */}
+          <Thumb key={`preview-${id}`} id={id} sizes="(min-width: 768px) 50vw, 100vw" />
           {/* Plain <img>: the 5 MB original fades in over the optimized thumbnail. */}
           <img
             key={id}
             src={originalImage(id)}
             alt={`Mad Lad #${id}`}
-            onLoad={() => setFull(true)}
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${full ? "opacity-100" : "opacity-0"}`}
+            onLoad={() => setLoaded(id)}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${loaded === id ? "opacity-100" : "opacity-0"}`}
           />
           <div className="absolute inset-x-3 bottom-3 flex justify-between md:inset-x-4 md:bottom-4">
             <NavButton label="Previous Lad" onClick={onPrev} dir="left" />
@@ -903,9 +903,14 @@ export function LadDialog({
               <span className="pointer-coarse:hidden">Tip: use ← → to browse, Esc to close.{onFilter && " Click a trait to see every Lad that has it."}</span>
               <span className="hidden pointer-coarse:inline">Tip: swipe the picture to browse, tap outside to close.{onFilter && " Tap a trait to see every Lad that has it."}</span>
             </p>
-            <a href={originalImage(id)} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-accent underline underline-offset-4">
-              Open full-resolution image ↗
-            </a>
+            <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-accent">
+              <Link href={`/madlads/${id}`} className="underline underline-offset-4">
+                This Lad’s page →
+              </Link>
+              <a href={originalImage(id)} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">
+                Full-resolution image ↗
+              </a>
+            </div>
           </div>
         </div>
       </div>

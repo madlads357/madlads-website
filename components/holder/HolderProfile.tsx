@@ -6,7 +6,8 @@ import { HolderLads } from "./HolderLads";
 import { DaysMad } from "./DaysMad";
 import { PassportWindow } from "@/components/passport/PassportWindow";
 import { LockIcon } from "@/components/Icons";
-import { bagItems, type BagItem } from "@/data/bag";
+import { bagItems, isBagWindow, type BagItem, type BagWindow } from "@/data/bag";
+import { MemeVault } from "./MemeVault";
 import { PHOTO_EVENT, PHOTO_KEY } from "@/lib/auth/hint";
 import "./bag.css";
 
@@ -16,6 +17,7 @@ type Props = {
   since?: string;
   roles?: string[];
   lads: number[];
+  photo?: number; // the saved passport photo (database), if any
 };
 
 // Where the bag's opening is, as a fraction of the backpack image (objects fly out from there).
@@ -23,9 +25,9 @@ const MOUTH = { x: 0.25, y: 0.62 };
 // Desktop: where the sticky bag sits on screen (px). The fall maths in Items uses the same numbers.
 const STICKY = { top: 110, pad: 40 };
 
-export function HolderProfile({ name, handle, since, roles, lads }: Props) {
-  const [photo, setPhoto] = useState(lads[0]);
-  const [passport, setPassport] = useState(false);
+export function HolderProfile({ name, handle, since, roles, lads, photo: saved }: Props) {
+  const [photo, setPhoto] = useState(saved ?? lads[0]);
+  const [windowOpen, setWindowOpen] = useState<BagWindow | null>(null); // the passport or the meme vault
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => window.scrollY > 60 && setScrolled(true);
@@ -34,12 +36,14 @@ export function HolderProfile({ name, handle, since, roles, lads }: Props) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Without a saved photo (no database), fall back to the one remembered in this browser.
   useEffect(() => {
+    if (saved) return;
     try {
-      const saved = Number(localStorage.getItem(PHOTO_KEY));
-      if (lads.includes(saved)) setPhoto(saved);
+      const local = Number(localStorage.getItem(PHOTO_KEY));
+      if (lads.includes(local)) setPhoto(local);
     } catch {}
-  }, [lads]);
+  }, [lads, saved]);
 
   const choosePhoto = (id: number) => {
     setPhoto(id);
@@ -47,9 +51,10 @@ export function HolderProfile({ name, handle, since, roles, lads }: Props) {
       localStorage.setItem(PHOTO_KEY, String(id));
     } catch {}
     window.dispatchEvent(new CustomEvent(PHOTO_EVENT, { detail: id })); // the header picture follows
+    fetch("/api/holder/photo", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ photo: id }) }).catch(() => {}); // every device
   };
 
-  const closePassport = useCallback(() => setPassport(false), []);
+  const closeWindow = useCallback(() => setWindowOpen(null), []);
 
   const n = lads.length;
   const sinceText = since ? new Date(since).toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }) : null;
@@ -81,7 +86,7 @@ export function HolderProfile({ name, handle, since, roles, lads }: Props) {
             <Backpack hop={!scrolled} className="w-[58%] max-w-[300px]" />
           </div>
 
-          <Items onPassport={() => setPassport(true)} />
+          <Items onOpen={setWindowOpen} />
         </div>
 
         {/* Desktop: the bag stays in view while the objects fall out */}
@@ -92,9 +97,8 @@ export function HolderProfile({ name, handle, since, roles, lads }: Props) {
         </div>
       </div>
 
-      {passport && (
-        <PassportWindow data={{ name, handle, since, roles, lads, photo }} onClose={closePassport} />
-      )}
+      {windowOpen === "passport" && <PassportWindow data={{ name, handle, since, roles, lads, photo }} onClose={closeWindow} />}
+      {windowOpen === "memes" && <MemeVault onClose={closeWindow} />}
     </div>
   );
 }
@@ -122,7 +126,7 @@ function Backpack({ className = "", hop }: { className?: string; hop?: boolean }
 
 // Each object starts at the bag's opening and lands in its slot as it scrolls into view.
 // The scroll drives the animation (CSS, bag.css); JS only measures how far each slot is from the bag.
-function Items({ onPassport }: { onPassport: () => void }) {
+function Items({ onOpen }: { onOpen: (w: BagWindow) => void }) {
   const list = useRef<HTMLUListElement>(null);
 
   const measure = useCallback(() => {
@@ -176,7 +180,7 @@ function Items({ onPassport }: { onPassport: () => void }) {
           <div className="bag-fall-x">
             <div className="bag-fall-y">
               <div className="bag-spin">
-                <Item item={item} onPassport={onPassport} />
+                <Item item={item} onOpen={onOpen} />
               </div>
             </div>
           </div>
@@ -186,9 +190,9 @@ function Items({ onPassport }: { onPassport: () => void }) {
   );
 }
 
-function Item({ item, onPassport }: { item: BagItem; onPassport: () => void }) {
+function Item({ item, onOpen }: { item: BagItem; onOpen: (w: BagWindow) => void }) {
   const locked = item.open === null;
-  const external = !locked && item.open !== "passport"; // opens another site in a new tab
+  const external = !locked && !isBagWindow(item.open); // opens another site in a new tab
   const body = (
     <>
       {/* fixed box, image centered inside: every label lines up whatever the object's shape */}
@@ -224,12 +228,14 @@ function Item({ item, onPassport }: { item: BagItem; onPassport: () => void }) {
   );
   const cls = "group flex w-full flex-col items-center rounded-2xl outline-offset-4 focus-visible:outline-2 focus-visible:outline-accent";
 
-  if (item.open === "passport")
+  if (isBagWindow(item.open)) {
+    const w = item.open;
     return (
-      <button type="button" onClick={onPassport} className={cls} aria-label="Open your Lads Passport">
+      <button type="button" onClick={() => onOpen(w)} className={cls} aria-label={w === "passport" ? "Open your Lads Passport" : "Open the meme vault"}>
         {body}
       </button>
     );
+  }
   if (locked)
     return (
       <div className={`${cls} cursor-default`} aria-label={`${item.label}, coming soon`}>

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/terms" },
 };
 
-const UPDATED = "November 3, 2026";
+const UPDATED = "November 4, 2026";
 
 const ext = (href: string, label: string) => (
   <a href={href} target="_blank" rel="noopener noreferrer">
@@ -131,9 +131,16 @@ const sections: LegalSection[] = [
     id: "holders",
     title: "Holder area",
     body: (
-      <p>
-        A holder-only area with Matrica login is coming. When it opens, extra terms may apply to it, and we will update this page.
-      </p>
+      <>
+        <p>
+          Holders can log in with Matrica to reach the holder area. Access depends on holding at least one Mad Lad in a wallet linked to your Matrica account, and
+          may change as your holdings do. Features in the holder area can change or end at any time.
+        </p>
+        <p>
+          Your Lads Passport can be shared through a public link. You decide whether to share it, and you can stop sharing at any time. Please don’t share links
+          in a way that suggests a passport is someone else’s. How we handle your data is in our <Link href="/privacy">Privacy Policy</Link>.
+        </p>
+      </>
     ),
   },
   {
