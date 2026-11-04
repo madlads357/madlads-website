@@ -47,7 +47,7 @@ const fmt = (n: number) => n.toLocaleString("en-US");
    share the name "lad-hero" (never both at once), so the browser animates one into the other.
    Browsers without the API, and reduced motion, just open/close instantly. */
 type VTDocument = Document & { startViewTransition?: (update: () => void) => { finished: Promise<void> } };
-const HERO = "lad-hero";
+export const HERO = "lad-hero"; // the shared name of the morphing picture (tile → large view)
 let namedTile: HTMLElement | null = null; // tile still carrying the name from the last close
 export function morph(update: () => void, before?: HTMLElement | null, after?: () => HTMLElement | null) {
   const doc = document as VTDocument;

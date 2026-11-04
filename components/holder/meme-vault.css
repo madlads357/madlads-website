@@ -1,0 +1,74 @@
+/* Meme vault (MemeVault.tsx): the same paper world as the passport and the dressing room. */
+
+.mv-room,
+.mv-paper {
+  background: #f6f1e8 url(/passport/paper.jpg) 0 0 / 420px;
+}
+.mv-room {
+  animation: mv-in 260ms ease-out both;
+}
+@keyframes mv-in {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}
+
+/* A meme pinned on the wall: a white print, a little tilted, its author written under it */
+.mv-print {
+  padding: 8px 8px 6px;
+  background: #ffffff;
+  border-radius: 6px;
+  transform: rotate(var(--tilt, 0deg));
+  box-shadow:
+    0 1px 0 rgba(17, 17, 17, 0.05),
+    0 14px 26px -16px rgba(60, 20, 10, 0.45);
+  transition:
+    transform 0.35s cubic-bezier(0.3, 1.4, 0.5, 1),
+    box-shadow 0.35s ease;
+}
+.mv-print:hover,
+.mv-print:focus-visible {
+  transform: rotate(0deg) translateY(-4px) scale(1.02);
+  box-shadow:
+    0 1px 0 rgba(17, 17, 17, 0.05),
+    0 26px 40px -20px rgba(60, 20, 10, 0.55);
+}
+.mv-print:active {
+  transform: rotate(0deg) scale(0.99);
+}
+
+/* Prints rise in as they scroll into view (the wall is its own scroller, so view() follows it) */
+@supports (animation-timeline: view()) {
+  .mv-rise {
+    animation: mv-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 40%;
+  }
+}
+@keyframes mv-rise {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+}
+
+/* The large view: the same print, bigger */
+.mv-large {
+  padding: 12px 12px 10px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow:
+    0 2px 0 rgba(17, 17, 17, 0.04),
+    0 30px 60px -28px rgba(60, 20, 10, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mv-room,
+  .mv-rise {
+    animation: none;
+  }
+  .mv-print {
+    transition: none;
+  }
+}
