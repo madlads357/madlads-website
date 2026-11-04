@@ -4,10 +4,11 @@ import { links } from "@/data/site";
 // Add an object: drop its image in public/holders/bag/ (transparent WebP) and add a line here.
 //   open: "passport"  opens the Lads Passport (a window on the page)
 //         "memes"     opens the meme vault (a window on the page)
+//         "dressing"  opens the Dressing Room (a window on the page)
 //         a URL       opens that page in a new tab
 //         null        not available yet: shown greyed out with "Soon"
-export type BagWindow = "passport" | "memes";
-export const isBagWindow = (open: string | null): open is BagWindow => open === "passport" || open === "memes";
+export type BagWindow = "passport" | "memes" | "dressing";
+export const isBagWindow = (open: string | null): open is BagWindow => open === "passport" || open === "memes" || open === "dressing";
 
 export type BagItem = {
   id: string;
@@ -25,6 +26,7 @@ const HUB = "https://www.madlads-hub.xyz"; // the Culture Hub, until it moves in
 
 export const bagItems: BagItem[] = [
   { id: "passport", label: "Passport", hint: "Your Lads Passport", image: "/holders/bag/passport.webp", w: 491, h: 560, open: "passport", tilt: -6, scale: 1 },
+  { id: "dressing", label: "Dressing room", hint: "Dress up your Lad", image: "/holders/bag/hanger.webp", w: 460, h: 560, open: "dressing", tilt: 6, scale: 1 },
   { id: "news", label: "Mad News", hint: "The monthly newsletter", image: "/holders/bag/newspaper.webp", w: 560, h: 286, open: links.newsletter, tilt: -3, scale: 1 },
   { id: "discord", label: "Discord", hint: "Talk to the Lads", image: "/holders/bag/walkie-talkie.webp", w: 391, h: 560, open: links.discord, tilt: 8, scale: 1.15 },
   { id: "playlist", label: "Playlist", hint: "The Mad Lads mix", image: "/holders/bag/cassette.webp", w: 560, h: 378, open: `${HUB}/playlist`, tilt: 5, scale: 0.96 },

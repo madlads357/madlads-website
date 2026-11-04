@@ -41,7 +41,8 @@ Every setting is described in `.env.example`.
 - [ ] At the first real Matrica login, check in `lib/auth/matrica.ts` that `UserWallet.id` is the wallet address (needed for "Days Mad").
 - [x] Database (Neon) connected; tables created with `npm run db:setup` (db/schema.sql).
 - [ ] If production uses a different Neon database or branch than .env.local, run `npm run db:setup` against it once (with its DATABASE_URL).
-- [ ] Passport role stamps: get the Mad Lads Discord server ID from the CM and set `MADLADS_DISCORD_SERVER_ID` in Vercel. Optional: `MADLADS_STAMP_ROLES` = the roles that earn a stamp, most important first (e.g. "OG,Mad Coach").
+- [x] Mad Lads Discord server ID: 971847939456639047 (in .env.local; set `MADLADS_DISCORD_SERVER_ID` in Vercel).
+- [ ] Optional: `MADLADS_STAMP_ROLES` in Vercel = the roles that earn a passport stamp, most important first (e.g. "OG,Mad Coach"). Without it, any of the holder's roles on the server can be stamped.
 - [ ] At the first real login, check that Matrica returns the X handle and the Discord roles with the scopes asked (`socials.twitter socials.discord`, in `lib/auth/config.ts`).
-- [ ] Decide what else goes in the holder area. Done: memes (the meme vault, 326 memes moved from the hub). Still on the hub: playlist, mini-games.
+- [ ] Decide what else goes in the holder area. Done: memes (meme vault, 326 memes) and the Dressing Room (15 accessories), both moved from the hub. Still on the hub: playlist, mini-games, events, directory.
 - [ ] Add the Culture Hub ticket to the backpack (`data/bag.ts`) once its image exists.

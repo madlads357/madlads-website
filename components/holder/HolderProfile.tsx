@@ -8,6 +8,7 @@ import { PassportWindow } from "@/components/passport/PassportWindow";
 import { LockIcon } from "@/components/Icons";
 import { bagItems, isBagWindow, type BagItem, type BagWindow } from "@/data/bag";
 import { MemeVault } from "./MemeVault";
+import { DressingRoom } from "./DressingRoom";
 import { PHOTO_EVENT, PHOTO_KEY } from "@/lib/auth/hint";
 import "./bag.css";
 
@@ -27,7 +28,7 @@ const STICKY = { top: 110, pad: 40 };
 
 export function HolderProfile({ name, handle, since, roles, lads, photo: saved }: Props) {
   const [photo, setPhoto] = useState(saved ?? lads[0]);
-  const [windowOpen, setWindowOpen] = useState<BagWindow | null>(null); // the passport or the meme vault
+  const [windowOpen, setWindowOpen] = useState<BagWindow | null>(null); // passport, meme vault or dressing room
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => window.scrollY > 60 && setScrolled(true);
@@ -99,6 +100,7 @@ export function HolderProfile({ name, handle, since, roles, lads, photo: saved }
 
       {windowOpen === "passport" && <PassportWindow data={{ name, handle, since, roles, lads, photo }} onClose={closeWindow} />}
       {windowOpen === "memes" && <MemeVault onClose={closeWindow} />}
+      {windowOpen === "dressing" && <DressingRoom lads={lads} photo={photo} onClose={closeWindow} />}
     </div>
   );
 }
@@ -231,7 +233,7 @@ function Item({ item, onOpen }: { item: BagItem; onOpen: (w: BagWindow) => void 
   if (isBagWindow(item.open)) {
     const w = item.open;
     return (
-      <button type="button" onClick={() => onOpen(w)} className={cls} aria-label={w === "passport" ? "Open your Lads Passport" : "Open the meme vault"}>
+      <button type="button" onClick={() => onOpen(w)} className={cls} aria-label={{ passport: "Open your Lads Passport", memes: "Open the meme vault", dressing: "Open the dressing room" }[w]}>
         {body}
       </button>
     );
