@@ -481,7 +481,7 @@ function PromoCard() {
       />
       <span className="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
       <span className="t-eyebrow text-white/70">The Lore</span>
-      <span className="mt-2 text-2xl leading-tight font-bold tracking-tight md:text-3xl">From the mint to the Mad King.</span>
+      <span className="mt-2 text-2xl leading-tight font-bold tracking-tight md:text-3xl">From the mint to the MAD King.</span>
       <span className="mt-3 inline-flex items-center gap-2 text-sm font-semibold">
         Read the story <span className="transition-transform group-hover:translate-x-1">→</span>
       </span>
