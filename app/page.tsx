@@ -7,9 +7,9 @@ import { Section, SectionHeader } from "@/components/Section";
 import { RosterPreview } from "@/components/RosterPreview";
 import { ArtCard } from "@/components/ArtCard";
 import { LogoStacked } from "@/components/Logo";
-import { LockIcon } from "@/components/Icons";
 import { perks } from "@/data/holders";
 import { LadsMarquee } from "@/components/Marquee";
+import { ladImage } from "@/data/lads";
 import { CountUp } from "@/components/CountUp";
 import { Faq } from "@/components/Faq";
 import { ScrollWords } from "@/components/ScrollWords";
@@ -116,7 +116,7 @@ function Roster() {
           <br />
           LADS
         </h2>
-        <p className="text-muted">10,000 unique Lads, Lassies and a few Skulls. Different backgrounds, same energy.</p>
+        <p className="text-muted">10,000 unique LADS, Lassies and a few Skulls. Different backgrounds, same energy.</p>
         <div>
           <Button href="/madlads" variant="secondary">
             Explore all MAD LADS →
@@ -244,7 +244,7 @@ function Art() {
               <LogoStacked className="reveal-rise h-[560px] w-auto text-ink" title="" />
             </div>
             <p className="t-eyebrow text-accent">Behind the art</p>
-            <p className="text-[40px] leading-none font-bold tracking-[-0.03em]">Every Lad starts as a sketch.</p>
+            <p className="text-[40px] leading-none font-bold tracking-[-0.03em]">Every LAD starts as a sketch.</p>
             <p className="t-body-l text-muted">Previews, studies and special pieces from the artists who shape the MAD LADS universe.</p>
           </div>
         </div>
@@ -263,35 +263,93 @@ function SubHeader({ label, note }: { label: string; note: string }) {
 }
 
 /* ------------------------------------------------------------- Holders */
-function Holders() {
+// What holding gets you (copy and background images in data/holders.ts). The crew comes first as the
+// big card; the other perks sit beside it as smaller cards. All three share the same dark, blurred look.
+
+// Blurred LADS (none of them from the marquee or the roster) and a meetup photo scattered over the whole
+// Holders section, behind the header and the cards. Decorative only: phones get 4 small, faint tiles
+// around the edges; the full set shows from md/lg.
+const holderDecor = [
+  { src: ladImage(1070), cls: "top-2 left-1/2 size-20 -translate-x-1/2 -rotate-6 blur-[3px] opacity-30 md:top-8 md:size-40 md:blur-sm md:opacity-50" },
+  { src: ladImage(905), cls: "top-4 -right-6 size-20 -rotate-6 blur-[3px] opacity-30 md:top-6 md:right-[3%] md:size-32 md:blur-sm md:opacity-50" },
+  { src: ladImage(1337), cls: "top-[48%] -left-6 size-20 rotate-6 blur-[3px] opacity-30 md:hidden lg:top-[45%] lg:-left-12 lg:block lg:size-36 lg:opacity-60" },
+  { src: ladImage(6738), cls: "top-[72%] -right-6 size-24 -rotate-6 blur-[3px] opacity-30 md:hidden lg:top-[52%] lg:-right-12 lg:block lg:size-36 lg:opacity-60" },
+  { src: "/irl/hanoi-meetup.jpg", cls: "hidden bottom-6 left-[20%] h-28 w-48 -rotate-3 blur-md opacity-35 lg:block" },
+  { src: ladImage(2968), cls: "hidden right-[8%] bottom-6 size-40 rotate-12 blur-md opacity-50 md:block" },
+];
+
+function HolderDecor() {
   return (
-    <Section id="holders" tone="sunken">
-      <SectionHeader eyebrow="05 / Holders" title="For the holders" text="More than a collection. Log in with Matrica to unlock what’s next." />
-      <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-        {perks.map(({ Icon, title, text }, i) => (
-          <li key={title} className="reveal flex flex-col gap-3" style={{ "--i": i } as CSSProperties}>
-            <Icon className="size-8" />
-            <p className="text-xl font-semibold tracking-tight">{title}</p>
-            <p className="text-muted">{text}</p>
-          </li>
-        ))}
-      </ul>
-      <div className="reveal mt-12 grid items-center gap-5 rounded-lg bg-surface p-6 md:p-8 lg:grid-cols-[300px_1fr_1fr_1fr]">
-        <div className="flex flex-col gap-4">
-          <p className="t-h3">Holder-only</p>
-          <p className="text-muted">A preview of what’s behind the wall. Connect through Matrica, no wallet pop-ups.</p>
-          <div>
-            <Button href={links.matricaLogin}>Login with Matrica</Button>
-          </div>
+    <div className="pointer-events-none absolute inset-0 select-none" aria-hidden>
+      {holderDecor.map(({ src, cls }) => (
+        <div key={src} className={`absolute overflow-hidden rounded-2xl ${cls}`}>
+          <Image src={src} alt="" fill sizes="224px" className="object-cover" />
         </div>
-        {["/lads/956.jpg", "/lads/638.jpg", "/lads/1742.jpg"].map((src) => (
-          <div key={src} className="relative h-[220px] overflow-hidden rounded-[4px]">
-            <Image src={src} alt="" fill sizes="25vw" className="scale-125 object-cover blur-2xl" />
-            <span className="absolute inset-0 m-auto grid size-12 place-items-center rounded-full bg-white">
-              <LockIcon className="size-6" />
-            </span>
+      ))}
+    </div>
+  );
+}
+
+// The blurred photo + dark gradient behind every holder card, so white text stays readable.
+function CardBackdrop({ src, sizes, position = "object-center", overlay = "from-black/90 via-black/60 to-black/30" }: { src: string; sizes: string; position?: string; overlay?: string }) {
+  return (
+    <>
+      <Image src={src} alt="" fill sizes={sizes} className={`-z-20 scale-105 object-cover blur-[2px] transition-transform duration-700 group-hover/card:scale-110 ${position}`} />
+      <div className={`absolute inset-0 -z-10 bg-gradient-to-t ${overlay}`} aria-hidden />
+    </>
+  );
+}
+
+function Holders() {
+  const [crew, ...more] = perks;
+  return (
+    <Section id="holders" tone="sunken" className="relative isolate overflow-hidden">
+      <HolderDecor />
+      <div className="relative z-10">
+        <SectionHeader
+          eyebrow="05 / Holders"
+          title="For the holders"
+          text="Hold a LAD, join the crew. Log in with Matrica: no wallet pop-ups, nothing to sign."
+          action={<Button href={links.matricaLogin}>Login with Matrica</Button>}
+        />
+        <div className="relative grid gap-4 lg:grid-cols-[1.35fr_1fr] lg:grid-rows-2 lg:gap-6">
+          {/* 01 - The crew, front and centre */}
+          <div className="reveal lg:row-span-2">
+            <article className="group/card relative isolate flex h-full min-h-[300px] flex-col justify-end overflow-hidden rounded-2xl bg-[#1a0508] p-6 text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-18px_rgba(17,17,17,0.6)] md:min-h-[340px] md:p-8">
+              <CardBackdrop src={crew.image} sizes="(min-width: 1024px) 56vw, 100vw" />
+              <h3 className="t-h3 max-w-[520px]">{crew.title}</h3>
+              <p className="mt-2 max-w-[440px] text-white/80">{crew.text}</p>
+              <div className="mt-5">
+                <Button href={links.discord} variant="inverse-red" external>
+                  Meet the MAD LADS ↗
+                </Button>
+              </div>
+            </article>
           </div>
-        ))}
+
+          {/* 02, 03 - Collabs & giveaways, community tools. Staggered only side by side (lg); stacked on phones each
+              card fades in on its own, so the last one isn't left half-transparent. */}
+          {more.map(({ title, text, image, objectPosition, overlay, tags }, i) => (
+            <div key={title} className={`reveal ${i === 0 ? "lg:[--i:1]" : "lg:[--i:2]"}`}>
+              <article className="group/card relative isolate flex h-full min-h-[150px] flex-col justify-end overflow-hidden rounded-2xl bg-[#1a0508] p-5 text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-18px_rgba(17,17,17,0.6)] md:p-6">
+                <CardBackdrop src={image} sizes="(min-width: 1024px) 40vw, 100vw" position={objectPosition} overlay={overlay} />
+                <div className="flex flex-col gap-2">
+                  <h3 className="t-h3">{title}</h3>
+                  <p className="text-white/80">{text}</p>
+                  {tags && (
+                    <ul className="mt-2 flex flex-wrap gap-2">
+                      {tags.map((t) => (
+                        <li key={t} className="rounded-full border border-white/30 bg-black/30 px-3 py-1.5 text-sm font-medium text-white backdrop-blur-sm">
+                          {t}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </article>
+            </div>
+          ))}
+        </div>
       </div>
     </Section>
   );
@@ -361,7 +419,7 @@ function BackpackBand() {
 const faq = [
   {
     q: "What is MAD LADS?",
-    a: "A collection of 10,000 illustrated characters (Lads, Lassies and a few Skulls) on Solana. It launched in April 2023 as the first collection of executable NFTs (xNFTs), made by Coral, the team behind Backpack.",
+    a: "A collection of 10,000 illustrated characters (LADS, Lassies and a few Skulls) on Solana. It launched in April 2023 as the first collection of executable NFTs (xNFTs), made by Coral, the team behind Backpack.",
   },
   {
     q: "What is the link with Backpack?",
@@ -372,14 +430,14 @@ const faq = [
     a: "MAD LADS trade on NFT marketplaces such as Magic Eden and Tensor. Always check you are on the verified MAD LADS collection before buying.",
   },
   {
-    q: "How do I trade a Lad peer-to-peer safely?",
+    q: "How do I trade a LAD peer-to-peer safely?",
     a: (
       <>
         Only use{" "}
         <a href={links.foxySwap} target="_blank" rel="noopener noreferrer" className="font-medium text-ink underline underline-offset-2 hover:text-accent">
           FoxySwap
         </a>{" "}
-        by the Famous Fox Federation: both sides lock their items and the swap only happens when both agree. Never send a Lad directly to someone, and never trust a DM offering a deal. The team will never message you first.
+        by the Famous Fox Federation: both sides lock their items and the swap only happens when both agree. Never send a LAD directly to someone, and never trust a DM offering a deal. The team will never message you first.
       </>
     ),
   },
@@ -389,7 +447,7 @@ const faq = [
   },
   {
     q: "What are the honoraries and 1/1s?",
-    a: "One-of-one pieces the team drew for legends and friends of the community, like Meltem Demirors, Toly and Iggy Azalea. Some special Lads were also made for raffles and collaborations.",
+    a: "One-of-one pieces the team drew for legends and friends of the community, like Meltem Demirors, Toly and Iggy Azalea. Some special LADS were also made for raffles and collaborations.",
   },
   {
     q: "I’m a journalist. Where are the brand assets?",

@@ -27,8 +27,8 @@ const sections: LegalSection[] = [
     body: (
       <>
         <p>
-          This policy explains what happens to your data when you visit madlads.com, the website of Mad Lads, the NFT collection by Backpack. “We” means the
-          Mad Lads team at Backpack.
+          This policy explains what happens to your data when you visit madlads.com, the website of MAD LADS, the NFT collection by Backpack. “We” means the
+          MAD LADS team at Backpack.
         </p>
         <ul>
           <li>You don’t need an account or a wallet to browse the site.</li>
@@ -68,7 +68,7 @@ const sections: LegalSection[] = [
             <strong>ml_session</strong>: keeps you logged in (encrypted, unreadable by the page). Deleted when you log out, or after 8 hours.
           </li>
           <li>
-            <strong>ml_user</strong>: your name and the number of your passport Lad, so the menu bar can show them. Same lifetime as ml_session.
+            <strong>ml_user</strong>: your name and the number of your passport LAD, so the menu bar can show them. Same lifetime as ml_session.
           </li>
         </ul>
         <p>
@@ -88,7 +88,7 @@ const sections: LegalSection[] = [
           {ext("https://policies.google.com/privacy", "privacy policy")} applies to that video.
         </p>
         <p>
-          Thumbnails of the art and the news covers are fetched by our server, so your browser doesn’t contact those sources. When you open a Mad Lad at full
+          Thumbnails of the art and the news covers are fetched by our server, so your browser doesn’t contact those sources. When you open a MAD LADS at full
           size, the original image loads directly from the collection’s public storage on Amazon Web Services.
         </p>
       </>
@@ -99,8 +99,8 @@ const sections: LegalSection[] = [
     title: "Other sites",
     body: (
       <p>
-        When you follow a link to another service, like Mad News on Substack, Magic Eden, Tensor, FoxySwap, Backpack, X or Discord, that service’s own privacy
-        policy applies. Subscribing to {ext(links.newsletter, "Mad News")} happens on Substack, not on this site.
+        When you follow a link to another service, like MAD News on Substack, Magic Eden, Tensor, FoxySwap, Backpack, X or Discord, that service’s own privacy
+        policy applies. Subscribing to {ext(links.newsletter, "MAD News")} happens on Substack, not on this site.
       </p>
     ),
   },
@@ -115,12 +115,12 @@ const sections: LegalSection[] = [
         </p>
         <ul>
           <li>your Matrica user ID and name;</li>
-          <li>the Mad Lads held in the wallets you linked to Matrica, and the addresses of those wallets;</li>
+          <li>the MAD LADS held in the wallets you linked to Matrica, and the addresses of those wallets;</li>
           <li>your X handle, shown on your passport;</li>
-          <li>your roles on the Mad Lads Discord server, shown as stamps on your passport.</li>
+          <li>your roles on the MAD LADS Discord server, shown as stamps on your passport.</li>
         </ul>
         <p>
-          To work out since when you hold a Mad Lad (“Mad since”), your wallet addresses are sent to {ext("https://www.helius.dev", "Helius")}, a Solana data
+          To work out since when you hold a MAD LADS (“MAD since”), your wallet addresses are sent to {ext("https://www.helius.dev", "Helius")}, a Solana data
           service, which reads the public blockchain. This happens at login, at most once a week. We don’t store your wallet addresses, and we never ask you to
           sign anything or connect a wallet.
         </p>
@@ -133,7 +133,7 @@ const sections: LegalSection[] = [
     body: (
       <>
         <p>
-          For holders who log in, our database keeps your Matrica user ID, the Lad you chose as passport photo and your “Mad since” date, so they follow you on
+          For holders who log in, our database keeps your Matrica user ID, the LAD you chose as passport photo and your “MAD since” date, so they follow you on
           every device. The database is hosted by {ext("https://neon.com", "Neon")} in the European Union (Frankfurt).
         </p>
         <p>
@@ -149,7 +149,7 @@ const sections: LegalSection[] = [
       <>
         <p>
           When you open your passport, the site prepares a public link to it (madlads.com/p/…). Anyone with that link can see your passport: your name, X handle,
-          passport Lad, number of Lads, “Mad since” and stamps. Nothing else, and never your wallet addresses.
+          passport LAD, number of LADS, “MAD since” and stamps. Nothing else, and never your wallet addresses.
         </p>
         <p>
           We store that passport with the link and count how many times it was opened. You can stop sharing at any time from your passport (Copy, then “Stop

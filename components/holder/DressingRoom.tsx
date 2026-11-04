@@ -167,13 +167,13 @@ export function DressingRoom({ lads, photo, onClose }: { lads: number[]; photo: 
             onPointerLeave={() => setPeek(false)}
             onPointerCancel={() => setPeek(false)}
             onContextMenu={(e) => e.preventDefault()}
-            aria-label="Press and hold to compare with the Lad as it is"
+            aria-label="Press and hold to compare with the LAD as it is"
           >
             <span className="absolute inset-[10px] overflow-hidden rounded-[4px] bg-sunken">
               <Image
                 key={lad}
                 src={originalImage(lad)}
-                alt={`Mad Lad #${lad}`}
+                alt={`MAD LADS #${lad}`}
                 fill
                 priority
                 quality={75}
@@ -192,9 +192,9 @@ export function DressingRoom({ lads, photo, onClose }: { lads: number[]; photo: 
             <span className="dr-tag absolute -bottom-3 left-5 rounded-[3px] bg-red px-2.5 py-1 text-xs font-bold tracking-wide text-white tabular-nums">#{lad}</span>
           </button>
           <p className="flex items-center gap-3 text-xs text-muted">
-            {peek ? "The Lad as it is." : active.length ? "Press and hold to compare." : "Pick a sticker to dress it up."}
+            {peek ? "The LAD as it is." : active.length ? "Press and hold to compare." : "Pick a sticker to dress it up."}
             <button type="button" onClick={changeLad} className="font-semibold text-accent underline underline-offset-4 md:hidden">
-              Change Lad
+              Change LAD
             </button>
           </p>
         </div>
@@ -204,7 +204,7 @@ export function DressingRoom({ lads, photo, onClose }: { lads: number[]; photo: 
           <div className="thin-scroll -mr-2 flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto pr-2 pb-2">
             {/* on phones the stickers come first: they are what you came for */}
             <section ref={ladsSection} className="flex scroll-mt-2 flex-col gap-3 max-md:order-last">
-              <h3 className="t-eyebrow text-muted">Your Lads</h3>
+              <h3 className="t-eyebrow text-muted">Your LADS</h3>
               <div className="flex flex-wrap gap-2">
                 {lads.map((id) => (
                   <button
@@ -212,7 +212,7 @@ export function DressingRoom({ lads, photo, onClose }: { lads: number[]; photo: 
                     type="button"
                     onClick={() => setLad(id)}
                     aria-pressed={lad === id}
-                    aria-label={`Dress Mad Lad #${id}`}
+                    aria-label={`Dress MAD LADS #${id}`}
                     className={`relative size-14 overflow-hidden rounded-lg bg-sunken ring-2 transition ${lad === id ? "-translate-y-0.5 shadow-md ring-red" : "ring-transparent hover:-translate-y-0.5 hover:ring-ink/30"}`}
                   >
                     <Image src={thumbImage(id)} alt="" fill sizes="56px" quality={70} className="object-cover" />
@@ -229,7 +229,7 @@ export function DressingRoom({ lads, photo, onClose }: { lads: number[]; photo: 
                   inputMode="numeric"
                   value={query}
                   onChange={(e) => setQuery(e.target.value.replace(/\D/g, "").slice(0, 4))}
-                  placeholder="Any Lad, e.g. 5894"
+                  placeholder="Any LAD, e.g. 5894"
                   className="min-w-0 flex-1 rounded-[4px] bg-surface px-4 py-3 text-sm ring-1 ring-line outline-none placeholder:text-muted focus:ring-2 focus:ring-ink"
                 />
                 <button type="submit" className="rounded-[4px] border-[1.5px] border-ink px-4 text-sm font-semibold transition-colors hover:bg-ink hover:text-white">
@@ -242,7 +242,7 @@ export function DressingRoom({ lads, photo, onClose }: { lads: number[]; photo: 
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <h3 className="t-eyebrow text-muted">Stickers{active.length ? ` · ${active.length} on` : ""}</h3>
                 <div className="flex items-center gap-3">
-                  <div className="flex rounded-full bg-ink/[0.06] p-1 text-xs font-semibold" role="group" aria-label="Lad or Lassie">
+                  <div className="flex rounded-full bg-ink/[0.06] p-1 text-xs font-semibold" role="group" aria-label="LAD or Lassie">
                     {[false, true].map((w) => (
                       <button
                         key={String(w)}
@@ -251,7 +251,7 @@ export function DressingRoom({ lads, photo, onClose }: { lads: number[]; photo: 
                         onClick={() => setLassie(w)}
                         className={`rounded-full px-3.5 py-1.5 transition ${lassie === w ? "bg-surface shadow-sm" : "text-muted hover:text-ink"}`}
                       >
-                        {w ? "Lassie" : "Lad"}
+                        {w ? "Lassie" : "LAD"}
                       </button>
                     ))}
                   </div>

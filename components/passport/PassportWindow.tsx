@@ -88,7 +88,7 @@ export function PassportWindow({ data, onClose }: { data: PassportData; onClose:
   }, []);
 
   const days = data.since ? Math.floor((Date.now() - new Date(data.since).getTime()) / 86_400_000) : null;
-  const message = `My Lads Passport.${days ? ` ${days.toLocaleString("en-US")} days MAD.` : ""} Fock it.`;
+  const message = `My MAD LADS Passport.${days ? ` ${days.toLocaleString("en-US")} days MAD.` : ""} Fock it.`;
   const url = link ?? window.location.origin;
   const say = (text: string) => {
     setNote(text);
@@ -106,7 +106,7 @@ export function PassportWindow({ data, onClose }: { data: PassportData; onClose:
   const share = async () => {
     if (!shareFile) return;
     try {
-      await navigator.share({ files: [shareFile], text: `${message} ${url}`, title: "My Lads Passport" });
+      await navigator.share({ files: [shareFile], text: `${message} ${url}`, title: "My MAD LADS Passport" });
     } catch {
       /* closed the share sheet: nothing to do */
     }
@@ -150,9 +150,9 @@ export function PassportWindow({ data, onClose }: { data: PassportData; onClose:
   const secondary = `${pill} bg-white/10 ring-1 ring-white/25 hover:bg-white/20`;
 
   return (
-    <div ref={root} className="fixed inset-0 z-[80] flex flex-col bg-[#1a0508]/90 text-white backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Your Lads Passport" data-lenis-prevent>
+    <div ref={root} className="fixed inset-0 z-[80] flex flex-col bg-[#1a0508]/90 text-white backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Your MAD LADS Passport" data-lenis-prevent>
       <header className="flex items-center justify-between gap-4 px-4 pt-[max(12px,env(safe-area-inset-top))] pb-3 md:px-6">
-        <p className="t-eyebrow text-white/60">Your Lads Passport</p>
+        <p className="t-eyebrow text-white/60">Your MAD LADS Passport</p>
         {video.step === "ready" && (
           <div className="flex rounded-full bg-white/10 p-1 text-sm font-semibold" role="tablist" aria-label="Show">
             {(["passport", "video"] as const).map((v) => (

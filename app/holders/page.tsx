@@ -86,9 +86,9 @@ function LoggedOut({ error }: { error?: string }) {
 
 function NoLads({ session }: { session: HolderSession }) {
   return (
-    <Shell title="No Lad found.">
+    <Shell title="No LAD found.">
       <p className="t-body-l text-muted">
-        Hey {session.name}, we couldn’t find a MAD LADS in the wallets linked to your Matrica account. If your LADS is in another wallet, link it on Matrica, then
+        Hey {session.name}, we couldn’t find a MAD LADS in the wallets linked to your Matrica account. If your LAD is in another wallet, link it on Matrica, then
         log in again.
       </p>
       <div className="flex flex-wrap gap-3">
@@ -123,7 +123,7 @@ function Holder({ session }: { session: HolderSession }) {
 function Perks() {
   return (
     <section className="bg-sunken px-4 py-20 md:px-page md:py-section" aria-label="What holders get">
-      <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      <ul className="grid gap-10 md:grid-cols-3">
         {perks.map(({ Icon, title, text }) => (
           <li key={title} className="flex flex-col gap-3">
             <Icon className="size-8" />

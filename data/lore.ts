@@ -31,7 +31,7 @@ export type Chapter = {
 };
 
 export const loreIntro =
-  "From a chaotic mint in April 2023 to the Backpack token in 2026: how 10,000 misfits became the flagship of Backpack, one Mad moment at a time.";
+  "From a chaotic mint in April 2023 to the Backpack token in 2026: how 10,000 misfits became the flagship of Backpack, one MAD moment at a time.";
 
 const img = (src: string, w: number, h: number, caption: string, alt: string): LoreImage => ({ kind: "image", src, w, h, caption, alt });
 
@@ -48,7 +48,7 @@ export const chapters: Chapter[] = [
       "Apr 20, 2023 — A massive DDoS pushes the public mint back",
       "Apr 21, 2023 — Public mint, and a honeypot for the bots",
     ],
-    image: { src: "/lads/9366.jpg", alt: "Mad Lad #9366 in a fedora on a red background" },
+    image: { src: "/lads/9366.jpg", alt: "MAD LADS #9366 in a fedora on a red background" },
     media: [
       {
         kind: "tweet",
@@ -101,7 +101,7 @@ export const chapters: Chapter[] = [
     number: "03",
     title: "Rear wings & Rickrolls",
     dates: "Fall 2023",
-    body: "The Lads turn every vote into a raid. They win Kraken’s #RearWingTakeover, and MAD LADS #8731 rides the rear wing of a Williams F1 car at the Austin Grand Prix. Holders wait for big October news and get Rickrolled instead. Meanwhile, collection locking makes LADS among the safest NFTs on Solana.",
+    body: "The LADS turn every vote into a raid. They win Kraken’s #RearWingTakeover, and MAD LADS #8731 rides the rear wing of a Williams F1 car at the Austin Grand Prix. Holders wait for big October news and get Rickrolled instead. Meanwhile, collection locking makes LADS among the safest NFTs on Solana.",
     moments: [
       "Sep 2023 — MadderCrab David becomes an honorary LAD",
       "Oct 2023 — The Rickroll: “See you at Breakpoint”",
@@ -131,7 +131,7 @@ export const chapters: Chapter[] = [
     image: { src: "/lore/breakpoint-booth.jpg", alt: "The Backpack booth at Breakpoint Amsterdam with two MAD Skull standees and Fock it cards" },
     media: [
       img("/lore/breakpoint-amsterdam.jpg", 1290, 650, "MAD LADS Amsterdam", "Illustration of MAD LADS walking through a foggy Amsterdam street"),
-      img("/lore/fock-it-cards.jpg", 1400, 649, "The Fock it playing cards, with MAD LADS as the face cards", "MAD LADS playing card deck with Lads and Lassies on the cards"),
+      img("/lore/fock-it-cards.jpg", 1400, 649, "The Fock it playing cards, with MAD LADS as the face cards", "MAD LADS playing card deck with LADS and Lassies on the cards"),
       img("/lore/exchange-first-users.jpg", 734, 724, "First reviews of Backpack Exchange", "Tweets from early users praising the Backpack Exchange sign-up"),
     ],
   },
@@ -140,7 +140,7 @@ export const chapters: Chapter[] = [
     number: "05",
     title: "Laddrop season",
     dates: "Early 2024",
-    body: "2024 opens with airdrop after airdrop. Holding a LAD means badges in its soulbound inventory, then tokens from Wormhole, Dymension, Parcl, Sharky and more. And the Lads take the show on the road: a pop-up in Seoul, NFT.NYC in Times Square, a token-gated Discord filling up live during TOKEN2049 Dubai, a nightclub in Manila and a first birthday in Tokyo.",
+    body: "2024 opens with airdrop after airdrop. Holding a LAD means badges in its soulbound inventory, then tokens from Wormhole, Dymension, Parcl, Sharky and more. And the LADS take the show on the road: a pop-up in Seoul, NFT.NYC in Times Square, a token-gated Discord filling up live during TOKEN2049 Dubai, a nightclub in Manila and a first birthday in Tokyo.",
     moments: [
       "Mar 2024 — The Wormhole badge lands in eligible LADS",
       "Mar 2024 — The MAD Seoul pop-up",
@@ -166,7 +166,7 @@ export const chapters: Chapter[] = [
     number: "06",
     title: "LADS everywhere",
     dates: "Late 2024",
-    body: "Armani headlines the Solana Summit in Kuala Lumpur, and the meetups never stop: Hanoi, Taipei, then Ho Chi Minh City, Madrid and Lagos on the very same September day. Haliey Welch becomes honorary #6, holders get a custom Keystone wallet, and Pudgy Penguins send $PENGU to the Lads. At the end of the year, co-founder Tristan Yver steps back to an advisory role.",
+    body: "Armani headlines the Solana Summit in Kuala Lumpur, and the meetups never stop: Hanoi, Taipei, then Ho Chi Minh City, Madrid and Lagos on the very same September day. Haliey Welch becomes honorary #6, holders get a custom Keystone wallet, and Pudgy Penguins send $PENGU to the LADS. At the end of the year, co-founder Tristan Yver steps back to an advisory role.",
     moments: [
       "Jun 2024 — Armani on stage at the Solana Summit in Kuala Lumpur",
       "Aug 2024 — MAD Night in Taipei, and Haliey Welch becomes honorary #6",
@@ -179,7 +179,7 @@ export const chapters: Chapter[] = [
       img("/lore/solana-summit-armani.jpg", 1400, 1748, "Armani, speaker at the Solana Summit in Kuala Lumpur", "Solana Summit speaker card for Armani Ferrante with his MAD LADS"),
       img("/lore/hcmc-meetup.jpg", 637, 498, "200+ holders in Ho Chi Minh City", "Tweet with photos of the MAD LADS and Backpack venue in Ho Chi Minh City"),
       img("/lore/madrid-meetup.jpg", 640, 627, "A token-gated night in Madrid", "Tweet with photos of the MAD LADS event in Madrid"),
-      img("/lore/lagos-meetup.jpg", 550, 800, "MAD LADS Africa, Lagos", "MAD LADS Lagos backdrop with a backpack and Lads illustrations"),
+      img("/lore/lagos-meetup.jpg", 550, 800, "MAD LADS Africa, Lagos", "MAD LADS Lagos backdrop with a backpack and LADS illustrations"),
       img("/lore/haliey-honorary.jpg", 720, 900, "Haliey Welch, honorary #6", "Honorary MAD Lassie of Haliey Welch in a cowboy hat"),
       img("/lore/keystone-wallet.jpg", 1400, 1660, "A custom Keystone hardware wallet for holders", "Keystone hardware wallet with a MAD Lassie printed on the back"),
       img("/lore/pengu-fock-it.jpg", 1280, 1280, "Pudgy Penguins send $PENGU, in a Fock it hoodie", "Pudgy Penguin wearing a red MAD LADS beanie and a Fock it hoodie"),
@@ -211,7 +211,7 @@ export const chapters: Chapter[] = [
     number: "08",
     title: "Brick by brick",
     dates: "2025",
-    body: "Backpack builds. It acquires FTX EU, launches Backpack EU and runs four trading Seasons that reward its community. The Lads get their own bomber jacket, the MAD Tour stops in Madrid and Paris, and Armani keeps teasing merch, down to a pair of Mad Lads Vans.",
+    body: "Backpack builds. It acquires FTX EU, launches Backpack EU and runs four trading Seasons that reward its community. The LADS get their own bomber jacket, the MAD Tour stops in Madrid and Paris, and Armani keeps teasing merch, down to a pair of MAD LADS Vans.",
     moments: [
       "Jan 2025 — Backpack acquires FTX EU",
       "Feb 2025 — The MAD Tour in Madrid and Paris",
@@ -221,7 +221,7 @@ export const chapters: Chapter[] = [
     ],
     image: { src: "/lore/bomber-delivered.jpg", alt: "The MAD LADS bomber jacket unboxed next to some plushies and a pool table" },
     media: [
-      img("/lore/mad-tour-madrid.jpg", 1400, 933, "The MAD Tour: “Not for everyone. For the MAD ones only.”", "Illustration of a Lad with a red backpack looking at Madrid for the MAD Tour"),
+      img("/lore/mad-tour-madrid.jpg", 1400, 933, "The MAD Tour: “Not for everyone. For the MAD ones only.”", "Illustration of a LAD with a red backpack looking at Madrid for the MAD Tour"),
       img("/lore/mad-tour-paris.jpg", 1400, 774, "The red bags line up at NFT Paris", "Row of holders with red Backpack bags in front of the Grande Halle de la Villette"),
       img("/lore/seasons-coming.jpg", 1400, 641, "“The seasons are coming.”", "Illustration of a LAD pointing a sword at a cave full of gold"),
       img("/irl/bomber-teaser.jpg", 1200, 1600, "Armani teasing the bomber, March 2025", "Armani seen from behind wearing the black MAD LADS bomber jacket"),
@@ -234,7 +234,7 @@ export const chapters: Chapter[] = [
     number: "09",
     title: "Three years MAD",
     dates: "2026",
-    body: "The Backpack token goes live on March 23, 2026, with 1% of the supply set aside for MAD LADS holders and no allocation at launch for founders, team or VCs. The community celebrates from Hanoi to Tokyo, MAD Coach takes over as community manager, and four weeks later the Lads turn three. Then Backpack goes after Wall Street: a US-regulated brokerage, tokenized stocks and the first 24/7 market for US equities. The story is just getting started.",
+    body: "The Backpack token goes live on March 23, 2026, with 1% of the supply set aside for MAD LADS holders and no allocation at launch for founders, team or VCs. The community celebrates from Hanoi to Tokyo, MAD Coach takes over as community manager, and four weeks later the LADS turn three. Then Backpack goes after Wall Street: a US-regulated brokerage, tokenized stocks and the first 24/7 market for US equities. The story is just getting started.",
     moments: [
       "Jan 2026 — The token plan: 1% for MAD LADS holders",
       "Mar 23, 2026 — $BP goes live on Solana",

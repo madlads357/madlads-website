@@ -8,7 +8,7 @@ import { collection, ladTraits } from "@/lib/madlads-server";
 
 // Link preview of one Lad's page: the Lad large on the right, its number and key traits on the left.
 // Made the first time it is asked for, then kept.
-export const alt = "A Mad Lad";
+export const alt = "A MAD LADS";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

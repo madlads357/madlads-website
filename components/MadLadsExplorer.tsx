@@ -35,7 +35,7 @@ const SWATCH: Record<string, string> = {
 type Quick = "all" | "lads" | "lassies" | "skulls" | "oneofones";
 const QUICK: { key: Quick; label: string }[] = [
   { key: "all", label: "All" },
-  { key: "lads", label: "Lads" },
+  { key: "lads", label: "LADS" },
   { key: "lassies", label: "Lassies" },
   { key: "skulls", label: "Skulls" },
   { key: "oneofones", label: "1/1s" },
@@ -297,7 +297,7 @@ export function MadLadsExplorer() {
             )}
           </label>
           <p className="hidden shrink-0 px-2 text-sm text-muted md:block" aria-live="polite">
-            <span className="font-semibold text-ink tabular-nums">{data ? fmt(results.length) : "9,971"}</span> {data && results.length === 1 ? "Lad" : "Lads"}
+            <span className="font-semibold text-ink tabular-nums">{data ? fmt(results.length) : "9,971"}</span> {data && results.length === 1 ? "LAD" : "LADS"}
           </p>
           <SortMenu sort={sort} setSort={setSort} />
           <div className="hidden shrink-0 rounded-xl bg-sunken p-1 sm:flex" role="group" aria-label="Grid density">
@@ -426,7 +426,7 @@ function Thumb({ id, priority, sizes }: { id: number; priority?: boolean; sizes?
   return (
     <Image
       src={src}
-      alt={`Mad Lad #${id}`}
+      alt={`MAD LADS #${id}`}
       fill
       sizes={sizes ?? "(min-width: 1536px) 18vw, (min-width: 1280px) 22vw, (min-width: 640px) 30vw, 48vw"}
       quality={70}
@@ -768,7 +768,7 @@ function FilterSheet({ children, onClose, onReset, total, active }: { children: 
             Reset
           </button>
           <button type="button" onClick={onClose} className="h-12 flex-[1.4] rounded-xl bg-accent font-semibold text-white">
-            Show {fmt(total)} Lads
+            Show {fmt(total)} LADS
           </button>
         </div>
       </div>
@@ -852,13 +852,13 @@ export function LadDialog({
           <img
             key={id}
             src={originalImage(id)}
-            alt={`Mad Lad #${id}`}
+            alt={`MAD LADS #${id}`}
             onLoad={() => setLoaded(id)}
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${loaded === id ? "opacity-100" : "opacity-0"}`}
           />
           <div className="absolute inset-x-3 bottom-3 flex justify-between md:inset-x-4 md:bottom-4">
-            <NavButton label="Previous Lad" onClick={onPrev} dir="left" />
-            <NavButton label="Next Lad" onClick={onNext} dir="right" />
+            <NavButton label="Previous LAD" onClick={onPrev} dir="left" />
+            <NavButton label="Next LAD" onClick={onNext} dir="right" />
           </div>
         </div>
         {/* desktop: header, traits (scroll if long), actions always visible at the bottom */}
@@ -879,14 +879,14 @@ export function LadDialog({
               const pct = (share[ti] / total) * 100;
               return (
                 <div key={t.name}>
-                  <TraitCard onClick={onFilter && (() => onFilter(ti, vi))} title={`See every Lad with ${t.name}: ${t.values[vi]}`}>
+                  <TraitCard onClick={onFilter && (() => onFilter(ti, vi))} title={`See every LAD with ${t.name}: ${t.values[vi]}`}>
                     <dt className="t-eyebrow text-muted">{t.name}</dt>
                     <dd className="font-semibold leading-tight">{t.values[vi]}</dd>
                     <dd className="mt-auto pt-1">
                       <span className="block h-1 overflow-hidden rounded-full bg-sunken">
                         <span className="block h-full rounded-full bg-accent" style={{ width: `${Math.max(2, Math.min(100, pct))}%` }} />
                       </span>
-                      <span className="mt-1 block text-[11px] text-muted">{share[ti] === 1 ? "1 of 1" : `${fmt(share[ti])} Lads · ${pct.toFixed(pct < 1 ? 2 : 1)}%`}</span>
+                      <span className="mt-1 block text-[11px] text-muted">{share[ti] === 1 ? "1 of 1" : `${fmt(share[ti])} LADS · ${pct.toFixed(pct < 1 ? 2 : 1)}%`}</span>
                     </dd>
                   </TraitCard>
                 </div>
@@ -897,8 +897,8 @@ export function LadDialog({
             {action}
             <p className="text-xs text-muted">
               {/* keyboard tip on computers, touch tip on phones and tablets */}
-              <span className="pointer-coarse:hidden">Tip: use ← → to browse, Esc to close.{onFilter && " Click a trait to see every Lad that has it."}</span>
-              <span className="hidden pointer-coarse:inline">Tip: swipe the picture to browse, tap outside to close.{onFilter && " Tap a trait to see every Lad that has it."}</span>
+              <span className="pointer-coarse:hidden">Tip: use ← → to browse, Esc to close.{onFilter && " Click a trait to see every LAD that has it."}</span>
+              <span className="hidden pointer-coarse:inline">Tip: swipe the picture to browse, tap outside to close.{onFilter && " Tap a trait to see every LAD that has it."}</span>
             </p>
             <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-accent">
               <Link href={`/madlads/${id}`} className="underline underline-offset-4">

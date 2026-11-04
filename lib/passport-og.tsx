@@ -38,11 +38,11 @@ export async function renderPassportOg(p: SharedPassport | null) {
             ))}
           </svg>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ display: "flex", fontSize: 150, fontWeight: 700, letterSpacing: -7, lineHeight: 0.9 }}>I’m Mad.</div>
-            <div style={{ display: "flex", fontSize: 36, fontWeight: 700, marginTop: 26, color: "#f6f1e8" }}>{p ? `${p.name}’s Lads Passport` : "Lads Passport"}</div>
+            <div style={{ display: "flex", fontSize: 150, fontWeight: 700, letterSpacing: -7, lineHeight: 0.9 }}>I’m MAD.</div>
+            <div style={{ display: "flex", fontSize: 36, fontWeight: 700, marginTop: 26, color: "#f6f1e8" }}>{p ? `${p.name}’s MAD LADS Passport` : "MAD LADS Passport"}</div>
             {p && (
               <div style={{ display: "flex", fontSize: 28, marginTop: 10, color: "rgba(255,255,255,0.75)" }}>
-                {`${days ? `${days.toLocaleString("en-US")} days Mad · ` : ""}${p.count} Mad ${p.count === 1 ? "Lad" : "Lads"}`}
+                {`${days ? `${days.toLocaleString("en-US")} days MAD · ` : ""}${p.count} MAD ${p.count === 1 ? "LAD" : "LADS"}`}
               </div>
             )}
           </div>
@@ -67,7 +67,7 @@ export async function renderPassportOg(p: SharedPassport | null) {
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ display: "flex", fontSize: 15, fontWeight: 700, letterSpacing: 4, color: "#c41129" }}>LADS PASSPORT</div>
+              <div style={{ display: "flex", fontSize: 15, fontWeight: 700, letterSpacing: 4, color: "#c41129" }}>MAD LADS PASSPORT</div>
               <svg width={92} height={22} viewBox="0 0 334 80" fill={red}>
                 {HORIZONTAL.map((d) => (
                   <path key={d.slice(0, 12)} d={d} />

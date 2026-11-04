@@ -11,10 +11,10 @@ import type { SharedPassport } from "@/lib/passport-share";
 const days = (since?: string) => (since ? Math.floor((Date.now() - new Date(since).getTime()) / 86_400_000) : null);
 
 export function sharedMetadata(p: SharedPassport | null): Metadata {
-  if (!p) return { title: "Lads Passport", robots: { index: false } };
+  if (!p) return { title: "MAD LADS Passport", robots: { index: false } };
   const d = days(p.since);
-  const title = `${p.name}’s Lads Passport`;
-  const description = `${d ? `${d.toLocaleString("en-US")} days MAD. ` : ""}${p.count} MAD ${p.count === 1 ? "Lad" : "Lads"}. Fock it.`;
+  const title = `${p.name}’s MAD LADS Passport`;
+  const description = `${d ? `${d.toLocaleString("en-US")} days MAD. ` : ""}${p.count} MAD ${p.count === 1 ? "LAD" : "LADS"}. Fock it.`;
   return {
     title,
     description,
@@ -32,7 +32,7 @@ export function SharedPassportView({ p }: { p: SharedPassport }) {
       <main id="main" className="bg-sunken pt-[72px] md:pt-[88px]">
         <section className="flex min-h-[calc(100svh-88px)] flex-col items-center justify-center gap-8 px-4 py-10 md:px-page">
           <header className="flex flex-col items-center gap-3 text-center">
-            <p className="t-eyebrow text-accent">Lads Passport</p>
+            <p className="t-eyebrow text-accent">MAD LADS Passport</p>
             <h1 className="text-[clamp(2rem,4.5vw,3.5rem)] leading-[0.95] font-bold tracking-[-0.04em]">{p.name}’s passport.</h1>
             <p className="text-muted">
               {d ? `${d.toLocaleString("en-US")} days MAD · ` : ""}
@@ -45,7 +45,7 @@ export function SharedPassportView({ p }: { p: SharedPassport }) {
           </div>
 
           <div className="flex flex-wrap justify-center gap-3">
-            <Button href="/holders">Get your Lads Passport</Button>
+            <Button href="/holders">Get your MAD LADS Passport</Button>
             <Button href="/madlads" variant="secondary">
               Explore the MAD LADS
             </Button>

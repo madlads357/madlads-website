@@ -6,6 +6,7 @@ const styles = {
   primary: "bg-accent text-white hover:bg-ink",
   secondary: "border-[1.5px] border-ink text-ink hover:bg-ink hover:text-white",
   inverse: "bg-white text-ink hover:bg-ink hover:text-white",
+  "inverse-red": "bg-white text-ink hover:bg-accent hover:text-white",
   "inverse-outline": "border-[1.5px] border-white text-white hover:bg-white hover:text-ink",
 } as const;
 

@@ -130,7 +130,7 @@ function kindsOf(collection: Collection, ids: number[]) {
 function Cover() {
   return (
     <span className="pp-paper-grain flex h-full flex-col items-center justify-between bg-[#b31220] px-[8cqw] py-[10cqw] text-[#f6f1e8]">
-      <span className="text-[4.4cqw] font-semibold tracking-[0.42em]">LADS PASSPORT</span>
+      <span className="text-[4.4cqw] font-semibold tracking-[0.42em]">MAD LADS PASSPORT</span>
       <LogoStacked className="pp-emboss w-[44cqw] text-[#f62038]" title="" />
       <span className="flex w-full items-end justify-between">
         <span className="text-[3cqw] font-semibold tracking-[0.3em] opacity-70">EVERYONE’S MAD HERE.</span>
@@ -148,14 +148,14 @@ function IdentityPage({ data }: { data: PassportData }) {
   return (
     <span className="pp-paper flex h-full flex-col px-[7cqw] py-[8cqw] text-left text-ink">
       <span className="flex items-center justify-between">
-        <span className="text-[3.6cqw] font-bold tracking-[0.32em] text-accent">LADS PASSPORT</span>
+        <span className="text-[3.6cqw] font-bold tracking-[0.32em] text-accent">MAD LADS PASSPORT</span>
         <LogoHorizontal className="w-[22cqw] text-red" title="" />
       </span>
 
       {/* Photo on the left, the Lad number beside it; the stamp lands across the photo's edge */}
       <span className="relative mt-[7cqw] flex gap-[5cqw]">
         <span className="relative block aspect-[4/5] w-[48cqw] shrink-0 overflow-hidden rounded-[2.4cqw] bg-sunken ring-1 ring-black/10">
-          <Image src={thumbImage(data.photo)} alt={`Mad Lad #${data.photo}`} fill sizes="300px" className="object-cover" />
+          <Image src={thumbImage(data.photo)} alt={`MAD LADS #${data.photo}`} fill sizes="300px" className="object-cover" />
         </span>
         <span className="flex flex-col gap-[1.2cqw] pt-[1cqw]">
           <span className="text-[2.8cqw] font-semibold tracking-[0.2em] text-accent">LAD NO.</span>

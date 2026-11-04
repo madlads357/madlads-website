@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/madlads" },
   description: "Explore all 9,971 MAD LADS: search by number and filter by type, background, clothing and every other trait.",
   openGraph: { title: "All 9,971 MAD LADS", description: "Explore every MAD LADS: search by number and filter by type, background, clothing and every other trait." },
-  twitter: { card: "summary_large_image", site: "@MadLads", title: "All 9,971 MAD LADS", description: "Explore every Mad Lad: search by number and filter by type, background, clothing and every other trait." },
+  twitter: { card: "summary_large_image", site: "@MadLads", title: "All 9,971 MAD LADS", description: "Explore every MAD LADS: search by number and filter by type, background, clothing and every other trait." },
 };
 
 export default function MadLadsPage() {
@@ -20,7 +20,7 @@ export default function MadLadsPage() {
           <p className="t-eyebrow text-accent">MAD LADS</p>
           <h1 className="t-display-l mt-6">The MAD LADS</h1>
           <p className="t-body-l mt-6 max-w-[640px] text-muted">
-            All 9,971 Lads, Lassies, Skulls and 1/1s. Search by number, or filter by any trait.
+            All 9,971 LADS, Lassies, Skulls and 1/1s. Search by number, or filter by any trait.
           </p>
         </header>
         <section className="px-4 pb-24 md:px-page" aria-label="MAD LADS explorer">

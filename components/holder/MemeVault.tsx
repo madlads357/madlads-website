@@ -76,7 +76,7 @@ export function MemeVault({ onClose }: { onClose: () => void }) {
         <div className="min-w-0">
           <p className="t-eyebrow text-accent">Meme vault</p>
           <h2 className="mt-1 text-[clamp(1.75rem,3.2vw,2.75rem)] leading-none font-bold tracking-[-0.04em]">
-            {memes.length} memes by <span className="text-red">{authors} Lads</span>.
+            {memes.length} memes by <span className="text-red">{authors} LADS</span>.
           </h2>
         </div>
         <div className="flex shrink-0 items-center gap-2">

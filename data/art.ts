@@ -24,14 +24,14 @@ export const king: ArtPiece = {
 
 export const honoraries: ArtPiece[] = [
   { src: originalImage(9970), kind: "Honorary Lassie · #9970", name: "Iggy Azalea", alt: "“Mother”, the honorary Lassie of Iggy Azalea" },
-  { src: honorary(2), kind: "Honorary Lad #2", name: "Toly", alt: "Honorary MAD LADS of Anatoly Yakovenko in a Solana cap" },
+  { src: honorary(2), kind: "Honorary LAD #2", name: "Toly", alt: "Honorary MAD LADS of Anatoly Yakovenko in a Solana cap" },
   { src: honorary(1), kind: "Honorary Lassie #1", name: "Meltem Demirors", alt: "Honorary Lassie of Meltem Demirors with a katana" },
-  { src: "/art/honorary_mert.jpg", kind: "Honorary Lad", name: "Mert, without the hat", alt: "Honorary MAD LADS of Mert breathing fire" },
+  { src: "/art/honorary_mert.jpg", kind: "Honorary LAD", name: "Mert, without the hat", alt: "Honorary MAD LADS of Mert breathing fire" },
 ];
 
 export const moreOneOfOnes: ArtPiece[] = [
-  { src: honorary(4), kind: "Honorary Lad #4", name: "Austin Federa", alt: "Honorary MAD LADS of Austin Federa with his cat Elote" },
-  { src: honorary(5), kind: "Honorary Lad #5", name: "MadderCrab David", alt: "Honorary diamond Skull of MadderCrab David (thehasheddude)" },
+  { src: honorary(4), kind: "Honorary LAD #4", name: "Austin Federa", alt: "Honorary MAD LADS of Austin Federa with his cat Elote" },
+  { src: honorary(5), kind: "Honorary LAD #5", name: "MadderCrab David", alt: "Honorary diamond Skull of MadderCrab David (thehasheddude)" },
   { src: "/art/1of1_scarface.jpg", kind: "1/1 tribute", name: "Scarface", alt: "MAD LADS 1/1 tribute to Scarface" },
   { src: originalImage(9969), kind: "1/1 · Tensor raffle · #9969", name: "Glitched Lassie", alt: "Glitched Lassie #9969 in a studded leather jacket, her face split in neon glitch colors" },
   { src: originalImage(9971), kind: "Honorary Lassie · #9971", name: "Haliey Welch", alt: "Honorary Lassie of Haliey Welch in a cowboy hat" },

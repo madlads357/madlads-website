@@ -170,7 +170,7 @@ function coverLayer(paper: HTMLImageElement, coverStamp: HTMLCanvasElement) {
   ctx.globalAlpha = 1;
   ctx.globalCompositeOperation = "source-over";
 
-  text(ctx, "LADS PASSPORT", PAGE_W / 2, 10 * CQ + 4.4 * CQ, 4.4 * CQ, { weight: 600, color: C.cream, spacing: 0.42, align: "center" });
+  text(ctx, "MAD LADS PASSPORT", PAGE_W / 2, 10 * CQ + 4.4 * CQ, 4.4 * CQ, { weight: 600, color: C.cream, spacing: 0.42, align: "center" });
   // embossed logo: a dark edge above, a light edge below
   const logoW = 44 * CQ;
   const s = logoW / 176;
@@ -197,7 +197,7 @@ async function identityLayer(data: PassportData, paper: HTMLImageElement, photo:
   const left = 7 * CQ;
   let y = 8 * CQ;
 
-  text(ctx, "LADS PASSPORT", left, y + 3.6 * CQ, 3.6 * CQ, { color: C.accent, spacing: 0.32 });
+  text(ctx, "MAD LADS PASSPORT", left, y + 3.6 * CQ, 3.6 * CQ, { color: C.accent, spacing: 0.32 });
   paths(ctx, HORIZONTAL, PAGE_W - left - 22 * CQ, y + 0.3 * CQ, (22 * CQ) / 334, C.red);
   y += 3.6 * CQ + 7 * CQ;
 
@@ -381,7 +381,7 @@ async function buildScene(root: HTMLElement, data: PassportData): Promise<Scene>
     g.addColorStop(1, C.bg);
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, SIZE, SIZE);
-    text(ctx, "LADS PASSPORT", SIZE / 2, 82, 22, { weight: 700, color: C.accent, spacing: 0.32, align: "center" });
+    text(ctx, "MAD LADS PASSPORT", SIZE / 2, 82, 22, { weight: 700, color: C.accent, spacing: 0.32, align: "center" });
     text(ctx, "madlads.com · Fock it.", SIZE / 2, SIZE - 58, 22, { weight: 600, color: C.muted, align: "center" });
 
     // opening: 0 = closed, 1 = open

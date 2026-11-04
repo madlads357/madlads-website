@@ -116,7 +116,7 @@ export function HolderLads({ ids, photo, onPhoto }: { ids: number[]; photo: numb
           <ul className="grid grid-cols-[repeat(auto-fill,minmax(var(--card),1fr))] gap-3">
             {ordered.map((id) => card(id, false))}
             <li data-card="more" className="relative">
-              <MoreCard bg={ordered[0]} label="Fold" hint={`${ordered.length} Lads`} onClick={toggle} />
+              <MoreCard bg={ordered[0]} label="Fold" hint={`${ordered.length} LADS`} onClick={toggle} />
             </li>
           </ul>
         )}
@@ -130,7 +130,7 @@ export function HolderLads({ ids, photo, onPhoto }: { ids: number[]; photo: numb
           onNext={index >= 0 && index < ordered.length - 1 ? () => setOpen(ordered[index + 1]) : undefined}
           action={
             open === photo ? (
-              <p className="rounded-xl bg-surface px-4 py-3 text-sm font-semibold text-muted ring-1 ring-line">This Lad is your passport photo.</p>
+              <p className="rounded-xl bg-surface px-4 py-3 text-sm font-semibold text-muted ring-1 ring-line">This LAD is your passport photo.</p>
             ) : (
               <button
                 type="button"

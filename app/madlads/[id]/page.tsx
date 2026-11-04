@@ -81,7 +81,7 @@ export default async function LadPage({ params }: Props) {
                 <div key={t.name}>
                   <Link
                     href={`/madlads?${new URLSearchParams({ [t.name.toLowerCase()]: t.value })}`}
-                    title={`See every Lad with ${t.name}: ${t.value}`}
+                    title={`See every LAD with ${t.name}: ${t.value}`}
                     className="flex h-full flex-col gap-1 rounded-xl bg-surface p-3 ring-1 ring-line transition-all hover:-translate-y-0.5 hover:ring-ink"
                   >
                     <dt className="t-eyebrow text-muted">{t.name}</dt>
@@ -90,7 +90,7 @@ export default async function LadPage({ params }: Props) {
                       <span className="block h-1 overflow-hidden rounded-full bg-sunken">
                         <span className="block h-full rounded-full bg-accent" style={{ width: `${Math.max(2, Math.min(100, t.share * 100))}%` }} />
                       </span>
-                      <span className="mt-1 block text-[11px] text-muted">{t.count === 1 ? "1 of 1" : `${fmt(t.count)} Lads · ${pct(t.share)}`}</span>
+                      <span className="mt-1 block text-[11px] text-muted">{t.count === 1 ? "1 of 1" : `${fmt(t.count)} LADS · ${pct(t.share)}`}</span>
                     </dd>
                   </Link>
                 </div>
@@ -104,7 +104,7 @@ export default async function LadPage({ params }: Props) {
               </Button>
             </div>
 
-            <nav aria-label="Other Lads" className="flex justify-between border-t border-line pt-6 text-sm font-semibold">
+            <nav aria-label="Other LADS" className="flex justify-between border-t border-line pt-6 text-sm font-semibold">
               {prev ? (
                 <Link href={`/madlads/${prev}`} className="hover:text-accent">
                   ← #{prev}

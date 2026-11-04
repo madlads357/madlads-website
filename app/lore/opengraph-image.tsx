@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { ogContentType, ogSize, renderOg } from "@/lib/og";
 
 // Open Graph link preview for this page, generated at build time (see lib/og.tsx).
-export const alt = "Mad Lads: the story so far";
+export const alt = "MAD LADS: the story so far";
 export const size = ogSize;
 export const contentType = ogContentType;
 

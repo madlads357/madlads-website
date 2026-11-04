@@ -9,7 +9,7 @@ import { SearchIcon } from "./Icons";
 // pressing Enter in the search opens the full explorer on /madlads.
 const filters: { label: string; test: (l: Lad) => boolean }[] = [
   { label: "All", test: () => true },
-  { label: "Lads", test: (l) => l.gender === "Male" && l.type !== "Skull" },
+  { label: "LADS", test: (l) => l.gender === "Male" && l.type !== "Skull" },
   { label: "Lassies", test: (l) => l.gender === "Female" },
   { label: "Skulls", test: (l) => l.type === "Skull" },
 ];
@@ -50,13 +50,13 @@ export function RosterPreview() {
         >
           <SearchIcon className="size-4 text-muted" />
           <label htmlFor="home-lad-search" className="sr-only">
-            Find a Lad by number
+            Find a LAD by number
           </label>
           <input
             id="home-lad-search"
             name="q"
             inputMode="numeric"
-            placeholder="Find Lad #"
+            placeholder="Find LAD #"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="w-full bg-transparent text-sm outline-none placeholder:text-muted"
@@ -70,7 +70,7 @@ export function RosterPreview() {
             <figure className="group relative aspect-[4/5] overflow-hidden rounded-[4px] bg-sunken">
               <Image
                 src={ladImage(l.id)}
-                alt={`Mad Lad #${l.id}, ${l.type}${l.gender === "Female" ? " Lassie" : ""}, ${l.background} background`}
+                alt={`MAD LADS #${l.id}, ${l.type}${l.gender === "Female" ? " Lassie" : ""}, ${l.background} background`}
                 fill
                 sizes="(min-width: 1024px) 16vw, (min-width: 640px) 25vw, 33vw"
                 className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06] group-hover:-rotate-1"

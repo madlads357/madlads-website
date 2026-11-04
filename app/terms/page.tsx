@@ -25,11 +25,11 @@ const sections: LegalSection[] = [
     body: (
       <>
         <p>
-          madlads.com is the official website of Mad Lads, the NFT collection by Backpack. These terms apply when you visit or use it. By using the site, you
+          madlads.com is the official website of MAD LADS, the NFT collection by Backpack. These terms apply when you visit or use it. By using the site, you
           agree to them. If you don’t, please don’t use the site.
         </p>
         <p>
-          “We” and “us” mean the Mad Lads team at Backpack. “You” means anyone using the site.
+          “We” and “us” mean the MAD LADS team at Backpack. “You” means anyone using the site.
         </p>
       </>
     ),
@@ -40,7 +40,7 @@ const sections: LegalSection[] = [
     body: (
       <>
         <p>
-          The site tells the story of Mad Lads and lets you browse the collection. It is for information only. You can’t buy, sell, mint or store NFTs or
+          The site tells the story of MAD LADS and lets you browse the collection. It is for information only. You can’t buy, sell, mint or store NFTs or
           tokens here, and we never ask you to connect a wallet to browse it.
         </p>
         <p>We may change, pause or remove any part of the site at any time.</p>
@@ -49,15 +49,15 @@ const sections: LegalSection[] = [
   },
   {
     id: "nfts",
-    title: "Owning a Mad Lad",
+    title: "Owning a MAD LADS",
     body: (
       <>
         <p>
-          Mad Lads live on the Solana blockchain. Owning one means holding the token in your own wallet. Buying, selling and transferring happen on
+          MAD LADS live on the Solana blockchain. Owning one means holding the token in your own wallet. Buying, selling and transferring happen on
           marketplaces and wallets that we don’t run, under their own terms.
         </p>
         <p>
-          Any rights to use the art of the Mad Lad you own come from the Mad Lads license, not from these terms.
+          Any rights to use the art of the MAD LADS you own come from the MAD LADS license, not from these terms.
         </p>
       </>
     ),
@@ -95,7 +95,7 @@ const sections: LegalSection[] = [
     body: (
       <p>
         The site links to services we don’t control, like {ext(links.magicEden, "Magic Eden")}, {ext(links.tensor, "Tensor")}, FoxySwap,{" "}
-        {ext(links.backpack, "Backpack")}, X, Discord, YouTube and Mad News on Substack. Their own terms and privacy policies apply when you use them, and we
+        {ext(links.backpack, "Backpack")}, X, Discord, YouTube and MAD News on Substack. Their own terms and privacy policies apply when you use them, and we
         aren’t responsible for their content or for what happens there.
       </p>
     ),
@@ -106,7 +106,7 @@ const sections: LegalSection[] = [
     body: (
       <>
         <p>
-          The Mad Lads name, logos, art, photos, videos and the design of this site belong to Backpack or to the people who made them. You’re welcome to share
+          The MAD LADS name, logos, art, photos, videos and the design of this site belong to Backpack or to the people who made them. You’re welcome to share
           links and screenshots. Please don’t use our brand in a way that suggests we made, approve or sponsor something when we didn’t.
         </p>
         <p>Photos and posts from the community stay the property of their authors. If you’d like one removed, contact us.</p>
@@ -122,7 +122,7 @@ const sections: LegalSection[] = [
         <ul>
           <li>try to break, overload or get unauthorized access to it;</li>
           <li>scrape it in a way that slows it down for others;</li>
-          <li>pretend to be Mad Lads, Backpack or anyone on the team.</li>
+          <li>pretend to be MAD LADS, Backpack or anyone on the team.</li>
         </ul>
       </>
     ),
@@ -133,11 +133,11 @@ const sections: LegalSection[] = [
     body: (
       <>
         <p>
-          Holders can log in with Matrica to reach the holder area. Access depends on holding at least one Mad Lad in a wallet linked to your Matrica account, and
+          Holders can log in with Matrica to reach the holder area. Access depends on holding at least one MAD LADS in a wallet linked to your Matrica account, and
           may change as your holdings do. Features in the holder area can change or end at any time.
         </p>
         <p>
-          Your Lads Passport can be shared through a public link. You decide whether to share it, and you can stop sharing at any time. Please don’t share links
+          Your MAD LADS Passport can be shared through a public link. You decide whether to share it, and you can stop sharing at any time. Please don’t share links
           in a way that suggests a passport is someone else’s. How we handle your data is in our <Link href="/privacy">Privacy Policy</Link>.
         </p>
       </>

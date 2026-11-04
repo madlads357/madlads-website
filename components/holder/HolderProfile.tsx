@@ -118,7 +118,7 @@ function Stat({ value, label }: { value: ReactNode; label: string }) {
 function Backpack({ className = "", hop }: { className?: string; hop?: boolean }) {
   return (
     <div className={`relative ${hop ? "bag-hop" : ""} ${className}`} data-bag>
-      <Image src="/holders/bag/backpack.webp" alt="Your Mad Lads backpack" width={892} height={900} priority sizes="(min-width: 1024px) 30vw, 58vw" className="h-auto w-full" />
+      <Image src="/holders/bag/backpack.webp" alt="Your MAD LADS backpack" width={892} height={900} priority sizes="(min-width: 1024px) 30vw, 58vw" className="h-auto w-full" />
       <span data-bag-mouth className="absolute size-1" style={{ left: `${MOUTH.x * 100}%`, top: `${MOUTH.y * 100}%` }} aria-hidden />
     </div>
   );
@@ -233,7 +233,7 @@ function Item({ item, onOpen }: { item: BagItem; onOpen: (w: BagWindow) => void 
   if (isBagWindow(item.open)) {
     const w = item.open;
     return (
-      <button type="button" onClick={() => onOpen(w)} className={cls} aria-label={{ passport: "Open your Lads Passport", memes: "Open the meme vault", dressing: "Open the dressing room" }[w]}>
+      <button type="button" onClick={() => onOpen(w)} className={cls} aria-label={{ passport: "Open your MAD LADS Passport", memes: "Open the meme vault", dressing: "Open the dressing room" }[w]}>
         {body}
       </button>
     );

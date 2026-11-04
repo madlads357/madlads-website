@@ -8,6 +8,6 @@ export function identityFields(d: { name: string; handle?: string; since?: strin
     { key: "name", label: "Name", value: d.name },
     d.handle ? { key: "x", label: "", value: `@${d.handle}` } : null,
     d.since ? { key: "since", label: "MAD since", value: fmtDate(d.since, { month: "long", year: "numeric" }) } : null,
-    { key: "lads", label: "Lads held", value: String(d.count ?? d.lads.length) },
+    { key: "lads", label: "LADS held", value: String(d.count ?? d.lads.length) },
   ].filter((f): f is { key: string; label: string; value: string } => f !== null);
 }
