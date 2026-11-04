@@ -26,14 +26,14 @@ const jsonLd = {
     {
       "@type": "Organization",
       "@id": `${siteUrl}/#organization`,
-      name: "Mad Lads",
+      name: "MAD LADS",
       url: siteUrl,
       logo: `${siteUrl}/icon.png`,
-      description: "10,000 Mad Lads on Solana. The collection by Backpack.",
+      description: "10,000 MAD LADS on Solana. The collection by Backpack.",
       sameAs: [links.x, links.discord, links.newsletter, links.magicEden, links.tensor],
       parentOrganization: { "@type": "Organization", name: "Backpack", url: links.backpack },
     },
-    { "@type": "WebSite", "@id": `${siteUrl}/#website`, name: "Mad Lads", url: siteUrl, publisher: { "@id": `${siteUrl}/#organization` } },
+    { "@type": "WebSite", "@id": `${siteUrl}/#website`, name: "MAD LADS", url: siteUrl, publisher: { "@id": `${siteUrl}/#organization` } },
   ],
 };
 

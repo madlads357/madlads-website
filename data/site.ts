@@ -3,7 +3,7 @@
 export const nav = [
   { label: "Lore", href: "/lore" },
   { label: "Art", href: "/#art" },
-  { label: "Mad Lads", href: "/madlads" },
+  { label: "MAD LADS", href: "/madlads" },
   { label: "Holders", href: "/#holders" },
 ];
 

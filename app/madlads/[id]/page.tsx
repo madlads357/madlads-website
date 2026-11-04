@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .slice(0, 3)
     .map((t) => `${t.name} ${t.value}`)
     .join(", ");
-  const description = `MAD LADS #${l.id}: ${[l.type, l.gender].filter(Boolean).join(", ")}. ${key}. One of ${fmt(collection().lads.length)} Mad Lads on Solana.`;
+  const description = `MAD LADS #${l.id}: ${[l.type, l.gender].filter(Boolean).join(", ")}. ${key}. One of ${fmt(collection().lads.length)} MAD LADS on Solana.`;
   return {
     title,
     description,

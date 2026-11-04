@@ -72,7 +72,7 @@ export function Footer() {
       </nav>
 
       <div className="mt-14 flex flex-col gap-2 border-t border-line pt-6 text-sm text-muted md:flex-row md:justify-between">
-        <p>© {new Date().getFullYear()} Mad Lads. A Backpack collection.</p>
+        <p>© {new Date().getFullYear()} MAD LADS. A Backpack collection.</p>
         <p className="flex gap-4">
           <Link href="/terms" className="hover:text-ink">Terms</Link>
           <Link href="/privacy" className="hover:text-ink">Privacy</Link>

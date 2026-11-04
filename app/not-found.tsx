@@ -30,7 +30,7 @@ export default function NotFound() {
               <div className="mt-2 flex flex-wrap gap-3">
                 <Button href="/">Back home</Button>
                 <Button href="/madlads" variant="secondary">
-                  Explore the Mad Lads →
+                  Explore the MAD LADS →
                 </Button>
               </div>
             </div>
