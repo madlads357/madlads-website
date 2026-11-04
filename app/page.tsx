@@ -141,7 +141,7 @@ function Manifesto() {
       {/* Lights up word by word as you scroll */}
       <ScrollWords
         className="mt-10 max-w-[900px] text-[clamp(1.5rem,2.8vw,2.375rem)] leading-[1.25] font-semibold tracking-[-0.02em]"
-        text="MAD LADS are a little louder, a little bolder, and a lot more themselves. A collection for the misfits, the risk-takers and everyone who keeps it Mad."
+        text="MAD LADS are a little louder, a little bolder, and a lot more themselves. A collection for the misfits, the risk-takers and everyone who keeps it MAD."
       />
       {/* Stats band (inspired by scrolltide.co) — numbers count up when they scroll into view */}
       <dl className="mt-16 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line md:grid-cols-4">
@@ -206,7 +206,7 @@ function Art() {
       <SectionHeader
         eyebrow="03 / Art"
         title="Art"
-        text="The 1/1s the team drew for legends and friends, plus previews, sketches and special pieces from the Mad Lads universe."
+        text="The 1/1s the team drew for legends and friends, plus previews, sketches and special pieces from the MAD LADS universe."
         action={
           <Button href={links.newsletter} variant="secondary" external>
             See them all on MAD News ↗
