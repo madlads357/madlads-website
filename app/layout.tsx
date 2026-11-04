@@ -8,13 +8,13 @@ import { links } from "@/data/site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: { default: "Mad Lads | Everyone’s mad here.", template: "%s | Mad Lads" },
-  description: "10,000 Mad Lads on Solana. The collection by Backpack.",
+  title: { default: "MAD LADS | Everyone’s MAD here.", template: "%s | MAD LADS" },
+  description: "10,000 MAD LADS on Solana. The collection by Backpack.",
   openGraph: {
-    title: "Mad Lads",
-    description: "10,000 Mad Lads on Solana. The collection by Backpack.",
+    title: "MAD LADS",
+    description: "10,000 MAD LADS on Solana. The collection by Backpack.",
     url: siteUrl,
-    siteName: "Mad Lads",
+    siteName: "MAD LADS",
   },
   twitter: { card: "summary_large_image", site: "@MadLads" },
 };

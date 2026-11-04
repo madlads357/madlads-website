@@ -81,14 +81,14 @@ function Hero() {
         <h1 className="t-display-xl animate-rise">
           Everyone’s
           <br />
-          <span className="text-red">mad</span> here.
+          <span className="text-red">MAD</span> here.
         </h1>
         <p className="t-body-l mt-7 max-w-[620px] animate-rise [animation-delay:120ms]">
-          10,000 Mad Lads on Solana. Stylish, rebellious, and a little unhinged. The collection by Backpack.
+          10,000 MAD LADS on Solana. Stylish, rebellious, and a little unhinged. The collection by Backpack.
         </p>
         <div className="mt-7 flex animate-rise flex-wrap gap-3 [animation-delay:220ms]">
           <Button href="/madlads" variant="inverse">
-            Meet the Mad Lads
+            Meet the MAD LADS
           </Button>
           <Button href="/lore" variant="inverse-outline">
             Read the Lore
@@ -337,21 +337,21 @@ function BackpackBand() {
   return (
     // Moving the mouse over the band leaves a trail of random Mad Lads (desktop)
     <LadTrail className="border-y border-line bg-paper">
-    <section className="flex flex-col justify-center gap-8 px-4 py-16 md:min-h-[min(88svh,820px)] md:gap-12 md:px-page md:py-40">
-      <h2 className="t-display-xl reveal-slide">
-        Part of the
-        <br />
-        <span className="text-red">Backpack</span> family.
-      </h2>
-      <div className="reveal flex max-w-[620px] flex-col items-start gap-7 lg:ml-auto" style={{ "--i": 1 } as CSSProperties}>
-        <p className="text-[clamp(1.25rem,2vw,1.625rem)] leading-[1.35] font-medium tracking-[-0.01em] text-muted">
-          Mad Lads is the flagship collection of Backpack, the wallet and exchange built for the next generation of onchain culture.
-        </p>
-        <Button href={links.backpack} external>
-          Learn about Backpack ↗
-        </Button>
-      </div>
-    </section>
+      <section className="flex flex-col justify-center gap-8 px-4 py-16 md:min-h-[min(88svh,820px)] md:gap-12 md:px-page md:py-40">
+        <h2 className="t-display-xl reveal-slide">
+          Part of the
+          <br />
+          <span className="text-red">Backpack</span> family.
+        </h2>
+        <div className="reveal flex max-w-[620px] flex-col items-start gap-7 lg:ml-auto" style={{ "--i": 1 } as CSSProperties}>
+          <p className="text-[clamp(1.25rem,2vw,1.625rem)] leading-[1.35] font-medium tracking-[-0.01em] text-muted">
+            Mad Lads is the flagship collection of Backpack, the wallet and exchange built for the next generation of onchain culture.
+          </p>
+          <Button href={links.backpack} external>
+            Learn about Backpack ↗
+          </Button>
+        </div>
+      </section>
     </LadTrail>
   );
 }
