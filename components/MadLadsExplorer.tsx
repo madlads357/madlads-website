@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { useDialogFocus } from "@/lib/useDialogFocus";
-import { loadCollection, originalImage, thumbImage, type Collection } from "@/lib/madlads";
+import { ONE_OF_ONE_TYPES, loadCollection, originalImage, thumbImage, type Collection } from "@/lib/madlads";
 import { CloseIcon, SearchIcon } from "./Icons";
 
 const PAGE = 60;
@@ -32,7 +32,6 @@ const SWATCH: Record<string, string> = {
 };
 
 /* Quick groups shown as pills above the grid. */
-export const ONE_OF_ONE_TYPES = ["King", "Oracle", "Glitch", "Mother", "Cowgirl"];
 type Quick = "all" | "lads" | "lassies" | "skulls" | "oneofones";
 const QUICK: { key: Quick; label: string }[] = [
   { key: "all", label: "All" },
@@ -835,9 +834,9 @@ export function LadDialog({
   return (
     <div ref={dialog} className="fixed inset-0 z-[80] grid place-items-center p-3 md:p-6" role="dialog" aria-modal="true" aria-label={`Mad Lad #${id}`}>
       <button type="button" className="absolute inset-0 bg-black/70 backdrop-blur-sm" aria-label="Close" onClick={onClose} />
-      <div className="relative grid max-h-[94svh] w-full max-w-5xl animate-[pop_200ms_ease-out] overflow-y-auto rounded-2xl bg-paper shadow-2xl md:grid-cols-[1.05fr_1fr] md:overflow-hidden">
+      <div className="relative grid max-h-[94svh] w-full max-w-5xl animate-[pop_200ms_ease-out] overflow-y-auto rounded-2xl bg-paper shadow-2xl md:h-[min(90svh,760px)] md:w-auto md:max-w-[94vw] md:grid-cols-[auto_minmax(340px,440px)] md:overflow-hidden">
         <div
-          className="relative aspect-[4/5] touch-pan-y bg-sunken"
+          className="relative aspect-[4/5] touch-pan-y bg-sunken md:h-full md:w-auto"
           style={{ viewTransitionName: HERO }}
           onPointerDown={(e) => {
             if (e.pointerType !== "mouse") swipeX.current = e.clientX;
@@ -865,7 +864,8 @@ export function LadDialog({
             <NavButton label="Next Lad" onClick={onNext} dir="right" />
           </div>
         </div>
-        <div className="thin-scroll flex flex-col gap-6 p-6 md:overflow-y-auto md:p-8">
+        {/* desktop: header, traits (scroll if long), actions always visible at the bottom */}
+        <div className="flex flex-col gap-6 p-6 md:min-h-0 md:gap-5 md:p-7">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="t-eyebrow text-accent">Mad Lads</p>
@@ -875,7 +875,7 @@ export function LadDialog({
               <CloseIcon className="size-5" />
             </button>
           </div>
-          <dl className="grid grid-cols-2 gap-2">
+          <dl className="thin-scroll grid grid-cols-2 content-start gap-2 md:-mr-3 md:min-h-0 md:flex-1 md:overflow-y-auto md:pr-3">
             {data.traits.map((t, ti) => {
               const vi = lad[ti + 1];
               if (vi < 0) return null;
@@ -896,15 +896,17 @@ export function LadDialog({
               );
             })}
           </dl>
-          {action}
-          <p className="text-xs text-muted">
-            {/* keyboard tip on computers, touch tip on phones and tablets */}
-            <span className="pointer-coarse:hidden">Tip: use ← → to browse, Esc to close.{onFilter && " Click a trait to see every Lad that has it."}</span>
-            <span className="hidden pointer-coarse:inline">Tip: swipe the picture to browse, tap outside to close.{onFilter && " Tap a trait to see every Lad that has it."}</span>
-          </p>
-          <a href={originalImage(id)} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-accent underline underline-offset-4">
-            Open full-resolution image ↗
-          </a>
+          <div className="flex flex-col gap-3 md:border-t md:border-line md:pt-4">
+            {action}
+            <p className="text-xs text-muted">
+              {/* keyboard tip on computers, touch tip on phones and tablets */}
+              <span className="pointer-coarse:hidden">Tip: use ← → to browse, Esc to close.{onFilter && " Click a trait to see every Lad that has it."}</span>
+              <span className="hidden pointer-coarse:inline">Tip: swipe the picture to browse, tap outside to close.{onFilter && " Tap a trait to see every Lad that has it."}</span>
+            </p>
+            <a href={originalImage(id)} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-accent underline underline-offset-4">
+              Open full-resolution image ↗
+            </a>
+          </div>
         </div>
       </div>
     </div>

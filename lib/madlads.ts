@@ -5,6 +5,9 @@
 //   lads:   [[id, valueIndex per trait]]  — -1 when the Lad doesn't have that trait
 
 export type Trait = { name: string; values: string[] };
+
+/** The "Type" values of the 1/1s. */
+export const ONE_OF_ONE_TYPES = ["King", "Oracle", "Glitch", "Mother", "Cowgirl"];
 export type Collection = { traits: Trait[]; lads: number[][] };
 
 let cache: Promise<Collection> | null = null;

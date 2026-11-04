@@ -88,7 +88,7 @@ export function OneOfOne() {
   const points = Array.from({ length: 48 }, (_, i) => {
     const r = i % 2 ? 84 : 96;
     const a = (i / 48) * Math.PI * 2;
-    return `${100 + r * Math.cos(a)},${100 + r * Math.sin(a)}`;
+    return `${(100 + r * Math.cos(a)).toFixed(2)},${(100 + r * Math.sin(a)).toFixed(2)}`; // rounded: same on server and browser
   }).join(" ");
   return (
     <Svg w={200} h={200}>

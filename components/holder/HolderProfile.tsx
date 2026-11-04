@@ -4,10 +4,9 @@ import Image from "next/image";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { HolderLads } from "./HolderLads";
 import { DaysMad } from "./DaysMad";
-import { Passport } from "@/components/passport/Passport";
+import { PassportWindow } from "@/components/passport/PassportWindow";
 import { LockIcon } from "@/components/Icons";
 import { bagItems, type BagItem } from "@/data/bag";
-import { useDialogFocus } from "@/lib/useDialogFocus";
 import { PHOTO_EVENT, PHOTO_KEY } from "@/lib/auth/hint";
 import "./bag.css";
 
@@ -50,6 +49,8 @@ export function HolderProfile({ name, handle, since, roles, lads }: Props) {
     window.dispatchEvent(new CustomEvent(PHOTO_EVENT, { detail: id })); // the header picture follows
   };
 
+  const closePassport = useCallback(() => setPassport(false), []);
+
   const n = lads.length;
   const sinceText = since ? new Date(since).toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }) : null;
 
@@ -73,14 +74,6 @@ export function HolderProfile({ name, handle, since, roles, lads }: Props) {
             </header>
 
             <HolderLads ids={lads} photo={photo} onPhoto={choosePhoto} />
-
-            {/* Desktop: the objects are below the first screen, so say so */}
-            <p className="t-eyebrow mt-12 hidden items-center gap-3 text-muted lg:flex">
-              Scroll to empty your bag
-              <span className="relative block h-8 w-px overflow-hidden bg-ink/20" aria-hidden>
-                <span className="absolute inset-x-0 top-0 h-1/2 animate-[scroll-cue_1.8s_ease-in-out_infinite] bg-ink" />
-              </span>
-            </p>
           </div>
 
           {/* On phones the bag sits here, above what falls out of it */}
@@ -100,9 +93,7 @@ export function HolderProfile({ name, handle, since, roles, lads }: Props) {
       </div>
 
       {passport && (
-        <Modal onClose={() => setPassport(false)} label="Your Lads Passport">
-          <Passport autoOpen onDark data={{ name, handle, since, roles, lads, photo }} />
-        </Modal>
+        <PassportWindow data={{ name, handle, since, roles, lads, photo }} onClose={closePassport} />
       )}
     </div>
   );
@@ -249,33 +240,5 @@ function Item({ item, onPassport }: { item: BagItem; onPassport: () => void }) {
     <a href={item.open!} target="_blank" rel="noopener noreferrer" className={cls}>
       {body}
     </a>
-  );
-}
-
-/* ------------------------------------------------------------ Window */
-
-function Modal({ onClose, label, children }: { onClose: () => void; label: string; children: ReactNode }) {
-  const root = useRef<HTMLDivElement>(null);
-  useDialogFocus(root);
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
-  }, [onClose]);
-
-  return (
-    <div ref={root} className="fixed inset-0 z-[80] overflow-y-auto" role="dialog" aria-modal="true" aria-label={label} data-lenis-prevent>
-      <button type="button" className="fixed inset-0 animate-[fade-in_200ms_ease-out] bg-[#1a0508]/80 backdrop-blur-sm" aria-label="Close" onClick={onClose} />
-      <div className="relative flex min-h-full flex-col items-center justify-center px-4 py-16">
-        <div className="w-full max-w-[1000px] animate-[pop_240ms_ease-out]">{children}</div>
-        <button type="button" onClick={onClose} data-autofocus className="relative mt-4 rounded-full bg-white/10 px-5 py-2.5 text-sm font-semibold text-white ring-1 ring-white/25 hover:bg-white/20">
-          Close
-        </button>
-      </div>
-    </div>
   );
 }

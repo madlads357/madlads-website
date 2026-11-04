@@ -40,5 +40,6 @@ Every setting is described in `.env.example`.
 - [x] Helius key set (local + Vercel); collection address and API responses checked.
 - [ ] At the first real Matrica login, check in `lib/auth/matrica.ts` that `UserWallet.id` is the wallet address (needed for "Days Mad").
 - [ ] Privacy page: wallet addresses are sent to Helius at login to compute "Mad since" (and the readable `ml_user` header cookie).
+- [ ] Privacy page: shared passport links (/passport/…) make the passport public (name, handle, Lad, Lads held, Mad since, stamps) for anyone with the link, for one year.
 - [ ] Decide what goes in the holder area (Culture Hub, perks).
 - [ ] Add the Culture Hub ticket to the backpack (`data/bag.ts`) once its image exists.

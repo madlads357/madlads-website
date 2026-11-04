@@ -3,9 +3,9 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { LogoHorizontal, LogoStacked } from "@/components/Logo";
-import { ONE_OF_ONE_TYPES } from "@/components/MadLadsExplorer";
-import { loadCollection, thumbImage, type Collection } from "@/lib/madlads";
+import { ONE_OF_ONE_TYPES, loadCollection, thumbImage, type Collection } from "@/lib/madlads";
 import { FockIt, HolderSeal, Issued, Lassie, OneOfOne, Role, SkullClub, Tier } from "./Stamps";
+import { fmtDate, identityFields } from "./format";
 import "./passport.css";
 
 export type PassportData = {
@@ -15,9 +15,12 @@ export type PassportData = {
   roles?: string[];
   lads: number[];
   photo: number; // the Lad shown as the passport photo
+  // Shared links (/passport/<token>) carry these instead of the full list of Lads:
+  count?: number; // Lads held (default: lads.length)
+  kinds?: { skull: boolean; oneOfOne: boolean; lassie: boolean }; // which kinds of Lad (default: worked out from the collection)
+  issued?: string; // date of the "Issued" stamp (default: today)
 };
 
-const fmtDate = (iso: string, opts: Intl.DateTimeFormatOptions) => new Date(iso).toLocaleDateString("en-GB", { ...opts, timeZone: "UTC" }).toUpperCase();
 
 // Where each stamp lands on the stamps page: position (% of the page), width (%), tilt (deg), ink colour.
 const SLOTS: { x: number; y: number; w: number; r: number }[] = [
@@ -37,13 +40,14 @@ type StampItem = { key: string; ink: Ink; el: ReactNode };
 
 export function Passport({ data, autoOpen, onDark }: { data: PassportData; autoOpen?: boolean; onDark?: boolean }) {
   const [open, setOpen] = useState(false);
+  const [stampsShown, setStampsShown] = useState(false); // phones: the stamps page is turned
   const [collection, setCollection] = useState<Collection | null>(null);
   const [today, setToday] = useState<string | null>(null); // set after mount: server and browser may disagree on "today"
 
   useEffect(() => {
-    loadCollection().then(setCollection, () => {});
+    if (!data.kinds) loadCollection().then(setCollection, () => {}); // shared links already know the kinds
     setToday(new Date().toISOString());
-  }, []);
+  }, [data.kinds]);
 
   // In a window (the backpack), the passport opens by itself once it has appeared.
   useEffect(() => {
@@ -56,46 +60,69 @@ export function Passport({ data, autoOpen, onDark }: { data: PassportData; autoO
   const stamps = useMemo<StampItem[]>(() => {
     const out: StampItem[] = [{ key: "fock", ink: "red", el: <FockIt /> }];
     out.push({ key: "seal", ink: "red", el: <HolderSeal year={data.since ? data.since.slice(0, 4) : "2023"} /> });
-    out.push({ key: "tier", ink: "black", el: <Tier count={data.lads.length} /> });
-    if (collection) {
-      const ti = collection.traits.findIndex((t) => t.name === "Type");
-      const gi = collection.traits.findIndex((t) => t.name === "Gender");
-      const held = data.lads.map((id) => collection.lads.find((l) => l[0] === id)).filter((l): l is number[] => !!l);
-      const types = held.map((l) => collection.traits[ti].values[l[ti + 1]]);
-      if (types.includes("Skull")) out.push({ key: "skull", ink: "black", el: <SkullClub /> });
-      if (types.some((t) => ONE_OF_ONE_TYPES.includes(t))) out.push({ key: "one", ink: "gold", el: <OneOfOne /> });
-      if (held.some((l) => l[gi + 1] >= 0 && collection.traits[gi].values[l[gi + 1]] === "Female")) out.push({ key: "lassie", ink: "red", el: <Lassie /> });
-    }
+    out.push({ key: "tier", ink: "black", el: <Tier count={data.count ?? data.lads.length} /> });
+    const kinds = data.kinds ?? (collection ? kindsOf(collection, data.lads) : null);
+    if (kinds?.skull) out.push({ key: "skull", ink: "black", el: <SkullClub /> });
+    if (kinds?.oneOfOne) out.push({ key: "one", ink: "gold", el: <OneOfOne /> });
+    if (kinds?.lassie) out.push({ key: "lassie", ink: "red", el: <Lassie /> });
     (data.roles ?? []).slice(0, 2).forEach((r, i) => out.push({ key: `role-${r}`, ink: i ? "red" : "black", el: <Role name={r} shape={i ? "tri" : "hex"} /> }));
-    if (today) out.push({ key: "issued", ink: "blue", el: <Issued date={fmtDate(today, { day: "2-digit", month: "short", year: "numeric" })} /> });
+    const issued = data.issued ?? today;
+    if (issued) out.push({ key: "issued", ink: "blue", el: <Issued date={fmtDate(issued, { day: "2-digit", month: "short", year: "numeric" })} /> });
     return out.slice(0, SLOTS.length);
   }, [collection, data, today]);
 
   const identity = <IdentityPage data={data} />;
   const stampsPage = <StampsPage stamps={stamps} />;
 
+  // Phones show one page at a time: tapping the open passport turns to the stamps page and back.
+  const phone = () => window.matchMedia("(max-width: 47.99rem)").matches;
+  const tapCover = () => {
+    if (!open) setOpen(true);
+    else if (phone()) setStampsShown(true);
+    else setOpen(false);
+  };
+  const hint = !open ? "Tap the passport to open it." : stampsShown ? "Tap to go back to your passport." : "Tap to see your stamps.";
+
   return (
     <div className="pp" data-open={open || undefined}>
-      {/* Desktop: a booklet that opens like a book. Mobile: a card that flips, with the stamps below. */}
+      {/* Desktop: a booklet that opens like a book. Phones: a card that flips, then turns to the stamps. */}
       <div className="pp-book">
         <div className="pp-page pp-right max-md:hidden">{stampsPage}</div>
-        <button
-          type="button"
-          className="pp-cover"
-          onClick={() => setOpen((o) => !o)}
-          aria-expanded={open}
-          aria-label={open ? "Close the passport" : "Open the passport"}
-        >
+        <button type="button" className="pp-cover" onClick={tapCover} aria-expanded={open} aria-label={open ? "Your passport" : "Open the passport"}>
           <span className="pp-face pp-front">
             <Cover />
           </span>
           <span className="pp-face pp-back">{identity}</span>
         </button>
+        <button
+          type="button"
+          className="pp-page pp-mobile-stamps md:hidden"
+          data-show={(open && stampsShown) || undefined}
+          onClick={() => setStampsShown(false)}
+          aria-label="Back to the passport"
+        >
+          {stampsPage}
+        </button>
       </div>
-      <div className="pp-page pp-mobile-stamps md:hidden">{stampsPage}</div>
-      <p className={`mt-6 text-center text-sm ${onDark ? "text-white/70" : "text-muted"}`}>{open ? "Tap the passport to close it." : "Tap the passport to open it."}</p>
+      <p className={`mt-4 text-center text-sm ${onDark ? "text-white/70" : "text-muted"}`}>
+        <span className="md:hidden">{hint}</span>
+        <span className="max-md:hidden">{open ? "Tap the passport to close it." : "Tap the passport to open it."}</span>
+      </p>
     </div>
   );
+}
+
+// Which kinds of Lad the holder has, for the Skull / 1/1 / Lassie stamps.
+function kindsOf(collection: Collection, ids: number[]) {
+  const ti = collection.traits.findIndex((t) => t.name === "Type");
+  const gi = collection.traits.findIndex((t) => t.name === "Gender");
+  const held = ids.map((id) => collection.lads.find((l) => l[0] === id)).filter((l): l is number[] => !!l);
+  const types = held.map((l) => collection.traits[ti].values[l[ti + 1]]);
+  return {
+    skull: types.includes("Skull"),
+    oneOfOne: types.some((t) => ONE_OF_ONE_TYPES.includes(t)),
+    lassie: held.some((l) => l[gi + 1] >= 0 && collection.traits[gi].values[l[gi + 1]] === "Female"),
+  };
 }
 
 /* ------------------------------------------------------------ Pages */
@@ -116,12 +143,7 @@ function Cover() {
 }
 
 function IdentityPage({ data }: { data: PassportData }) {
-  const fields = [
-    { key: "name", label: "Name", value: data.name },
-    data.handle && { key: "x", label: <XLogo />, value: `@${data.handle}` }, // the X logo stands in for a "Handle" label
-    data.since && { key: "since", label: "Mad since", value: fmtDate(data.since, { month: "long", year: "numeric" }) },
-    { key: "lads", label: "Lads held", value: String(data.lads.length) },
-  ].filter(Boolean) as { key: string; label: ReactNode; value: string }[];
+  const fields = identityFields(data).map((f) => ({ ...f, label: f.key === "x" ? <XLogo /> : f.label }));
 
   return (
     <span className="pp-paper flex h-full flex-col px-[7cqw] py-[8cqw] text-left text-ink">
