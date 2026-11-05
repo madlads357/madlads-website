@@ -12,6 +12,7 @@ export const links = {
   // Holders section until then.
   matricaLogin: process.env.NEXT_PUBLIC_HOLDERS_LIVE === "1" ? "/api/auth/login" : "/#holders",
   newsletter: "https://news.madlads.com/",
+  playlist: "https://open.spotify.com/playlist/21MkOHQncB1NmB2pCp9wss", // the MAD LADS mix (holder area, backpack)
   backpack: "https://backpack.exchange/",
   x: "https://x.com/MadLads",
   discord: "https://discord.gg/madlads",
@@ -22,3 +23,6 @@ export const links = {
   pressEmail: "mailto:press@madlads.com", // TODO: confirm the real press contact
   legalEmail: "mailto:legal@madlads.com", // TODO: confirm the real legal/privacy contact
 };
+
+// Spotify's player for the playlist (components/holder/Playlist.tsx).
+export const spotifyEmbed = links.playlist.replace("open.spotify.com/", "open.spotify.com/embed/");

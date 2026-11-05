@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/privacy" },
 };
 
-const UPDATED = "November 4, 2026";
+const UPDATED = "November 5, 2026";
 
 const ext = (href: string, label: string) => (
   <a href={href} target="_blank" rel="noopener noreferrer">
@@ -86,6 +86,10 @@ const sections: LegalSection[] = [
         <p>
           Meetup videos are played with YouTube’s privacy-enhanced mode. Nothing loads from YouTube until you press play. Once you do, Google’s{" "}
           {ext("https://policies.google.com/privacy", "privacy policy")} applies to that video.
+        </p>
+        <p>
+          In the holder area, the playlist plays through Spotify’s player. It loads from Spotify only when you open the playlist, and Spotify’s{" "}
+          {ext("https://www.spotify.com/legal/privacy-policy/", "privacy policy")} and cookies then apply to it.
         </p>
         <p>
           Thumbnails of the art and the news covers are fetched by our server, so your browser doesn’t contact those sources. When you open a MAD LADS at full
