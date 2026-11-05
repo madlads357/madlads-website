@@ -86,7 +86,7 @@ export async function holderFromCode(code: string, verifier: string): Promise<Om
     id,
     handle,
     roles,
-    name: profile?.profile?.name || profile?.username || "Mad Lad",
+    name: profile?.profile?.name || profile?.username || "MAD LAD",
     lads: held,
     since,
     photo: settings?.photo && held.includes(settings.photo) ? settings.photo : undefined,

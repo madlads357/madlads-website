@@ -1,12 +1,16 @@
 import { redirect } from "next/navigation";
 import { authMode } from "@/lib/auth/config";
 import { loginUrl } from "@/lib/auth/matrica";
-import { randomState, setLoginFlow, setSession } from "@/lib/auth/session";
+import { getSession, randomState, setLoginFlow, setSession } from "@/lib/auth/session";
 import { getSettings } from "@/lib/db";
 
-// GET /api/auth/login → sends the visitor to Matrica to log in.
+// GET /api/auth/login → sends the visitor to Matrica to log in (the login buttons link here), then back
+// to /holders. Already logged in: straight to /holders.
 export async function GET(request: Request) {
   const mode = authMode();
+  const params = new URL(request.url).searchParams;
+  const again = params.has("again") || params.has("as"); // "Log in again" (another wallet linked since), or a mock test user
+  if (mode !== "off" && !again && (await getSession())) redirect("/holders");
 
   if (mode === "mock") {
     // Development only: skip Matrica. ?as=none tests the "no Lad found" screen, ?as=whale a holder with 40 Lads.
@@ -18,7 +22,7 @@ export async function GET(request: Request) {
     const saved = (await getSettings(id).catch(() => null))?.photo;
     await setSession({
       id,
-      name: "Test Lad",
+      name: "Test LAD",
       handle: "testlad",
       since: "2023-04-21",
       roles: ["OG", "Mad Coach"],

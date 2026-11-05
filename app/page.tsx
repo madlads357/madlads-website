@@ -7,7 +7,7 @@ import { Section, SectionHeader } from "@/components/Section";
 import { RosterPreview } from "@/components/RosterPreview";
 import { ArtCard } from "@/components/ArtCard";
 import { LogoStacked } from "@/components/Logo";
-import { perks } from "@/data/holders";
+import { perks, type Perk } from "@/data/holders";
 import { LadsMarquee } from "@/components/Marquee";
 import { ladImage } from "@/data/lads";
 import { CountUp } from "@/components/CountUp";
@@ -263,39 +263,61 @@ function SubHeader({ label, note }: { label: string; note: string }) {
 }
 
 /* ------------------------------------------------------------- Holders */
-// What holding gets you (copy and background images in data/holders.ts). The crew comes first as the
-// big card; the other perks sit beside it as smaller cards. All three share the same dark, blurred look.
+// What holding gets you (copy and photos in data/holders.ts): the crew first as the big card, then
+// collabs & giveaways and the community tools. Each card is a photo with its text on a solid panel
+// under it, never on top of the photo, so it stays readable.
 
-// Blurred LADS (none of them from the marquee or the roster) and a meetup photo scattered over the whole
-// Holders section, behind the header and the cards. Decorative only: phones get 4 small, faint tiles
-// around the edges; the full set shows from md/lg.
+// Blurred LADS (none of them from the marquee or the roster) scattered behind the header and the cards.
+// Decorative only: phones get 2 faint tiles at the top, the rest shows from md/lg.
 const holderDecor = [
-  { src: ladImage(1070), cls: "top-2 left-1/2 size-20 -translate-x-1/2 -rotate-6 blur-[3px] opacity-30 md:top-8 md:size-40 md:blur-sm md:opacity-50" },
-  { src: ladImage(905), cls: "top-4 -right-6 size-20 -rotate-6 blur-[3px] opacity-30 md:top-6 md:right-[3%] md:size-32 md:blur-sm md:opacity-50" },
-  { src: ladImage(1337), cls: "top-[48%] -left-6 size-20 rotate-6 blur-[3px] opacity-30 md:hidden lg:top-[45%] lg:-left-12 lg:block lg:size-36 lg:opacity-60" },
-  { src: ladImage(6738), cls: "top-[72%] -right-6 size-24 -rotate-6 blur-[3px] opacity-30 md:hidden lg:top-[52%] lg:-right-12 lg:block lg:size-36 lg:opacity-60" },
-  { src: "/irl/hanoi-meetup.jpg", cls: "hidden bottom-6 left-[20%] h-28 w-48 -rotate-3 blur-md opacity-35 lg:block" },
-  { src: ladImage(2968), cls: "hidden right-[8%] bottom-6 size-40 rotate-12 blur-md opacity-50 md:block" },
+  { src: ladImage(1070), cls: "top-2 left-1/2 size-20 -translate-x-1/2 -rotate-6 opacity-30 md:top-8 md:size-40 md:opacity-50" },
+  { src: ladImage(905), cls: "top-4 -right-6 size-20 -rotate-6 opacity-30 md:top-6 md:right-[3%] md:size-32 md:opacity-50" },
+  { src: ladImage(1337), cls: "hidden top-[45%] -left-12 size-36 rotate-6 opacity-50 lg:block" },
+  { src: ladImage(6738), cls: "hidden top-[52%] -right-12 size-36 -rotate-6 opacity-50 lg:block" },
 ];
 
 function HolderDecor() {
   return (
     <div className="pointer-events-none absolute inset-0 select-none" aria-hidden>
       {holderDecor.map(({ src, cls }) => (
-        <div key={src} className={`absolute overflow-hidden rounded-2xl ${cls}`}>
-          <Image src={src} alt="" fill sizes="224px" className="object-cover" />
+        <div key={src} className={`absolute overflow-hidden rounded-2xl blur-sm ${cls}`}>
+          <Image src={src} alt="" fill sizes="160px" className="object-cover" />
         </div>
       ))}
     </div>
   );
 }
 
-// The blurred photo + dark gradient behind every holder card, so white text stays readable.
-function CardBackdrop({ src, sizes, position = "object-center", overlay = "from-black/90 via-black/60 to-black/30" }: { src: string; sizes: string; position?: string; overlay?: string }) {
+const holderCard =
+  "group/card flex h-full overflow-hidden rounded-2xl bg-surface ring-1 ring-line transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-18px_rgba(17,17,17,0.35)]";
+
+function PerkPhoto({ perk, sizes, className }: { perk: Perk; sizes: string; className: string }) {
+  return (
+    <div className={`relative overflow-hidden bg-sunken ${className}`}>
+      <Image src={perk.image} alt="" fill sizes={sizes} className={`object-cover transition-transform duration-700 group-hover/card:scale-105 ${perk.objectPosition ?? ""}`} />
+    </div>
+  );
+}
+
+function PerkText({ perk, n }: { perk: Perk; n: number }) {
+  const { Icon, title, text, tags } = perk;
   return (
     <>
-      <Image src={src} alt="" fill sizes={sizes} className={`-z-20 scale-105 object-cover blur-[2px] transition-transform duration-700 group-hover/card:scale-110 ${position}`} />
-      <div className={`absolute inset-0 -z-10 bg-gradient-to-t ${overlay}`} aria-hidden />
+      <p className="flex items-center gap-2 text-accent">
+        <Icon className="size-5" />
+        <span className="t-eyebrow tabular-nums">0{n}</span>
+      </p>
+      <h3 className="t-h3 mt-3">{title}</h3>
+      <p className="mt-2 max-w-[460px] text-muted">{text}</p>
+      {tags && (
+        <ul className="mt-4 flex flex-wrap gap-2" aria-label="Tools">
+          {tags.map((t) => (
+            <li key={t} className="rounded-full bg-sunken px-3 py-1.5 text-sm font-medium">
+              {t}
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   );
 }
@@ -305,46 +327,37 @@ function Holders() {
   return (
     <Section id="holders" tone="sunken" className="relative isolate overflow-hidden">
       <HolderDecor />
-      <div className="relative z-10">
+      <div className="relative">
         <SectionHeader
           eyebrow="05 / Holders"
           title="For the holders"
-          text="Hold a LAD, join the crew. Log in with Matrica: no wallet pop-ups, nothing to sign."
+          text="Hold a LAD and you’re in the crew. Log in with Matrica: no wallet pop-up, nothing to sign."
           action={<Button href={links.matricaLogin}>Login with Matrica</Button>}
         />
-        <div className="relative grid gap-4 lg:grid-cols-[1.35fr_1fr] lg:grid-rows-2 lg:gap-6">
-          {/* 01 - The crew, front and centre */}
+        <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr] lg:grid-rows-2 lg:gap-6">
+          {/* 01 - The crew: a big photo, the text and the Discord button under it */}
           <div className="reveal lg:row-span-2">
-            <article className="group/card relative isolate flex h-full min-h-[300px] flex-col justify-end overflow-hidden rounded-2xl bg-[#1a0508] p-6 text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-18px_rgba(17,17,17,0.6)] md:min-h-[340px] md:p-8">
-              <CardBackdrop src={crew.image} sizes="(min-width: 1024px) 56vw, 100vw" />
-              <h3 className="t-h3 max-w-[520px]">{crew.title}</h3>
-              <p className="mt-2 max-w-[440px] text-white/80">{crew.text}</p>
-              <div className="mt-5">
-                <Button href={links.discord} variant="inverse-red" external>
-                  Meet the MAD LADS ↗
-                </Button>
+            <article className={`${holderCard} flex-col`}>
+              <PerkPhoto perk={crew} sizes="(min-width: 1024px) 52vw, 100vw" className="aspect-[16/9] lg:aspect-auto lg:min-h-[260px] lg:flex-1" />
+              <div className="p-6 md:p-8">
+                <PerkText perk={crew} n={1} />
+                <div className="mt-6">
+                  <Button href={links.discord} external>
+                    Meet the MAD LADS ↗
+                  </Button>
+                </div>
               </div>
             </article>
           </div>
 
-          {/* 02, 03 - Collabs & giveaways, community tools. Staggered only side by side (lg); stacked on phones each
-              card fades in on its own, so the last one isn't left half-transparent. */}
-          {more.map(({ title, text, image, objectPosition, overlay, tags }, i) => (
-            <div key={title} className={`reveal ${i === 0 ? "lg:[--i:1]" : "lg:[--i:2]"}`}>
-              <article className="group/card relative isolate flex h-full min-h-[150px] flex-col justify-end overflow-hidden rounded-2xl bg-[#1a0508] p-5 text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-18px_rgba(17,17,17,0.6)] md:p-6">
-                <CardBackdrop src={image} sizes="(min-width: 1024px) 40vw, 100vw" position={objectPosition} overlay={overlay} />
-                <div className="flex flex-col gap-2">
-                  <h3 className="t-h3">{title}</h3>
-                  <p className="text-white/80">{text}</p>
-                  {tags && (
-                    <ul className="mt-2 flex flex-wrap gap-2">
-                      {tags.map((t) => (
-                        <li key={t} className="rounded-full border border-white/30 bg-black/30 px-3 py-1.5 text-sm font-medium text-white backdrop-blur-sm">
-                          {t}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+          {/* 02, 03 - Collabs & giveaways, community tools: photo on the side from sm, on top on phones.
+              Staggered only side by side (lg); stacked, each card fades in on its own. */}
+          {more.map((perk, i) => (
+            <div key={perk.title} className={`reveal ${i === 0 ? "lg:[--i:1]" : "lg:[--i:2]"}`}>
+              <article className={`${holderCard} flex-col sm:flex-row`}>
+                <PerkPhoto perk={perk} sizes="(min-width: 1024px) 16vw, (min-width: 640px) 40vw, 100vw" className="aspect-[16/9] sm:aspect-auto sm:w-[38%] sm:shrink-0" />
+                <div className="flex flex-col justify-center p-6">
+                  <PerkText perk={perk} n={i + 2} />
                 </div>
               </article>
             </div>

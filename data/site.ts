@@ -8,8 +8,9 @@ export const nav = [
 ];
 
 export const links = {
-  // Login buttons: the holder area once NEXT_PUBLIC_HOLDERS_LIVE=1, the homepage Holders section until then.
-  matricaLogin: process.env.NEXT_PUBLIC_HOLDERS_LIVE === "1" ? "/holders" : "/#holders",
+  // Login buttons: straight to Matrica once NEXT_PUBLIC_HOLDERS_LIVE=1 (back on /holders after), the homepage
+  // Holders section until then.
+  matricaLogin: process.env.NEXT_PUBLIC_HOLDERS_LIVE === "1" ? "/api/auth/login" : "/#holders",
   newsletter: "https://news.madlads.com/",
   backpack: "https://backpack.exchange/",
   x: "https://x.com/MadLads",

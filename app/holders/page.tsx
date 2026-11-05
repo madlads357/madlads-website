@@ -95,7 +95,7 @@ function NoLads({ session }: { session: HolderSession }) {
         <Button href="https://matrica.io" external>
           Link a wallet on Matrica ↗
         </Button>
-        <Button href={LOGIN} variant="secondary">
+        <Button href={`${LOGIN}?again`} variant="secondary">
           Log in again
         </Button>
         <Logout />

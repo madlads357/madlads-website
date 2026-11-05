@@ -29,7 +29,7 @@ export async function getLatestNews(limit = 3): Promise<NewsItem[]> {
       .slice(0, limit)
       .map((p) => ({
         date: fmtDate(p.post_date!),
-        title: p.title!,
+        title: p.title!.replace(/\bMad News\b/gi, "MAD News").replace(/\bMad Lads\b/gi, "MAD LADS"), // the site's spelling
         subtitle: p.subtitle || undefined,
         href: p.canonical_url!,
         image: p.cover_image || fallback[0].image,

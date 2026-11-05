@@ -14,7 +14,7 @@ let cache: Promise<Collection> | null = null;
 
 export function loadCollection(): Promise<Collection> {
   cache ??= fetch("/data/madlads.json").then((r) => {
-    if (!r.ok) throw new Error(`Could not load Mad Lads data (${r.status})`);
+    if (!r.ok) throw new Error(`Could not load MAD LADS data (${r.status})`);
     return r.json() as Promise<Collection>;
   });
   return cache;
