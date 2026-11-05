@@ -280,7 +280,7 @@ export function MadLadsExplorer() {
             {activeCount > 0 && <span className="grid size-5 place-items-center rounded-full bg-accent text-[11px] text-white">{activeCount}</span>}
           </button>
           <span className="h-6 w-px bg-line" aria-hidden />
-          <label className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-xl px-3 focus-within:bg-sunken/60">
+          <label className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-xl px-3 focus-within:bg-sunken/60 focus-within:ring-2 focus-within:ring-ink">
             <SearchIcon className="size-4 shrink-0 text-muted" />
             <span className="sr-only">Find a MAD LADS by number</span>
             <input
@@ -288,7 +288,7 @@ export function MadLadsExplorer() {
               placeholder="Search by number…"
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              className="w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-muted"
+              className="w-full min-w-0 bg-transparent text-base outline-none placeholder:text-muted md:text-sm"
             />
             {q && (
               <button type="button" onClick={() => setQ("")} aria-label="Clear search" className="rounded-full p-1 hover:bg-sunken">
@@ -665,10 +665,10 @@ function LongList({
   const shown = all || query ? items : items.slice(0, PREVIEW);
   return (
     <div>
-      <label className="mb-2 flex h-9 items-center gap-2 rounded-lg bg-sunken/70 px-3">
+      <label className="mb-2 flex h-9 items-center gap-2 rounded-lg bg-sunken/70 px-3 focus-within:ring-2 focus-within:ring-ink">
         <SearchIcon className="size-3.5 text-muted" />
         <span className="sr-only">Search {name}</span>
-        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={`Search ${values.length} ${name.toLowerCase()}…`} className="w-full bg-transparent text-[13px] outline-none placeholder:text-muted" />
+        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={`Search ${values.length} ${name.toLowerCase()}…`} className="w-full bg-transparent text-base outline-none placeholder:text-muted md:text-[13px]" />
       </label>
       <ul className="flex flex-col">
         {shown.map(({ v, vi }) => {

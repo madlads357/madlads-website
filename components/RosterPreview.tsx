@@ -45,7 +45,7 @@ export function RosterPreview() {
         </div>
         <form
           action="/madlads"
-          className="flex h-11 items-center gap-2 rounded-full border border-line bg-surface px-4 sm:w-52"
+          className="flex h-11 items-center gap-2 rounded-full border border-line bg-surface px-4 focus-within:border-ink focus-within:ring-1 focus-within:ring-ink sm:w-52"
           role="search"
         >
           <SearchIcon className="size-4 text-muted" />
@@ -59,7 +59,7 @@ export function RosterPreview() {
             placeholder="Find LAD #"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full bg-transparent text-sm outline-none placeholder:text-muted"
+            className="w-full bg-transparent text-base outline-none placeholder:text-muted md:text-sm"
           />
         </form>
       </div>

@@ -189,7 +189,7 @@ export function DressingRoom({ lads, photo, onClose }: { lads: number[]; photo: 
                   <img key={`${a.id}-${lassie}`} src={layoutSrc(a, lassie)} alt="" draggable={false} className="dr-layer pointer-events-none absolute inset-0 h-full w-full object-cover" />
                 ))}
             </span>
-            <span className="dr-tag absolute -bottom-3 left-5 rounded-[3px] bg-red px-2.5 py-1 text-xs font-bold tracking-wide text-white tabular-nums">#{lad}</span>
+            <span className="dr-tag absolute -bottom-3 left-5 rounded-[3px] bg-accent px-2.5 py-1 text-xs font-bold tracking-wide text-white tabular-nums">#{lad}</span>
           </button>
           <p className="flex items-center gap-3 text-xs text-muted">
             {peek ? "The LAD as it is." : active.length ? "Press and hold to compare." : "Pick a sticker to dress it up."}
@@ -230,7 +230,7 @@ export function DressingRoom({ lads, photo, onClose }: { lads: number[]; photo: 
                   value={query}
                   onChange={(e) => setQuery(e.target.value.replace(/\D/g, "").slice(0, 4))}
                   placeholder="Any LAD, e.g. 5894"
-                  className="min-w-0 flex-1 rounded-[4px] bg-surface px-4 py-3 text-sm ring-1 ring-line outline-none placeholder:text-muted focus:ring-2 focus:ring-ink"
+                  className="min-w-0 flex-1 rounded-[4px] bg-surface px-4 py-3 text-base ring-1 ring-line outline-none md:text-sm placeholder:text-muted focus:ring-2 focus:ring-ink"
                 />
                 <button type="submit" className="rounded-[4px] border-[1.5px] border-ink px-4 text-sm font-semibold transition-colors hover:bg-ink hover:text-white">
                   Try it
@@ -278,7 +278,7 @@ export function DressingRoom({ lads, photo, onClose }: { lads: number[]; photo: 
                         <span className="dr-sticker-face relative grid size-16 place-items-center rounded-2xl bg-surface md:size-[72px]">
                           <Image src={iconSrc(a)} alt="" width={52} height={52} className="size-11 object-contain md:size-12" />
                           {isOn && (
-                            <span className="absolute -top-1.5 -right-1.5 grid size-5 place-items-center rounded-full bg-red text-[11px] font-bold text-white shadow" aria-hidden>
+                            <span className="absolute -top-1.5 -right-1.5 grid size-5 place-items-center rounded-full bg-accent text-[11px] font-bold text-white shadow" aria-hidden>
                               ✓
                             </span>
                           )}

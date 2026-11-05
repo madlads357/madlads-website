@@ -319,7 +319,7 @@ export function Wallpapers({ lads, photo, onClose }: { lads: number[]; photo: nu
                   >
                     <Image src={thumbImage(id)} alt="" fill sizes="56px" quality={70} className="object-cover" />
                     {format === "banner" && n >= 0 && (
-                      <span className="absolute top-1 right-1 grid size-5 place-items-center rounded-full bg-red text-[11px] font-bold text-white" aria-hidden>
+                      <span className="absolute top-1 right-1 grid size-5 place-items-center rounded-full bg-accent text-[11px] font-bold text-white" aria-hidden>
                         {n + 1}
                       </span>
                     )}

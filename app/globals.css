@@ -60,6 +60,7 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 6rem;
+    -webkit-tap-highlight-color: transparent; /* no grey box on tap; keyboard focus rings stay */
   }
   body {
     background: var(--color-paper);
@@ -103,6 +104,7 @@
 }
 /* Inner panels: the bar only shows while hovering the panel. */
 @utility thin-scroll {
+  overscroll-behavior: contain; /* reaching the end doesn't scroll the page behind (windows, panels) */
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
   &:hover {

@@ -55,14 +55,13 @@ export default function Home() {
 function Hero() {
   return (
     <section className="relative isolate flex h-[100svh] max-h-[1000px] min-h-[640px] items-end overflow-hidden bg-[#1a0508] text-white">
-      {/* Background video (from the Mad Lads Culture Hub). The poster shows while it loads
-          and stays alone for people who prefer reduced motion. */}
+      {/* Background video (from the Mad Lads Culture Hub). The picture under it shows while it loads
+          and stays alone for people who prefer reduced motion (no poster on the video: it would load twice). */}
       {/* Background: pushes back slightly and darkens as you scroll away (CSS scroll timeline) */}
       <div className="scroll-push absolute inset-0 -z-10">
         <Image src="/video/hero-poster.jpg" alt="" fill loading="eager" fetchPriority="high" sizes="100vw" className="object-cover" />
         <video
           className="absolute inset-0 h-full w-full object-cover motion-reduce:hidden"
-          poster="/video/hero-poster.jpg"
           autoPlay
           muted
           loop
