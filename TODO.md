@@ -44,5 +44,5 @@ Every setting is described in `.env.example`.
 - [x] Mad Lads Discord server ID: 971847939456639047 (in .env.local; set `MADLADS_DISCORD_SERVER_ID` in Vercel).
 - [ ] Optional: `MADLADS_STAMP_ROLES` in Vercel = the roles that earn a passport stamp, most important first (e.g. "OG,Mad Coach"). Without it, any of the holder's roles on the server can be stamped.
 - [ ] At the first real login, check that Matrica returns the X handle and the Discord roles with the scopes asked (`socials.twitter socials.discord`, in `lib/auth/config.ts`).
-- [ ] Decide what else goes in the holder area. Done: memes (meme vault, 326 memes) and the Dressing Room (15 accessories), both moved from the hub. Still on the hub: playlist, mini-games, events, directory.
+- [ ] Decide what else goes in the holder area. Done: meme vault, Dressing Room, playlist (Spotify), wallpapers (phone, desktop, X banner). Still on the hub: mini-games, events, directory.
 - [ ] Add the Culture Hub ticket to the backpack (`data/bag.ts`) once its image exists.

@@ -10,6 +10,7 @@ import { bagItems, isBagWindow, type BagItem, type BagWindow } from "@/data/bag"
 import { MemeVault } from "./MemeVault";
 import { DressingRoom } from "./DressingRoom";
 import { Playlist } from "./Playlist";
+import { Wallpapers } from "./Wallpapers";
 import { PHOTO_EVENT, PHOTO_KEY } from "@/lib/auth/hint";
 import "./bag.css";
 
@@ -103,6 +104,7 @@ export function HolderProfile({ name, handle, since, roles, lads, photo: saved }
       {windowOpen === "memes" && <MemeVault onClose={closeWindow} />}
       {windowOpen === "dressing" && <DressingRoom lads={lads} photo={photo} onClose={closeWindow} />}
       {windowOpen === "playlist" && <Playlist onClose={closeWindow} />}
+      {windowOpen === "wallpapers" && <Wallpapers lads={lads} photo={photo} onClose={closeWindow} />}
     </div>
   );
 }
@@ -235,7 +237,7 @@ function Item({ item, onOpen }: { item: BagItem; onOpen: (w: BagWindow) => void 
   if (isBagWindow(item.open)) {
     const w = item.open;
     return (
-      <button type="button" onClick={() => onOpen(w)} className={cls} aria-label={{ passport: "Open your MAD LADS Passport", memes: "Open the meme vault", dressing: "Open the dressing room", playlist: "Play the MAD LADS mix" }[w]}>
+      <button type="button" onClick={() => onOpen(w)} className={cls} aria-label={{ passport: "Open your MAD LADS Passport", memes: "Open the meme vault", dressing: "Open the dressing room", playlist: "Play the MAD LADS mix", wallpapers: "Make a wallpaper or an X banner" }[w]}>
         {body}
       </button>
     );

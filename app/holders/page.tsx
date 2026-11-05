@@ -7,6 +7,12 @@ import { authMode } from "@/lib/auth/config";
 import { getSession, type HolderSession } from "@/lib/auth/session";
 import { perks } from "@/data/holders";
 import { HolderProfile } from "@/components/holder/HolderProfile";
+import Image from "next/image";
+import Link from "next/link";
+import { thumbImage } from "@/lib/madlads";
+import { links } from "@/data/site";
+
+const MAX_LAD = 9971; // numbers in the collection (#1 to #9971)
 
 // The holder area. Reads the login cookie, so it is rendered on every request (not prebuilt).
 export const metadata: Metadata = {
@@ -84,23 +90,62 @@ function LoggedOut({ error }: { error?: string }) {
   );
 }
 
+// Logged in, but no LAD in the linked wallets: two ways forward, not a dead end. Already have one in
+// another wallet → link it on Matrica and log in again. Not yet → where to get one, a few LADS to look at,
+// and what holders get.
 function NoLads({ session }: { session: HolderSession }) {
+  const picks = Array.from({ length: 6 }, () => 1 + Math.floor(Math.random() * MAX_LAD)); // new ones on every visit
   return (
-    <Shell title="No LAD found.">
-      <p className="t-body-l text-muted">
-        Hey {session.name}, we couldn’t find a MAD LADS in the wallets linked to your Matrica account. If your LAD is in another wallet, link it on Matrica, then
-        log in again.
-      </p>
-      <div className="flex flex-wrap gap-3">
-        <Button href="https://matrica.io" external>
-          Link a wallet on Matrica ↗
-        </Button>
-        <Button href={`${LOGIN}?again`} variant="secondary">
-          Log in again
-        </Button>
+    <>
+      <Shell title="No LAD found.">
+        <p className="t-body-l text-muted">Hey {session.name}, there’s no MAD LADS in the wallets linked to your Matrica account.</p>
+      </Shell>
+      <div className="grid gap-4 px-4 pb-16 md:grid-cols-2 md:gap-6 md:px-page md:pb-24">
+        <section className="flex flex-col items-start gap-4 rounded-2xl bg-surface p-6 ring-1 ring-line md:p-8">
+          <p className="t-eyebrow text-accent">Already have one?</p>
+          <h2 className="t-h3">It’s in another wallet.</h2>
+          <p className="text-muted">Link that wallet on Matrica, then log in again. Your LADS show up right away.</p>
+          <div className="mt-auto flex flex-wrap gap-3 pt-2">
+            <Button href="https://matrica.io" external>
+              Link a wallet on Matrica ↗
+            </Button>
+            <Button href={`${LOGIN}?again`} variant="secondary">
+              Log in again
+            </Button>
+          </div>
+        </section>
+
+        <section className="flex flex-col items-start gap-4 rounded-2xl bg-surface p-6 ring-1 ring-line md:p-8">
+          <p className="t-eyebrow text-accent">Not yet?</p>
+          <h2 className="t-h3">Pick your LAD.</h2>
+          <p className="text-muted">MAD LADS trade on Magic Eden and Tensor. Find one you like first: every LAD has its own page.</p>
+          <ul className="flex -space-x-3 pt-1" aria-label="A few MAD LADS">
+            {picks.map((id, i) => (
+              <li key={`${id}-${i}`} style={{ rotate: `${[-6, 4, -3, 5, -4, 3][i]}deg` }}>
+                <Link href={`/madlads/${id}`} className="relative block size-16 overflow-hidden rounded-xl bg-sunken ring-4 ring-surface transition hover:z-10 hover:-translate-y-1 md:size-20">
+                  <Image src={thumbImage(id)} alt={`MAD LADS #${id}`} fill sizes="80px" quality={70} className="object-cover" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-auto flex flex-wrap gap-3 pt-2">
+            <Button href={links.magicEden} external>
+              Magic Eden ↗
+            </Button>
+            <Button href={links.tensor} variant="secondary" external>
+              Tensor ↗
+            </Button>
+            <Button href="/madlads" variant="secondary">
+              Browse all LADS
+            </Button>
+          </div>
+        </section>
+      </div>
+      <Perks />
+      <div className="flex justify-center px-4 py-10">
         <Logout />
       </div>
-    </Shell>
+    </>
   );
 }
 
