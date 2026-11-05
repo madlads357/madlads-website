@@ -23,6 +23,7 @@ import { honoraries, king, moreOneOfOnes, specials } from "@/data/art";
 import { chapters } from "@/data/lore";
 import { getLatestNews } from "@/lib/news";
 import { links } from "@/data/site";
+import { HolderButton } from "@/components/HolderButton";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
@@ -332,7 +333,7 @@ function Holders() {
           eyebrow="05 / Holders"
           title="For the holders"
           text="Hold a LAD and you’re in the crew. Log in with Matrica: no wallet pop-up, nothing to sign."
-          action={<Button href={links.matricaLogin}>Login with Matrica</Button>}
+          action={<HolderButton />}
         />
         <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr] lg:grid-rows-2 lg:gap-6">
           {/* 01 - The crew: a big photo, the text and the Discord button under it */}

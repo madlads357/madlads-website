@@ -36,7 +36,7 @@ Every setting is described in `.env.example`.
 - [ ] In Vercel, set `MATRICA_CLIENT_ID`, `MATRICA_CLIENT_SECRET`, `MATRICA_COLLECTION_ID` and `SESSION_SECRET`.
 - [ ] Test a real login with a wallet that holds a Lad. Check that the Lad numbers come out right (`ladNumber` in `lib/auth/matrica.ts`).
 - [x] Privacy page and Terms updated for the holder area (cookies, Matrica, Helius, database, share links). Still needs the legal review above.
-- [ ] Go live: set `NEXT_PUBLIC_HOLDERS_LIVE=1` and redeploy. The login buttons then open `/holders`.
+- [ ] Go live: set `NEXT_PUBLIC_HOLDERS_LIVE=1` and redeploy. The login buttons then go straight to Matrica and back to `/holders`.
 - [x] Helius key set (local + Vercel); collection address and API responses checked.
 - [ ] At the first real Matrica login, check in `lib/auth/matrica.ts` that `UserWallet.id` is the wallet address (needed for "Days Mad").
 - [x] Database (Neon) connected; tables created with `npm run db:setup` (db/schema.sql).
