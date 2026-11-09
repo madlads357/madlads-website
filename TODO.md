@@ -1,79 +1,91 @@
-# Before launch
+# Launch plan
 
-## Domain
-- [ ] Point the domain (madlads.com) to the Vercel project.
-- [ ] In Vercel, set `NEXT_PUBLIC_SITE_URL=https://madlads.com` and redeploy.
-      This one setting updates the canonical URLs, `sitemap.xml`, `robots.txt`, the structured data and the link previews.
-
-## Email addresses
-Both are placeholders in `data/site.ts`:
-- [ ] `legalEmail`: `legal@madlads.com`, used on the Terms and Privacy pages.
-- [ ] `pressEmail`: `press@madlads.com`, used in the footer and the FAQ.
-
-## Legal review (Backpack legal)
-- [ ] Review `/terms` (`app/terms/page.tsx`) and `/privacy` (`app/privacy/page.tsx`).
-- [ ] Decide whether to name the legal entity and governing law (the draft names neither).
-- [ ] Link the Mad Lads art license from the Terms (section “Owning a Mad Lad”), if there is one.
-
-## Copy review (community manager)
-- [ ] FAQ answers (`app/page.tsx`).
-- [ ] Lore chapters (`data/lore.ts`).
-
-## Links to check
-- [ ] Discord invite: https://discord.gg/madlads
-- [ ] Press kit (Google Drive folder in `data/site.ts`)
-- [ ] X account: https://x.com/MadLads
-
-# After launch
-- [ ] Add the domain to Google Search Console and submit `https://madlads.com/sitemap.xml`.
-- [ ] Optional: turn on Vercel Speed Insights to see real visitors’ load times.
-      It sets no cookies, but mention it on the Privacy page (“Data from your visit”) if you enable it.
-
-# Login with Backpack (the default holder login)
-How it works: `lib/auth/wallet.ts` (server) and `lib/wallet/backpack.ts` (browser). Settings in `.env.example`.
-- [x] Built on Solana Kit (`@solana/kit-plugin-wallet`, as the solana-dev skill recommends). Sign In With Solana (`solana:signIn`, as an offchain message where Backpack supports it); "I use a Ledger": a checklist, then a memo transaction approved on the device and never sent; vault links (cold wallet → hot wallet). Checked end to end over HTTP with test keys (28 checks).
-- [x] Test with a real Backpack: a normal account.
-- [ ] Test with a real Ledger account selected in Backpack (tick "I use a Ledger"), and linking a Ledger vault to a hot wallet.
-- [ ] Test on a phone: "Open in Backpack" should open the site in the Backpack app's browser (`openInBackpackApp` in `lib/wallet/backpack.ts`; the link format still needs checking).
-- [ ] In Vercel (Project → Settings → Environment Variables), set:
-  - `SESSION_SECRET`: encrypts the login cookie. A long random string, made with
-    `node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"`.
-    Use a new one for production (not the one in `.env.local`). Changing it later logs everyone out.
-  - `AUTH_PROVIDER`: leave it empty for Login with Backpack. Set it to `matrica` only to switch back to Matrica
-    (that also needs the `MATRICA_*` settings below).
-  - `HELIUS_API_KEY`: already set.
-  - Then `NEXT_PUBLIC_HOLDERS_LIVE=1` and redeploy to go live.
-- [ ] Run `npm run db:setup` against the production database once (new tables `wallet_links`, `used_nonces`).
-- [ ] Vercel Firewall: add a rate-limit rule on `/api/auth/*` (for example 20 requests a minute per IP). The limit in the code (`lib/rate-limit.ts`) only counts inside one server instance, so it's a speed bump, not a wall.
-# Link Discord / X (holder profile)
-- [x] Link Discord built (lib/accounts/discord.ts, /api/accounts/discord/*, table holder_accounts). Token revoked after use; "Refresh roles" re-reads them.
-- [ ] Discord developer portal: add redirects http://localhost:3000/api/accounts/discord/callback and https://madlads.com/api/accounts/discord/callback.
-- [ ] Set DISCORD_CLIENT_ID and DISCORD_CLIENT_SECRET (.env.local and Vercel).
-- [ ] Set MADLADS_STAMP_ROLES as "role id:Stamp name" pairs (see .env.example), locally and in Vercel.
-- [ ] Test a real link, refresh and unlink. Check that guilds.members.read works without Discord approval.
-- [ ] Run npm run db:setup on the production database (new table holder_accounts; same command as above).
-- [x] Code review of the login (Nov 9): packed session cookie, fixed session expiry, kept "MAD since" on Helius errors, awaited token revokes, shared passport follows unlinks, rate limit, one-time login proofs, vault-side revoke.
-- [x] Link X built (lib/accounts/x.ts, /api/accounts/x/*): OAuth 1.0a, handle read from the free access-token reply; users/me (paid, ~$0.001) only if X leaves it out.
-- [ ] X Developer Console: app (ideally on the MAD LADS X account), spend cap $0, User authentication settings (Web App, Read, callbacks, website/terms/privacy URLs).
-- [ ] Set X_API_KEY and X_API_SECRET (consumer keys) in .env.local and Vercel.
-- [x] First real link works locally with the spend cap at $0 (handle comes free in the OAuth reply).
-- [ ] Legal review of the updated Privacy and Terms (now about the wallet login).
-
-# Matrica login (built, kept for later: AUTH_PROVIDER=matrica)
-Paused: Matrica asks 4k a year. Wallet login is the default meanwhile.
+Do these in order. Test everything on the free `*.vercel.app` address before buying or pointing the domain.
 Every setting is described in `.env.example`.
-- [ ] Request API access on business.matrica.io. Ask for the client ID and secret, the Mad Lads collection ID (Matrica's own ID), token lifetimes and rate limits.
-- [ ] Register the callback URLs with Matrica: `https://madlads.com/api/auth/callback` and `http://localhost:3000/api/auth/callback`.
-- [ ] In Vercel, set `MATRICA_CLIENT_ID`, `MATRICA_CLIENT_SECRET`, `MATRICA_COLLECTION_ID` and `SESSION_SECRET`.
-- [ ] Test a real login with a wallet that holds a Lad. Check that the Lad numbers come out right (`ladNumber` in `lib/auth/matrica.ts`).
-- [x] Privacy page and Terms updated for the holder area (cookies, Matrica, Helius, database, share links). Still needs the legal review above.
-- [ ] To switch to Matrica: `AUTH_PROVIDER=matrica` plus the settings above. The login button on /holders then goes to Matrica and back.
-- [x] Helius key set (local + Vercel); collection address and API responses checked.
-- [ ] At the first real Matrica login, check in `lib/auth/matrica.ts` that `UserWallet.id` is the wallet address (needed for "Days Mad").
-- [x] Database (Neon) connected; tables created with `npm run db:setup` (db/schema.sql).
-- [ ] If production uses a different Neon database or branch than .env.local, run `npm run db:setup` against it once (with its DATABASE_URL).
-- [x] Mad Lads Discord server ID: 971847939456639047 (in .env.local; set `MADLADS_DISCORD_SERVER_ID` in Vercel).
-- [ ] Optional: `MADLADS_STAMP_ROLES` in Vercel = the roles that earn a passport stamp, most important first (e.g. "OG,Mad Coach"). Without it, any of the holder's roles on the server can be stamped.
-- [ ] At the first real login, check that Matrica returns the X handle and the Discord roles with the scopes asked (`socials.twitter socials.discord`, in `lib/auth/config.ts`).
-- [ ] Decide what else goes in the holder area. Done: meme vault, Dressing Room, playlist (Spotify), wallpapers (phone, desktop, X banner). Still on the hub: mini-games, events, directory.
+
+## 1. Test on the `*.vercel.app` address
+
+### Environment variables (Vercel → Project → Settings → Environment Variables)
+`NEXT_PUBLIC_*` values are baked in at build time: change one, then redeploy.
+
+| Variable | What to do |
+| --- | --- |
+| `SESSION_SECRET` | **New.** A long random string, not the one in `.env.local`: `node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"`. Changing it later logs everyone out. |
+| `HELIUS_API_KEY` | Already set. Check it. |
+| `DATABASE_URL` | Set by Vercel's Neon integration. Check it is the database you expect (see the next step). |
+| `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET` | **New.** From the Discord developer portal → your app → OAuth2. |
+| `MADLADS_DISCORD_SERVER_ID` | Check it is set (the ID is in `.env.local`). |
+| `MADLADS_STAMP_ROLES` | **New.** The roles that earn a passport stamp, most important first, as `role id:Stamp name` (e.g. `1234567890123456:OG,2345678901234567:Mad Coach`). Without it, Discord links but gives no stamps. |
+| `X_API_KEY`, `X_API_SECRET` | **New.** The app's "API Key and Secret" (consumer keys) from the X Developer Console. |
+| `AUTH_PROVIDER` | Leave empty (Login with Backpack). |
+| `MATRICA_*`, `MATRICA_MOCK`, `AUTH_MOCK` | Remove if present. `AUTH_MOCK` must never be set in Vercel. |
+| `NEXT_PUBLIC_HOLDERS_LIVE`, `NEXT_PUBLIC_SITE_URL` | Not yet: steps 2 and 3. |
+
+### Database
+- [ ] If Vercel's Neon database is not the one in `.env.local` (different database or branch), run `npm run db:setup` against it once, with its `DATABASE_URL`.
+      It creates the five tables: `holder_settings`, `share_links`, `wallet_links`, `holder_accounts`, `used_nonces`.
+
+### Provider portals
+- [ ] **Discord** (developer portal → OAuth2 → Redirects): add `https://<project>.vercel.app/api/accounts/discord/callback`. Keep the localhost one. Copy it exactly: a trailing space breaks it.
+- [ ] **X** (Developer Console → the app → User authentication settings): add `https://<project>.vercel.app/api/accounts/x/callback`, keep localhost.
+      The app should be a Web App with Read permission, a **$0 spend cap**, and website, terms and privacy URLs set. Ideally the app belongs to the MAD LADS X account, since holders see its name on the Authorize screen.
+
+### Protect the login routes
+- [ ] Vercel Firewall → add a rule: path **starts with** `/api/auth/` → rate limit, fixed window 60 s, **30 requests**, key IP, respond 429.
+      Publish it. Try it first with the action set to *Log*. The limit in the code (`lib/rate-limit.ts`) only counts inside one server instance, so it is a speed bump, not a wall.
+
+### Real tests (on the deployed address)
+- [x] Backpack login with a normal account (works locally).
+- [ ] Backpack login with a **Ledger account** selected in Backpack ("I use a Ledger").
+- [ ] Link a Ledger vault to a hot wallet, then remove the link from each side.
+- [ ] **Phone:** "Open in Backpack" should open the site in the Backpack app's browser. The link format (`openInBackpackApp` in `lib/wallet/backpack.ts`) has not been checked yet.
+- [ ] **Discord:** link, then ⋯ → Refresh roles (stamps need `MADLADS_STAMP_ROLES`), then unlink. Check that `guilds.members.read` works without Discord approval.
+- [ ] **X:** link, switch account, unlink. The first local link worked with the $0 cap (the handle comes free in the OAuth reply).
+- [ ] The shared passport link (`/p/<code>`) shows the new name and stamps, and loses them after an unlink.
+
+## 2. Domain
+- [ ] Buy the domain and add it to the Vercel project; point the DNS as Vercel shows.
+- [ ] Set `NEXT_PUBLIC_SITE_URL=https://madlads.com` and redeploy.
+      This updates the canonical URLs, `sitemap.xml`, `robots.txt`, the structured data and the link previews.
+- [ ] **Discord:** add `https://madlads.com/api/accounts/discord/callback` (and keep the others you still test with).
+- [ ] **X:** add `https://madlads.com/api/accounts/x/callback`, and update the website, terms and privacy URLs.
+- [ ] Anyone logged in on the `vercel.app` address has to log in again on the domain (cookies belong to one address).
+
+## 3. Go live
+- [ ] Replace the placeholder emails in `data/site.ts`: `legalEmail` (`legal@madlads.com`, Terms and Privacy) and `pressEmail` (`press@madlads.com`, footer and FAQ).
+- [ ] Check the links: Discord invite https://discord.gg/madlads, the press kit (Google Drive folder in `data/site.ts`), X account https://x.com/MadLads.
+- [ ] Set `NEXT_PUBLIC_HOLDERS_LIVE=1` and redeploy. The login buttons then point to the holder area. Do this last.
+
+## Reviews by other people
+These don't block the technical steps, but they block the launch.
+- [ ] **Legal (Backpack legal):** review `/terms` and `/privacy` (`app/terms/page.tsx`, `app/privacy/page.tsx`). They describe the wallet login, vault links, Discord and X linking, the cookies and what we store.
+- [ ] Decide whether to name the legal entity and the governing law (the drafts name neither).
+- [ ] Link the Mad Lads art license from the Terms (section “Owning a Mad Lad”), if there is one.
+- [ ] **Copy (community manager):** the FAQ answers (`app/page.tsx`) and the Lore chapters (`data/lore.ts`).
+
+## After launch
+- [ ] Add the domain to Google Search Console and submit `https://madlads.com/sitemap.xml`.
+- [ ] Watch the first logins: Vercel function logs for `[auth]`, `[wallet]`, `[accounts]` errors, and the Helius usage page.
+- [ ] Optional: turn on Vercel Speed Insights. It sets no cookies, but then mention it on the Privacy page (“Data from your visit”).
+
+## Later: the holder area
+- [ ] Decide what else goes in it. Done: passport, wallpapers, dressing room, playlist, meme vault. Still on the Culture Hub: mini-games, events, directory.
 - [ ] Add the Culture Hub ticket to the backpack (`data/bag.ts`) once its image exists.
+
+---
+
+## Done
+- [x] Login with Backpack: Sign In With Solana, "I use a Ledger" (a memo transaction, never sent), vault wallets linked to a hot wallet, built on Solana Kit.
+- [x] Link Discord (roles become passport stamps) and link X (handle on the passport), from the profile.
+- [x] Reviews of the login code: a bug review, a cleanup pass and a security review (nothing exploitable found), with the findings fixed.
+- [x] Privacy page and Terms updated for all of the above (still waiting for the legal review).
+- [x] Database (Neon) connected locally, tables created with `npm run db:setup` (`db/schema.sql`).
+- [x] README with images (`npm run screenshots`).
+
+## Parked: Matrica login
+Built and kept behind `AUTH_PROVIDER=matrica`. Paused: Matrica asks 4k a year, and the wallet login replaces it. To switch back:
+- [ ] Get API access on business.matrica.io: client ID and secret, the Mad Lads collection ID (Matrica's own ID), token lifetimes and rate limits.
+- [ ] Register the callbacks `https://madlads.com/api/auth/callback` and `http://localhost:3000/api/auth/callback`.
+- [ ] In Vercel, set `AUTH_PROVIDER=matrica`, `MATRICA_CLIENT_ID`, `MATRICA_CLIENT_SECRET`, `MATRICA_COLLECTION_ID` and `SESSION_SECRET`. The login button on `/holders` then goes to Matrica and back, and linking X and Discord is switched off (Matrica brings them).
+- [ ] At the first real login, check that `UserWallet.id` is the wallet address (`lib/auth/matrica.ts`, needed for "Days Mad"), that the Lad numbers come out right (`ladNumber`), and that Matrica returns the X handle and the Discord roles with the scopes asked (`socials.twitter socials.discord`, in `lib/auth/config.ts`).
+- [ ] The Privacy page and Terms describe the wallet login: their Matrica wording is in the git history (before Nov 9, 2026).
