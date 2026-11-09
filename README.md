@@ -1,53 +1,116 @@
-# Mad Lads — website
+<p align="center">
+  <img src="docs/images/hero.png" alt="The Mad Lads homepage: a red comic portrait behind the headline Everyone's MAD here, with buttons to meet the MAD LADS and read the Lore" width="100%">
+</p>
 
-The new website for [Mad Lads](https://madlads.com), the Solana collection by Backpack:
-a homepage, the **Lore** page, and an explorer for **all 9,971 Mad Lads** with search and trait filters.
+<h1 align="center">MAD LADS</h1>
 
-**Stack:** Next.js 16 (App Router, static pages) · React 19 · TypeScript · Tailwind CSS 4 · Lenis · Geist font
-**Design:** [Figma file](https://www.figma.com/design/yJT0LFzcDQkT3OaeJuCl3S/MadLads) — tokens, components and the homepage
+<p align="center"><b>The new website for <a href="https://madlads.com">Mad Lads</a>, the Solana collection by Backpack: the Lore, an explorer for all 9,971 Lads, and a holder area you log into with your Backpack wallet.</b></p>
 
----
+<!-- Live site: add the URL here once madlads.com points to this site. -->
 
-## Getting started
+<p align="center">
+  <img src="docs/images/strip.png" alt="Four screens on a phone: the homepage, the Lore, the Mad Lads explorer and the holder profile" width="100%">
+</p>
 
-Requires **Node.js 20.9+**.
+Browsing needs no wallet and no account. Holders log in with Backpack to open their backpack, passport and wallpapers: signing is free and nothing is ever sent.
 
-```bash
-npm install
-npm run dev          # http://localhost:3000
-```
+## What's inside
 
-| Script | What it does |
+| Page | What you see |
 | --- | --- |
-| `npm run dev` | Dev server with hot reload |
-| `npm run build` | Production build (all pages are static) |
-| `npm start` | Serve the production build |
-| `npm run typecheck` | TypeScript check (`next lint` no longer exists in Next 16) |
-| `npm run data:madlads` | Rebuild the collection data from the official S3 metadata (see below) |
+| **Home** `/` | Hero video, a Mad Lads preview, the manifesto and stats, a marquee of Lads, a Lore teaser, the art (1/1s and specials), the holders section, the latest MAD News, Backpack and the FAQ. The “Bolt strike” intro plays each time the page is opened. |
+| **Lore** `/lore` | “The story so far”: nine chapters from the mint (April 2023) to three years MAD, then **Beyond the screen**: real-life photos on a pinned horizontal reel and meetup videos. |
+| **Mad Lads** `/madlads` | The explorer: all 9,971 Lads, search by number, 16 trait filters, sort, and a page for every Lad (`/madlads/1234`). |
+| **Holders** `/holders` | Log in with Backpack, see your Lads and “Days MAD”, link your X and Discord, and open your backpack: **Passport**, **Wallpapers**, **Dressing room**, **Playlist**, **Memes**, plus MAD News, Discord and Games. |
+| **Shared passport** `/p/<code>` | The public page behind a passport share link, with its own link-preview card. |
+| **Privacy** and **Terms** | `/privacy`, `/terms`. Written for the code as it is: they change when the code does. |
 
-## Pages
+<p align="center">
+  <img src="docs/images/page-madlads.png" alt="The explorer: search by number, sort, trait filters and the grid of Lads" width="49%">
+  <img src="docs/images/page-holders.png" alt="The holder profile: welcome, days MAD, linked accounts, the Lads and the backpack" width="49%">
+</p>
 
-| Route | File | Content |
-| --- | --- | --- |
-| `/` | `app/page.tsx` | Hero (video), Mad Lads preview, manifesto + stats, Lads marquee, lore teaser, art (1/1s & specials), holders, news, Backpack, FAQ |
-| `/lore` | `app/lore/page.tsx` | “The story so far” — 5 chapters from the mint (2023) to today, then **Beyond the screen**: real-life photos (pinned horizontal reel) and meetup videos |
-| `/madlads` | `app/madlads/page.tsx` | Explorer: 9,971 Lads, number search, 16 trait filters, sort, detail view |
+## Features
+
+- **Login with Backpack.** Sign In With Solana, checked on our server. No password and no third-party login. The site only offers Backpack, and disconnects from the wallet as soon as you are logged in.
+  - **Ledger.** Tick “I use a Ledger”: you approve a free transaction on the device that is checked and never sent.
+  - **Vault wallets.** Lads in a cold wallet or on a Ledger? Sign once with that wallet to link it to your everyday one. From then on, logging in with the everyday wallet counts the vault's Lads too, and gives no access to its funds. Remove a link any time.
+- **Link X and Discord.** Small chips on the profile. Your Discord roles on the Mad Lads server become stamps on your passport, and your X handle goes on it too. We keep the account, never the login tokens.
+- **The passport.** A shareable card with your photo Lad, handle, “MAD since” date and stamps. The video and image are made in your browser (no upload) and shared through a public link you can switch off.
+- **Nothing downloaded in advance.** Lad images are requested by number, only when they appear on screen, and Tensor's image CDN serves a small render that `next/image` shrinks to about 9 KB.
+- **An entrance, not just a page.** Almost all motion is pure CSS (scroll-driven animations), off when the visitor asks for reduced motion. See [Motion](#motion).
+- **Made to be shared.** One branded 1200×630 link-preview card per page, generated at build time, plus a sitemap, robots.txt and canonical URLs.
+- **Accessible and fast.** Lighthouse (mobile, local production build): performance Home 92–100, Lore 95, Mad Lads 87–95. Accessibility, Best practices and SEO are 100.
+
+## Tech stack
+
+- **[Next.js 16](https://nextjs.org)** (App Router) with **React 19** and **TypeScript**. Public pages are static; the holder area is rendered per visitor.
+- **[Tailwind CSS 4](https://tailwindcss.com)** with design tokens in `app/globals.css`, **[Geist](https://vercel.com/font)**, and **[Lenis](https://github.com/darkroomengineering/lenis)** for smooth scrolling.
+- **[Solana Kit](https://github.com/anza-xyz/kit)** (`@solana/kit` and `@solana/kit-plugin-wallet`, Wallet Standard) for Backpack on the page and for checking signatures on the server.
+- **[Helius](https://www.helius.dev)** to read the Lads a wallet holds and since when. **[Neon](https://neon.com)** Postgres for settings, vault links, linked accounts and share links.
+- **[mediabunny](https://mediabunny.dev)** to encode the passport video in the browser. **sharp** for images, **puppeteer-core** (dev only) for the README images.
 
 ## Project structure
 
 ```
-app/                 Routes, root layout, global styles (design tokens), favicon
-components/          UI components (Nav, Button, Section, ArtCard, Faq, Marquee, ScrollWords, SmoothScroll, MadLadsExplorer…)
-data/                Editable content: lore, art, news, links, homepage preview Lads
-lib/madlads.ts       Collection loading + image URL helpers
-public/
-  data/madlads.json  Metadata of the whole collection (generated)
-  lads/              20 preview Lads used on the homepage
-  art/               Pieces that only exist outside the collection (newsletter, merch, sketches)
-  irl/               Real-life event photos (Mad News)
-  video/             Hero background video + poster
-brand/media-kit/     Official logos (Mad Lads Media Kit) — source of components/Logo.tsx
-scripts/             build-madlads-data.mjs
+app/
+├── page.tsx, lore/, madlads/, holders/     the pages (public ones static)
+├── p/[code], passport/[token]/             shared passports (database link, or signed link without a database)
+├── privacy/, terms/, not-found.tsx         legal pages and the 404
+├── api/auth/                               login: wallet/challenge + wallet/verify, login, logout (callback = Matrica)
+├── api/accounts/{discord,x}/               link: start, callback, and DELETE to unlink
+├── api/holder/                             passport photo, vault wallets
+├── api/passport/share                      create or stop a share link
+├── layout.tsx, globals.css                 shell and design tokens
+components/
+├── holder/        profile, the backpack windows, Socials, bag.css
+├── passport/      the passport, its window, stamps, share view, video export
+├── WalletLogin.tsx  "Login with Backpack", the Ledger option, vault links
+└── intro/, lore/, beyond/, Nav, Footer…    the rest of the site
+lib/
+├── auth/          session cookie, wallet login (wallet.ts, solana.ts, siws.ts), Matrica (kept)
+├── accounts/      Discord and X linking, and how linked accounts shape the session
+├── wallet/        Backpack in the browser (Solana Kit)
+├── helius.ts, db.ts, passport-share.ts     blockchain reads, database, share links
+└── madlads.ts, news.ts, og.tsx…            collection helpers, MAD News, link previews
+data/              editable content: lore, art, news, links, the backpack, memes, dressing room
+db/schema.sql      the four tables
+public/            lads, art, irl, video, holder objects, collection data (generated)
+scripts/           collection data, database setup, README screenshots
+docs/images/       the images in this README
+```
+
+## Getting started
+
+You need **Node.js 20.9 or newer**.
+
+```bash
+npm install
+npm run dev          # http://localhost:3000
+npm run build        # production build
+npm start            # serve the production build
+npm run typecheck    # next lint no longer exists in Next 16
+```
+
+The public pages work with no settings. Everything else is optional and described in [`.env.example`](.env.example). Copy it to `.env.local` for development, and set the same values in Vercel for production.
+
+| To get… | Set |
+| --- | --- |
+| Login with Backpack | `SESSION_SECRET` (encrypts the login cookie) and `HELIUS_API_KEY` |
+| Vault links, X and Discord, share links, “MAD since” saved | `DATABASE_URL`, then `npm run db:setup` once |
+| Link Discord | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `MADLADS_DISCORD_SERVER_ID`, `MADLADS_STAMP_ROLES` (`role id:Stamp name`, most important first) |
+| Link X | `X_API_KEY`, `X_API_SECRET` (keep the app's spend cap at $0: the login is free) |
+| The login buttons live | `NEXT_PUBLIC_HOLDERS_LIVE=1` (until then they point to the homepage section) |
+| Canonical URLs and link previews | `NEXT_PUBLIC_SITE_URL=https://madlads.com` |
+| Matrica instead of Backpack | `AUTH_PROVIDER=matrica` plus the `MATRICA_*` settings (kept for later) |
+| Test logins in development | `AUTH_MOCK=1`, then `/api/auth/login?as=holder`, `?as=whale` (40 Lads) or `?as=none` |
+
+Register these redirect URLs on the providers: `https://madlads.com/api/accounts/discord/callback` and `…/api/accounts/x/callback` (and the same on `http://localhost:3000` for development).
+
+### Mad Lads data
+
+```bash
+npm run data:madlads   # rebuild public/data/madlads.json from the official S3 metadata
 ```
 
 ## Editing content
@@ -58,93 +121,70 @@ Most text lives in `data/`, not in the components:
 | --- | --- |
 | Lore chapters | `data/lore.ts` |
 | 1/1s, honoraries, previews & specials | `data/art.ts` |
-| News cards | Automatic — latest 3 issues from the Mad News Substack (`lib/news.ts`, refreshed every 6 h). `data/news.ts` is only the fallback |
-| Real-life photos, meetup videos, cities (“Beyond the screen”) | `data/irl.ts` (photos in `public/irl`) |
-| Nav links, socials, marketplaces, press kit, Matrica URL | `data/site.ts` |
+| News cards | Automatic: the latest 3 issues of the Mad News Substack (`lib/news.ts`, refreshed every 6 h). `data/news.ts` is the fallback |
+| Real-life photos, meetup videos, cities | `data/irl.ts` (photos in `public/irl`) |
+| Nav links, socials, marketplaces, press kit | `data/site.ts` |
+| What falls out of the backpack | `data/bag.ts` (drop the image in `public/holders/bag/`) |
+| Memes, dressing room layers | `data/memes.ts`, `data/dressing-room.ts` |
 | Homepage sections, FAQ, stats, manifesto | `app/page.tsx` |
 
 ## Design tokens
 
-Defined once in `app/globals.css` (`@theme`), mirroring the Figma variables:
+Defined once in `app/globals.css` (`@theme`), mirroring the [Figma file](https://www.figma.com/design/yJT0LFzcDQkT3OaeJuCl3S/MadLads):
 
 | Token | Value | Use |
 | --- | --- | --- |
 | `paper` | `#f6f1e8` | Page background |
 | `surface` / `sunken` | `#ffffff` / `#ede6da` | Cards, alternate sections |
 | `ink` / `muted` | `#111111` / `#5c574f` | Text |
-| `red` | `#f62038` | **Brand red** — logo, large display words |
+| `red` | `#f62038` | **Brand red**: logo, large display words |
 | `accent` | `#c41129` | Accessible red for buttons and small text (WCAG AA) |
 | `line` | `#e2dacc` | Borders |
 
 Text styles: `t-display-xl`, `t-display-l`, `t-h2`, `t-h3`, `t-body-l`, `t-eyebrow`.
 
-## Mad Lads images & data
-
-Nothing is downloaded in advance — images are requested **by number**, only when they appear on screen.
-
-- **Metadata** — `public/data/madlads.json` (~90 KB gzipped) holds the traits of every Lad in a compact,
-  index-based format. Regenerate it with `npm run data:madlads` (reads `json/{id}.json` on the official bucket).
-- **Originals** — `https://madlads.s3.us-west-2.amazonaws.com/images/{id}.png` (2048×2560, ~5 MB).
-  Honoraries #1–5 live under `/honoraries/{n}.png`.
-- **Explorer thumbnails** — Tensor’s image CDN serves a 400×500 render (~100 KB), which `next/image`
-  re-encodes to AVIF/WebP (~9 KB per tile). If the CDN fails, the tile falls back to the S3 original.
-  See `thumbImage()` in `lib/madlads.ts`.
-- **Allowed image hosts** are listed in `next.config.ts` (`images.remotePatterns`).
-
 ## Motion
 
-Almost all motion is **pure CSS** ([scroll-driven animations](https://developer.mozilla.org/docs/Web/CSS/CSS_scroll-driven_animations)),
-defined as utilities in `app/globals.css`. Browsers without support show the content without animation, and
-everything is off when the visitor asks for reduced motion.
+Almost all motion is **pure CSS** ([scroll-driven animations](https://developer.mozilla.org/docs/Web/CSS/CSS_scroll-driven_animations)), defined as utilities in `app/globals.css`. Browsers without support show the content without animation.
 
 | Utility | Effect | Used on |
 | --- | --- | --- |
-| `reveal` (+ `--i` for stagger) | Fade & rise into view, items one after another | Section headers, cards, perks, stats, FAQ |
+| `reveal` (+ `--i` for stagger) | Fade and rise into view, one after another | Section headers, cards, stats, FAQ |
 | `reveal-curtain` + `reveal-zoom` | Image unveils from the bottom and settles from a slight zoom | Art, lore, news images |
-| `scroll-words` / `ScrollWords` | Sentence lights up word by word while scrolling | Manifesto |
-| `scroll-drift`, `scroll-push`, `scroll-darken` | Hero content drifts up, background pushes back and darkens | Homepage hero |
-| `scroll-progress` | Reading progress bar | Lore page |
-| `reveal-rise`, `reveal-slide` | Big elements rise / slide into place | Footer logo, statements |
-| `animate-marquee` | Endless strip | Lads marquee |
-| `.reel` | Pinned section, photos glide sideways while scrolling down (desktop); swipe row on phones | Beyond the screen |
+| `scroll-words` / `ScrollWords` | A sentence lights up word by word while scrolling | Manifesto |
+| `scroll-drift`, `scroll-push`, `scroll-darken` | Hero content drifts up, the background pushes back and darkens | Homepage hero |
+| `.reel` | Pinned section, photos glide sideways while scrolling down (desktop); a swipe row on phones | Beyond the screen |
+| `bag-*` (`components/holder/bag.css`) | The backpack hops, and each object falls out of it as you scroll | Holder profile |
 
-**Intro (“Bolt strike”, ~1.8 s):** `components/intro/`. Plays every time the homepage is opened or reloaded
-(not on in-site navigation, never for reduced motion): the logo’s lightning bolt draws itself, the letters snap in,
-red flash, curtain up onto the hero. A tiny inline script in `app/layout.tsx` decides before the first paint, the
-sequence itself is CSS (“Intro loader” in `globals.css`). Click, any key or “Skip intro” skips it. Switch it off with
-`INTRO_ENABLED` in `components/intro/Intro.tsx`.
+**Intro (“Bolt strike”, about 1.8 s)** in `components/intro/`: the logo's bolt draws itself, the letters snap in, red flash, curtain up onto the hero. It plays every time the homepage is opened, never for reduced motion, and any click or key skips it. Switch it off with `INTRO_ENABLED` in `components/intro/Intro.tsx`.
 
-**Smooth scrolling:** [Lenis](https://github.com/darkroomengineering/lenis) (`components/SmoothScroll.tsx`) on the homepage
-and the Lore page. Nested scroll areas can opt out with `data-lenis-prevent`.
+## Deploying on Vercel
 
-## Performance & accessibility
+Import the repository in Vercel, set the values from the table above, and deploy. For a new database, run `npm run db:setup` once with its `DATABASE_URL`. Once madlads.com points to the project, set `NEXT_PUBLIC_SITE_URL=https://madlads.com`: it updates the canonical URLs, `sitemap.xml`, `robots.txt`, the structured data and the link previews.
 
-Lighthouse (mobile) on a local production build: Home 92–100, Lore 95, Mad Lads 87–95 for performance;
-100 for accessibility, best practices and SEO. Choices behind it:
+The launch checklist (domain, emails, legal review, going live) is in [TODO.md](TODO.md).
 
-- Static pages; the explorer’s first 20 tiles are in the HTML before the data loads (fast LCP, no layout shift).
-- `next/image` everywhere, AVIF/WebP, 30-day cache for remote images.
-- The marquee only loads its images once it is on screen, so it never competes with the hero.
-- Scroll reveals use CSS scroll-driven animations (no JavaScript); all motion respects `prefers-reduced-motion`.
-- Two reds: brand red for large elements, a darker accessible red for small text and buttons.
+## README images
 
-## Link previews, 404 & site address
+The images above are captured from the real site with your installed Chrome. The holder profile needs the development test login, so use the dev server:
 
-- **Link previews** (X, Discord, WhatsApp…): one branded 1200×630 image per page, generated at build time —
-  `app/**/opengraph-image.tsx` + `twitter-image.tsx`, shared renderer in `lib/og.tsx`.
-- **404:** `app/not-found.tsx`.
-- **Site address** for absolute links (`lib/site-url.ts`): Vercel’s production domain is used automatically.
-  Once madlads.com points to this site, set `NEXT_PUBLIC_SITE_URL=https://madlads.com` in Vercel.
+```bash
+# .env.local: AUTH_MOCK=1
+npm run dev                                     # in one terminal
+npm run screenshots                             # in another (SITE=… and CHROME_PATH=… to override)
+```
 
-## Roadmap
+Without `AUTH_MOCK`, the holder shots are skipped.
 
-- **Holder login**: Login with Backpack is built on Solana Kit (`@solana/kit-plugin-wallet`): Sign In With Solana, Ledger via offchain messages, checked on the server; vault wallets can be linked to a hot wallet.
-  Matrica login is kept behind `AUTH_PROVIDER=matrica`. Next: link X and Discord from the profile. See TODO.md
-- Copy review with the community manager: lore, manifesto, FAQ, perks, press email
-- Deploy (e.g. Vercel) and measure with PageSpeed Insights
+## Notes
+
+- **“MAD since”** is when the wallet got a Lad it still holds, read from the blockchain by Helius, and saved for a week. Lads in linked vault wallets count too.
+- **Names.** The profile and the passport show your X handle, otherwise your Discord name, otherwise your shortened wallet address. Share links never show full addresses or linked wallets.
+- **Up to 500 Lads** are kept in the login cookie, which has a size limit.
+- **Share links** are public and expire after a year. With a database they are short (`/p/<code>`) and can be switched off; without one they are long signed links.
+- **Backpack only is a rule of the page, not of the server.** A signature proves who owns an address, not which wallet app signed it. That is all the holder area needs.
+- **Privacy and Terms** describe exactly what the code stores: update them when you change what is collected. They still need review by Backpack's legal team (see [TODO.md](TODO.md)).
 
 ## Credits & rights
 
-Mad Lads artwork, logos and the honorary 1/1s belong to the Mad Lads / Backpack team; usage rights for all content on the site are confirmed by the team.
-The hero video comes from the [Mad Lads Culture Hub](https://www.madlads-hub.xyz/); event photos from Mad News and meetup videos from the Backpack Exchange YouTube channel; sketches and previews by
-[@yannpenno](https://x.com/yannpenno).
+Mad Lads artwork, logos and the honorary 1/1s belong to the Mad Lads / Backpack team; usage rights for all content on the site are confirmed by the team. The hero video comes from the [Mad Lads Culture Hub](https://www.madlads-hub.xyz/); event photos from Mad News and meetup videos from the Backpack Exchange YouTube channel; sketches and previews by [@yannpenno](https://x.com/yannpenno).
