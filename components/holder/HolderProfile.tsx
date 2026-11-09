@@ -12,7 +12,7 @@ import { DressingRoom } from "./DressingRoom";
 import { Playlist } from "./Playlist";
 import { Wallpapers } from "./Wallpapers";
 import { LinkedWallets } from "@/components/WalletLogin";
-import { LinkedAccounts } from "./LinkedAccounts";
+import { Socials } from "./Socials";
 import { PHOTO_EVENT, PHOTO_KEY } from "@/lib/auth/hint";
 import "./bag.css";
 
@@ -91,8 +91,11 @@ export function HolderProfile({ name, handle, since, roles, lads, photo: saved, 
                   {notice.text}
                 </p>
               )}
-              {wallet && <LinkedWallets wallet={wallet} vaults={vaults} />}
-              {(discordEnabled || discord) && <LinkedAccounts discord={discord} roles={roles} discordEnabled={discordEnabled} />}
+              {/* Accounts: socials and wallets, one block of chips */}
+              <div className="flex flex-col items-start gap-2">
+                <Socials discord={discord} roles={roles} discordEnabled={discordEnabled} />
+                {wallet && <LinkedWallets wallet={wallet} vaults={vaults} />}
+              </div>
             </header>
 
             <HolderLads ids={lads} photo={photo} onPhoto={choosePhoto} />

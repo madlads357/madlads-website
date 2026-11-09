@@ -1,0 +1,37 @@
+/* Socials on the holder profile (Socials.tsx): chips in the same style as the wallet chips.
+   A social not linked yet gets a small wiggle of its logo now and then, to invite a click. It stops for
+   good once the visitor hovers or focuses it (data-seen), and never runs for reduced motion. */
+
+.social-nudge {
+  display: inline-block;
+  transform-origin: 50% 70%;
+  animation: social-nudge 6s ease-in-out 2.5s infinite; /* offset from the backpack's hop (bag.css) */
+}
+[data-seen] .social-nudge {
+  animation: none;
+}
+@keyframes social-nudge {
+  0%,
+  10%,
+  100% {
+    rotate: 0deg;
+  }
+  2% {
+    rotate: -14deg;
+  }
+  4% {
+    rotate: 11deg;
+  }
+  6% {
+    rotate: -6deg;
+  }
+  8% {
+    rotate: 3deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social-nudge {
+    animation: none !important;
+  }
+}
