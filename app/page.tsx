@@ -331,7 +331,7 @@ function Holders() {
         <SectionHeader
           eyebrow="05 / Holders"
           title="For the holders"
-          text="Hold a LAD and you’re in the crew. Log in with Matrica: no wallet pop-up, nothing to sign."
+          text="Hold a LAD and you’re in the crew. Log in with Backpack: one free signature, nothing sent or spent. Works with Ledger."
           action={<HolderButton />}
         />
         <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr] lg:grid-rows-2 lg:gap-6">
@@ -455,8 +455,8 @@ const faq = [
     ),
   },
   {
-    q: "What does “Login with Matrica” do?",
-    a: "Matrica checks which MAD LADS you hold through the wallets you have linked to your Matrica account. You unlock holder content without connecting a wallet or signing anything on this site.",
+    q: "How does “Login with Backpack” work?",
+    a: "You connect your Backpack wallet and sign a message that proves it’s yours. It’s free: no transaction, nothing sent or spent. We then read which MAD LADS that wallet holds on the blockchain. Using a Ledger? Tick “I use a Ledger”: you approve a free transaction on the device, which is never sent. LADS in a cold wallet? Link it once from the holder area and log in with your everyday wallet.",
   },
   {
     q: "What are the honoraries and 1/1s?",

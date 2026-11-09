@@ -6,10 +6,12 @@ import { sessionSecret } from "./config";
 import { HINT, type HeaderHint } from "./hint";
 
 export type HolderSession = {
-  id: string; // Matrica user id: the key for the holder's saved settings and share link
-  name: string; // Matrica username
-  lads: number[]; // Mad Lad numbers held in the wallets linked to Matrica
-  handle?: string; // X handle linked to Matrica, for the passport
+  id: string; // "wallet:<address>" (or the Matrica user id): the key for the holder's saved settings and share link
+  name: string; // short wallet address (or the Matrica username)
+  lads: number[]; // Mad Lad numbers held in the wallet and its linked vaults (or the wallets linked to Matrica)
+  wallet?: string; // wallet login: the address that logged in
+  vaults?: string[]; // wallet login: vault wallets linked to it (their LADS count too)
+  handle?: string; // X handle, for the passport (Matrica only, for now)
   since?: string; // "holder since" date, ISO (from Helius, cached in the database)
   roles?: string[]; // Mad Lads Discord roles that earn a passport stamp (at most two)
   photo?: number; // the Lad chosen as passport photo (saved in the database)
@@ -19,8 +21,21 @@ export type HolderSession = {
 // Short-lived state kept between "go to Matrica" and "back from Matrica".
 export type LoginFlow = { verifier: string; state: string };
 
+// Short-lived state kept between "here is what to sign" and "here is the signature" (wallet login).
+// purpose "login": log in with the wallet that signs; "link": the wallet that signs (a vault) lets
+// `hot`, the logged-in wallet, act for it. signIn: the Sign In With Solana fields the wallet must sign.
+// memo: Ledger fallback, the transaction `payer` must sign carries `text`.
+export type WalletFlow = {
+  purpose: "login" | "link";
+  hot?: string;
+  signIn: { domain: string; uri: string; statement: string; nonce: string; issuedAt: string; expirationTime: string };
+  memo?: { payer: string; text: string };
+  exp: number;
+};
+
 const SESSION = "ml_session";
 const FLOW = "ml_login";
+const WALLET_FLOW = "ml_wallet";
 const SESSION_HOURS = 8;
 export const MAX_LADS = 500; // keeps the cookie under the browser's 4 KB limit
 
@@ -80,3 +95,14 @@ export async function takeLoginFlow(): Promise<LoginFlow | null> {
 }
 
 export const randomState = () => randomBytes(16).toString("base64url");
+
+export async function setWalletFlow(flow: WalletFlow) {
+  (await cookies()).set(WALLET_FLOW, seal(flow), { ...base, maxAge: 300 }); // 5 minutes to sign
+}
+
+export async function takeWalletFlow(): Promise<WalletFlow | null> {
+  const store = await cookies();
+  const flow = unseal<WalletFlow>(store.get(WALLET_FLOW)?.value);
+  store.delete(WALLET_FLOW); // one use only: a signature can't be replayed
+  return flow && flow.exp > Date.now() ? flow : null;
+}

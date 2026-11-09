@@ -74,11 +74,11 @@ export function Nav({ overHero = false }: { overHero?: boolean }) {
             <Account user={user} light={light} />
           ) : (
             <a
-              href={links.matricaLogin}
+              href={links.login}
               className={`rounded-[4px] px-4 py-3 text-[14px] leading-none font-semibold transition-colors md:px-6 md:py-4 md:text-[15px] ${light ? "bg-white text-ink hover:bg-ink hover:text-white" : "bg-accent text-white hover:bg-ink"
                 }`}
             >
-              Login with Matrica
+              Holder login
             </a>
           )}
           <button

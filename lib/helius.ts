@@ -2,7 +2,8 @@
 // For each wallet: list its Mad Lads (DAS searchAssets), then for each Lad find the newest
 // transfer of that Lad *into* the wallet (getTransactionsForAddress, tokenTransfer filter).
 // That is when the wallet got it; "holder since" is the earliest of those dates.
-// Runs once at login (lib/auth/matrica.ts) and the result is kept in the session.
+// Runs at login (lib/auth/wallet.ts, lib/auth/matrica.ts), cached a week in the database.
+// Also: which Mad Lads a wallet holds (the wallet login) and a recent blockhash (the Ledger login).
 // Any failure or timeout returns null: the profile then simply shows no date.
 //
 // Checked against the live API (Nov 2026): collection address, searchAssets { total, items[].id },
@@ -27,19 +28,56 @@ async function rpc<T>(method: string, params: unknown, signal: AbortSignal): Pro
   return json.result;
 }
 
-// The Mad Lads (mint addresses) held by one wallet.
-async function madLadMints(owner: string, signal: AbortSignal): Promise<string[]> {
-  const mints: string[] = [];
-  for (let page = 1; page <= 5 && mints.length < MAX_LADS; page++) {
-    const r = await rpc<{ total: number; items: { id: string }[] }>(
+// "Mad Lads #1234" → 1234 (the on-chain name).
+export const ladNumber = (name: string | undefined) => {
+  const m = name?.match(/#\s?(\d{1,5})\b/);
+  return m ? Number(m[1]) : null;
+};
+
+type Asset = { id: string; content?: { metadata?: { name?: string } } };
+
+// The Mad Lads held by one wallet (staked Lads stay in the wallet, so they count too).
+async function madLadAssets(owner: string, signal: AbortSignal, max = MAX_LADS): Promise<Asset[]> {
+  const items: Asset[] = [];
+  for (let page = 1; page <= 10 && items.length < max; page++) {
+    const r = await rpc<{ total: number; items: Asset[] }>(
       "searchAssets",
       { ownerAddress: owner, tokenType: "regularNft", grouping: ["collection", MADLADS_COLLECTION], page, limit: 1000 },
       signal,
     );
-    mints.push(...r.items.map((i) => i.id));
+    items.push(...r.items);
     if (r.items.length < 1000) break;
   }
-  return mints;
+  return items;
+}
+
+const madLadMints = async (owner: string, signal: AbortSignal) => (await madLadAssets(owner, signal)).map((a) => a.id);
+
+// Every Mad Lad number held by these wallets, sorted. Throws if Helius fails: the login must not
+// pretend someone holds nothing because the lookup broke.
+export async function madLadsOf(wallets: string[], max = 500): Promise<number[]> {
+  if (!process.env.HELIUS_API_KEY) throw new Error("HELIUS_API_KEY is not set");
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  try {
+    const lists = await Promise.all(wallets.map((w) => madLadAssets(w, ctrl.signal, max)));
+    const numbers = lists.flat().map((a) => ladNumber(a.content?.metadata?.name)).filter((n): n is number => n !== null);
+    return [...new Set(numbers)].sort((a, b) => a - b).slice(0, max);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// A recent blockhash, for the memo transaction Ledger users sign (never sent; wallets just want a real one).
+export async function latestBlockhash(): Promise<string> {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  try {
+    const r = await rpc<{ value: { blockhash: string } }>("getLatestBlockhash", [{ commitment: "finalized" }], ctrl.signal);
+    return r.value.blockhash;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 // When the wallet received this Lad (unix seconds), or null if not found.

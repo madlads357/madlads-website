@@ -1,20 +1,21 @@
 import { redirect } from "next/navigation";
-import { authMode } from "@/lib/auth/config";
+import { authMode, mockLogin } from "@/lib/auth/config";
 import { loginUrl } from "@/lib/auth/matrica";
 import { getSession, randomState, setLoginFlow, setSession } from "@/lib/auth/session";
 import { getSettings } from "@/lib/db";
 
-// GET /api/auth/login → sends the visitor to Matrica to log in (the login buttons link here), then back
-// to /holders. Already logged in: straight to /holders.
+// GET /api/auth/login → Matrica mode: sends the visitor to Matrica to log in, then back to /holders.
+// Wallet mode: the login happens on /holders (Login with Backpack), so this just goes there.
+// Development with AUTH_MOCK=1: ?as=holder|none|whale logs in as a test holder. Already logged in: /holders.
 export async function GET(request: Request) {
   const mode = authMode();
   const params = new URL(request.url).searchParams;
   const again = params.has("again") || params.has("as"); // "Log in again" (another wallet linked since), or a mock test user
   if (mode !== "off" && !again && (await getSession())) redirect("/holders");
 
-  if (mode === "mock") {
+  if (mockLogin() && (mode === "mock" || params.has("as"))) {
     // Development only: skip Matrica. ?as=none tests the "no Lad found" screen, ?as=whale a holder with 40 Lads.
-    const as = new URL(request.url).searchParams.get("as");
+    const as = params.get("as");
     const test = [1070, 2784, 4144, 5655, 7245, 8420, 9866];
     const whale = [...test, ...Array.from({ length: 33 }, (_, i) => 101 + i * 293)];
     const lads = as === "none" ? [] : as === "whale" ? whale : test;
@@ -31,7 +32,7 @@ export async function GET(request: Request) {
     });
     redirect("/holders");
   }
-  if (mode === "off") redirect("/holders");
+  if (mode !== "matrica") redirect("/holders");
 
   const state = randomState();
   const { url, verifier } = await loginUrl(state);

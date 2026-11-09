@@ -4,13 +4,14 @@ import { LegalPage, type LegalSection } from "@/components/LegalPage";
 import { links } from "@/data/site";
 
 // TODO: legal review before launch (Backpack legal). Confirm the entity, the governing law and the art license.
+// Written for Login with Backpack (lib/auth/wallet.ts). If Matrica comes back (AUTH_PROVIDER=matrica), adapt the holder section.
 export const metadata: Metadata = {
   title: "Terms of Use",
   description: "The rules for using madlads.com.",
   alternates: { canonical: "/terms" },
 };
 
-const UPDATED = "November 4, 2026";
+const UPDATED = "November 9, 2026";
 
 const ext = (href: string, label: string) => (
   <a href={href} target="_blank" rel="noopener noreferrer">
@@ -82,6 +83,10 @@ const sections: LegalSection[] = [
           <li>We will never message you first to offer a mint, an airdrop or support.</li>
           <li>We will never ask for your seed phrase or private key. Nobody legitimate will.</li>
           <li>
+            Logging in to the holder area only asks your wallet to sign a free sign-in for madlads.com. It never asks you to send, approve or pay anything. If a
+            “MAD LADS login” does, it isn’t us.
+          </li>
+          <li>
             For peer-to-peer trades, only use {ext(links.foxySwap, "FoxySwap")}. Use the official links on this site for everything else.
           </li>
         </ul>
@@ -133,8 +138,14 @@ const sections: LegalSection[] = [
     body: (
       <>
         <p>
-          Holders can log in with Matrica to reach the holder area. Access depends on holding at least one MAD LADS in a wallet linked to your Matrica account, and
-          may change as your holdings do. Features in the holder area can change or end at any time.
+          Holders can log in with their Backpack wallet to reach the holder area. Access depends on holding at least one MAD LADS in that wallet or in a wallet
+          you linked to it, and may change as your holdings do. We read holdings from the public blockchain through a data provider; if that is wrong or
+          unavailable, access may be too. Features in the holder area can change or end at any time.
+        </p>
+        <p>
+          You can link other wallets you own (“vaults”, for example a Ledger) to the wallet you log in with, by signing once with each of them. Only link
+          wallets you control. A link lets anyone who can log in with your everyday wallet see the vault’s MAD LADS in the holder area, and nothing more: it
+          gives no access to the vault’s funds or NFTs. You can remove a link at any time.
         </p>
         <p>
           Your MAD LADS Passport can be shared through a public link. You decide whether to share it, and you can stop sharing at any time. Please don’t share links

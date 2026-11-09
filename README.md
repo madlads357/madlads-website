@@ -138,7 +138,8 @@ Lighthouse (mobile) on a local production build: Home 92–100, Lore 95, Mad Lad
 
 ## Roadmap
 
-- **Matrica login** + holder area (needs a Matrica app / API key from the team) — `links.matricaLogin` in `data/site.ts`
+- **Holder login**: Login with Backpack is built on Solana Kit (`@solana/kit-plugin-wallet`): Sign In With Solana, Ledger via offchain messages, checked on the server; vault wallets can be linked to a hot wallet.
+  Matrica login is kept behind `AUTH_PROVIDER=matrica`. Next: link X and Discord from the profile. See TODO.md
 - Copy review with the community manager: lore, manifesto, FAQ, perks, press email
 - Deploy (e.g. Vercel) and measure with PageSpeed Insights
 

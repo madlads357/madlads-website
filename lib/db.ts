@@ -27,3 +27,24 @@ export async function saveSince(holderId: string, since: string | null) {
   await db`insert into holder_settings (holder_id, since, since_checked_at) values (${holderId}, ${since}, now())
            on conflict (holder_id) do update set since = excluded.since, since_checked_at = now(), updated_at = now()`;
 }
+
+/* ------------------------------------------------------------ vault links (wallet login) */
+
+const MAX_VAULTS = 10; // same cap as lib/auth/wallet.ts
+
+// The vault wallets linked to this hot wallet, oldest first.
+export async function vaultsOf(hot: string): Promise<string[]> {
+  if (!db) return [];
+  const rows = await db`select vault from wallet_links where hot = ${hot} order by created_at limit ${MAX_VAULTS}`;
+  return rows.map((r) => r.vault as string);
+}
+
+export async function linkVault(vault: string, hot: string) {
+  if (!db) throw new Error("No database");
+  await db`insert into wallet_links (vault, hot) values (${vault}, ${hot}) on conflict do nothing`;
+}
+
+export async function unlinkVault(vault: string, hot: string) {
+  if (!db) return;
+  await db`delete from wallet_links where vault = ${vault} and hot = ${hot}`;
+}

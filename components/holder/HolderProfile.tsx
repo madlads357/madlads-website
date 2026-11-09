@@ -11,6 +11,7 @@ import { MemeVault } from "./MemeVault";
 import { DressingRoom } from "./DressingRoom";
 import { Playlist } from "./Playlist";
 import { Wallpapers } from "./Wallpapers";
+import { LinkedWallets } from "@/components/WalletLogin";
 import { PHOTO_EVENT, PHOTO_KEY } from "@/lib/auth/hint";
 import "./bag.css";
 
@@ -21,6 +22,8 @@ type Props = {
   roles?: string[];
   lads: number[];
   photo?: number; // the saved passport photo (database), if any
+  wallet?: string; // wallet login: the address logged in, and the vault wallets linked to it
+  vaults?: string[];
 };
 
 // Where the bag's opening is, as a fraction of the backpack image (objects fly out from there).
@@ -28,7 +31,7 @@ const MOUTH = { x: 0.25, y: 0.62 };
 // Desktop: where the sticky bag sits on screen (px). The fall maths in Items uses the same numbers.
 const STICKY = { top: 110, pad: 40 };
 
-export function HolderProfile({ name, handle, since, roles, lads, photo: saved }: Props) {
+export function HolderProfile({ name, handle, since, roles, lads, photo: saved, wallet, vaults = [] }: Props) {
   const [photo, setPhoto] = useState(saved ?? lads[0]);
   const [windowOpen, setWindowOpen] = useState<BagWindow | null>(null); // the window a backpack object opened (data/bag.ts)
   const [scrolled, setScrolled] = useState(false);
@@ -79,6 +82,7 @@ export function HolderProfile({ name, handle, since, roles, lads, photo: saved }
                 {since && sinceText && <Stat value={<DaysMad since={since} />} label={`Days MAD · since ${sinceText}`} />}
                 <Stat value={n} label={"MAD LADS"} />
               </dl>
+              {wallet && <LinkedWallets wallet={wallet} vaults={vaults} />}
             </header>
 
             <HolderLads ids={lads} photo={photo} onPhoto={choosePhoto} />

@@ -1,7 +1,7 @@
 -- Mad Lads site database (Neon Postgres). Apply with: npm run db:setup
 -- Safe to run again: everything is "if not exists".
 
--- Holder preferences and cached data, by Matrica user id.
+-- Holder preferences and cached data, by holder id ("wallet:<address>", or the Matrica user id).
 create table if not exists holder_settings (
   holder_id        text primary key,
   photo            integer,          -- the Lad chosen as passport photo
@@ -21,3 +21,14 @@ create table if not exists share_links (
   expires_at  timestamptz not null,
   deleted_at  timestamptz            -- set when the holder stops sharing: the link stops working
 );
+
+-- Wallet login, vault links: a vault wallet (cold, often a Ledger) lets a hot wallet log in for it.
+-- The vault signed the link once (lib/auth/wallet.ts); logging in with the hot wallet then counts
+-- the vault's LADS too. The holder removes a link in the holder area.
+create table if not exists wallet_links (
+  vault       text not null,         -- the wallet holding the LADS (signed the link)
+  hot         text not null,         -- the wallet that logs in
+  created_at  timestamptz not null default now(),
+  primary key (vault, hot)
+);
+create index if not exists wallet_links_hot on wallet_links (hot);

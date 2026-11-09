@@ -1,21 +1,27 @@
-// Login with Matrica: configuration, read from environment variables (see .env.example).
-// Server-only: never import this from a client component (it reads the client secret).
+// Holder login: configuration, read from environment variables (see .env.example).
+// Server-only: never import this from a client component (it reads the Matrica client secret).
 //
-// Three modes:
-//   "matrica"  real login: MATRICA_CLIENT_ID, MATRICA_COLLECTION_ID and SESSION_SECRET are set
-//   "mock"     fake Matrica for building the holder area: MATRICA_MOCK=1, development only
-//   "off"      nothing configured: the holder area shows "coming soon" (today's behaviour)
+// Modes:
+//   "wallet"   Login with Backpack (default): SESSION_SECRET and HELIUS_API_KEY are set
+//   "matrica"  Login with Matrica, kept for later: AUTH_PROVIDER=matrica plus the MATRICA_* settings
+//   "mock"     fake login for building the holder area: AUTH_MOCK=1, development only, nothing else set
+//   "off"      nothing configured: the holder area shows "coming soon"
+// In development, AUTH_MOCK=1 also adds test logins next to the real one (mockLogin()).
 import { siteUrl } from "@/lib/site-url";
 
-export type AuthMode = "matrica" | "mock" | "off";
+export type AuthMode = "wallet" | "matrica" | "mock" | "off";
 
 const env = process.env;
 
 export function authMode(): AuthMode {
-  if (env.MATRICA_CLIENT_ID && env.MATRICA_COLLECTION_ID && env.SESSION_SECRET) return "matrica";
-  if (env.MATRICA_MOCK === "1" && env.NODE_ENV !== "production") return "mock";
+  if (env.AUTH_PROVIDER === "matrica" && env.MATRICA_CLIENT_ID && env.MATRICA_COLLECTION_ID && env.SESSION_SECRET) return "matrica";
+  if (env.SESSION_SECRET && env.HELIUS_API_KEY) return "wallet";
+  if (mockLogin()) return "mock";
   return "off";
 }
+
+// Test logins (/api/auth/login?as=…), never in production. MATRICA_MOCK is the old name.
+export const mockLogin = () => (env.AUTH_MOCK === "1" || env.MATRICA_MOCK === "1") && env.NODE_ENV !== "production";
 
 export const matricaConfig = () => ({
   clientId: env.MATRICA_CLIENT_ID ?? "",
@@ -32,9 +38,9 @@ export const matricaConfig = () => ({
     .filter(Boolean),
 });
 
-// Key used to encrypt the session cookies. In mock mode a fixed development key is fine.
+// Key used to encrypt the session cookies. For test logins without one, a fixed development key is fine.
 export function sessionSecret(): string {
   if (env.SESSION_SECRET) return env.SESSION_SECRET;
-  if (authMode() === "mock") return "dev-only-mock-secret-not-for-production";
+  if (mockLogin()) return "dev-only-mock-secret-not-for-production";
   throw new Error("SESSION_SECRET is not set");
 }

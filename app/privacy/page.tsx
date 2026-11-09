@@ -5,14 +5,15 @@ import { links } from "@/data/site";
 
 // TODO: legal review before launch (Backpack legal).
 // Keep this page true to the code: if analytics, cookies, stored data or outside services change, this page must too.
-// What the code does today: lib/auth (login, cookies), lib/helius.ts, lib/db.ts + db/schema.sql, lib/passport-share.ts.
+// What the code does today: lib/auth (login, cookies), lib/wallet/backpack.ts, lib/helius.ts, lib/db.ts + db/schema.sql, lib/passport-share.ts.
+// Written for Login with Backpack. If Matrica comes back (AUTH_PROVIDER=matrica), the Matrica wording is in git history (before Nov 9, 2026).
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "What data madlads.com collects (very little) and how it is used.",
   alternates: { canonical: "/privacy" },
 };
 
-const UPDATED = "November 5, 2026";
+const UPDATED = "November 9, 2026";
 
 const ext = (href: string, label: string) => (
   <a href={href} target="_blank" rel="noopener noreferrer">
@@ -32,7 +33,7 @@ const sections: LegalSection[] = [
         </p>
         <ul>
           <li>You don’t need an account or a wallet to browse the site.</li>
-          <li>Holders can log in with Matrica to reach the holder area. That is the only time we receive data about you.</li>
+          <li>Holders can log in with their Backpack wallet to reach the holder area. That is the only time we receive data about you.</li>
           <li>We don’t use advertising, tracking cookies or analytics tools, and we don’t sell your data.</li>
         </ul>
       </>
@@ -62,17 +63,19 @@ const sections: LegalSection[] = [
         <p>Browsing the site sets no cookies. Cookies only appear when you log in to the holder area, and they are all needed for the login to work:</p>
         <ul>
           <li>
-            <strong>ml_login</strong>: keeps a one-time code while you log in on Matrica. Deleted as soon as you come back, or after 10 minutes.
+            <strong>ml_wallet</strong>: keeps the one-time message your wallet signs while you log in. Deleted as soon as you have signed, or after 5 minutes.
           </li>
           <li>
             <strong>ml_session</strong>: keeps you logged in (encrypted, unreadable by the page). Deleted when you log out, or after 8 hours.
           </li>
           <li>
-            <strong>ml_user</strong>: your name and the number of your passport LAD, so the menu bar can show them. Same lifetime as ml_session.
+            <strong>ml_user</strong>: your shortened wallet address and the number of your passport LAD, so the menu bar can show them. Same lifetime as
+            ml_session.
           </li>
         </ul>
         <p>
-          The site also remembers your chosen passport photo in your browser’s storage, as a fallback. None of this is used for tracking, which is why there is
+          The site also uses your browser’s storage to remember your chosen passport photo (as a fallback) and whether you ticked “I use a Ledger”. None of
+          this is used for tracking, which is why there is
           no cookie banner.
         </p>
       </>
@@ -114,20 +117,23 @@ const sections: LegalSection[] = [
     body: (
       <>
         <p>
-          You log in with {ext("https://matrica.io", "Matrica")}, which already knows your wallets and linked accounts. You choose on Matrica what to share. We ask
-          for:
+          You log in with your {ext("https://backpack.app", "Backpack")} wallet: you sign a “Sign In With Solana” message to prove the wallet is yours (with a
+          Ledger, a transaction that our server checks and never sends). Signing is free. It gives us no
+          access to your wallet or your funds, and the site disconnects from your wallet as soon as you are logged in. We never ask you to send, approve or
+          pay anything.
         </p>
+        <p>We receive:</p>
         <ul>
-          <li>your Matrica user ID and name;</li>
-          <li>the MAD LADS held in the wallets you linked to Matrica, and the addresses of those wallets;</li>
-          <li>your X handle, shown on your passport;</li>
-          <li>your roles on the MAD LADS Discord server, shown as stamps on your passport.</li>
+          <li>your wallet’s public address;</li>
+          <li>the addresses of the wallets you link to it (“vaults”), which you confirm by signing with each of them;</li>
+          <li>what your wallet signed, which we check and then discard.</li>
         </ul>
         <p>
-          To work out since when you hold a MAD LADS (“MAD since”), your wallet addresses are sent to {ext("https://www.helius.dev", "Helius")}, a Solana data
-          service, which reads the public blockchain. This happens at login, at most once a week. We don’t store your wallet addresses, and we never ask you to
-          sign anything or connect a wallet.
+          To see which MAD LADS you hold, and since when (“MAD since”), these addresses are sent to {ext("https://www.helius.dev", "Helius")}, a Solana data
+          service, which reads the public blockchain. This happens when you log in, and “MAD since” at most once a week. Wallet addresses and holdings are
+          public on the blockchain; what the site adds is the link between the wallets you chose to connect.
         </p>
+        <p>Backpack is a separate service: its own {ext("https://backpack.app/privacy", "privacy policy")} applies to the wallet app itself.</p>
       </>
     ),
   },
@@ -137,8 +143,8 @@ const sections: LegalSection[] = [
     body: (
       <>
         <p>
-          For holders who log in, our database keeps your Matrica user ID, the LAD you chose as passport photo and your “MAD since” date, so they follow you on
-          every device. The database is hosted by {ext("https://neon.com", "Neon")} in the European Union (Frankfurt).
+          For holders who log in, our database keeps your wallet address, the wallets you linked to it, the LAD you chose as passport photo and your “MAD since”
+          date, so they follow you on every device. Linked wallets stay linked until you remove them in the holder area, which deletes the link at once. The database is hosted by {ext("https://neon.com", "Neon")} in the European Union (Frankfurt).
         </p>
         <p>
           The passport video and image are made in your browser. They are not uploaded to us, unless you share them yourself on another service.
@@ -152,8 +158,9 @@ const sections: LegalSection[] = [
     body: (
       <>
         <p>
-          When you open your passport, the site prepares a public link to it (madlads.com/p/…). Anyone with that link can see your passport: your name, X handle,
-          passport LAD, number of LADS, “MAD since” and stamps. Nothing else, and never your wallet addresses.
+          When you open your passport, the site prepares a public link to it (madlads.com/p/…). Anyone with that link can see your passport: your name (your
+          shortened wallet address, like 7xKX…9fQ2), passport LAD, number of LADS, “MAD since” and stamps. Never your full wallet address or your linked
+          wallets.
         </p>
         <p>
           We store that passport with the link and count how many times it was opened. You can stop sharing at any time from your passport (Copy, then “Stop
@@ -168,7 +175,7 @@ const sections: LegalSection[] = [
     body: (
       <p>
         Depending on where you live, you may have the right to ask what data we hold about you, to correct it or to delete it. If you never logged in, we hold
-        nothing about you. If you did, write to us and we’ll send or delete what is listed above. You can also stop sharing your passport yourself at any time.
+        nothing about you. If you did, write to us with your wallet address and we’ll send or delete what is listed above. You can also stop sharing your passport yourself at any time.
       </p>
     ),
   },

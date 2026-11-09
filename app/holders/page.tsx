@@ -3,21 +3,23 @@ import type { ReactNode } from "react";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/Button";
-import { authMode } from "@/lib/auth/config";
+import { authMode, mockLogin, type AuthMode } from "@/lib/auth/config";
 import { getSession, type HolderSession } from "@/lib/auth/session";
-import { perks } from "@/data/holders";
 import { HolderProfile } from "@/components/holder/HolderProfile";
 import Image from "next/image";
 import Link from "next/link";
 import { thumbImage } from "@/lib/madlads";
 import { links } from "@/data/site";
+import { LinkedWallets, WalletLogin } from "@/components/WalletLogin";
 
 const MAX_LAD = 9971; // numbers in the collection (#1 to #9971)
+const PICKS = 14; // LADS shown on "Pick your LAD" (fewer on small screens, see NoLads)
+const TILT = [-6, 4, -3, 5, -4, 3, -5, 2, 6, -2, 4, -6, 3, -4]; // degrees, one per pick
 
 // The holder area. Reads the login cookie, so it is rendered on every request (not prebuilt).
 export const metadata: Metadata = {
   title: "Holders",
-  description: "The MAD LADS holder area. Log in with Matrica.",
+  description: "The MAD LADS holder area. Log in with Backpack.",
   robots: { index: false }, // personal page: keep it out of search results
 };
 
@@ -38,7 +40,15 @@ export default async function HoldersPage({ searchParams }: { searchParams: Prom
     <>
       <Nav />
       <main id="main" className="pt-[72px] md:pt-[88px]">
-        {mode === "off" ? <ComingSoon /> : !session ? <LoggedOut error={error} /> : session.lads.length === 0 ? <NoLads session={session} /> : <Holder session={session} />}
+        {mode === "off" ? (
+          <ComingSoon />
+        ) : !session ? (
+          <LoggedOut mode={mode} error={error} />
+        ) : session.lads.length === 0 ? (
+          <NoLads session={session} />
+        ) : (
+          <Holder session={session} />
+        )}
       </main>
       <Footer />
     </>
@@ -61,69 +71,99 @@ function ComingSoon() {
   return (
     <>
       <Shell title="Opening soon.">
-        <p className="t-body-l text-muted">The holder area opens with Login with Matrica. Follow MAD News and X to know when it goes live.</p>
+        <p className="t-body-l text-muted">The holder area opens soon. Follow MAD News and X to know when it goes live.</p>
         <Button href="/" variant="secondary">
           Back home
         </Button>
       </Shell>
-      <Perks />
     </>
   );
 }
 
-function LoggedOut({ error }: { error?: string }) {
+function LoggedOut({ mode, error }: { mode: AuthMode; error?: string }) {
   return (
     <>
       <Shell title="For the holders.">
-        <p className="t-body-l text-muted">
-          Log in with Matrica to see your LADS and unlock the holder area. No wallet pop-up and nothing to sign: Matrica only tells us which MAD LADS you hold.
-        </p>
+        {mode === "matrica" ? (
+          <p className="t-body-l text-muted">
+            Log in with Matrica to see your LADS and unlock the holder area. No wallet pop-up and nothing to sign: Matrica only tells us which MAD LADS you hold.
+          </p>
+        ) : (
+          <p className="t-body-l text-muted">
+            Log in with your Backpack wallet to see your LADS and unlock the holder area. You sign a message to prove the wallet is yours: it’s free, and nothing is sent or
+            spent.
+          </p>
+        )}
         {error && (
           <p role="alert" className="rounded-lg bg-red/10 px-4 py-3 font-medium text-accent">
             {error}
           </p>
         )}
-        <Button href={LOGIN}>Login with Matrica</Button>
+        {mode === "matrica" ? <Button href={LOGIN}>Login with Matrica</Button> : mode === "wallet" && <WalletLogin />}
+        {mockLogin() && (
+          <p className="text-[14px] text-muted">
+            Dev test logins: <a className="underline" href={`${LOGIN}?as=holder`}>holder</a> · <a className="underline" href={`${LOGIN}?as=whale`}>whale</a> ·{" "}
+            <a className="underline" href={`${LOGIN}?as=none`}>no LAD</a>
+          </p>
+        )}
       </Shell>
-      <Perks />
     </>
   );
 }
 
-// Logged in, but no LAD in the linked wallets: two ways forward, not a dead end. Already have one in
-// another wallet → link it on Matrica and log in again. Not yet → where to get one, a few LADS to look at,
+// Logged in, but no LAD in the wallet(s): two ways forward, not a dead end. Already have one in
+// another wallet → link it as a vault (wallet login), or on Matrica and log in again. Not yet → where to get one, a few LADS to look at,
 // and what holders get.
 function NoLads({ session }: { session: HolderSession }) {
-  const picks = Array.from({ length: 6 }, () => 1 + Math.floor(Math.random() * MAX_LAD)); // new ones on every visit
+  // New ones on every visit, no repeats. Two rows: 10 on phones, 12 on tablets, 14 on wide screens.
+  const picks = new Set<number>();
+  while (picks.size < PICKS) picks.add(1 + Math.floor(Math.random() * MAX_LAD));
   return (
     <>
       <Shell title="No LAD found.">
-        <p className="t-body-l text-muted">Hey {session.name}, there’s no MAD LADS in the wallets linked to your Matrica account.</p>
+        <p className="t-body-l text-muted">
+          {session.wallet ? `There’s no MAD LADS in ${session.name}${session.vaults?.length ? " or its linked wallets" : ""}.` : `Hey ${session.name}, there’s no MAD LADS in the wallets linked to your Matrica account.`}
+        </p>
       </Shell>
       <div className="grid gap-4 px-4 pb-16 md:grid-cols-2 md:gap-6 md:px-page md:pb-24">
         <section className="flex flex-col items-start gap-4 rounded-2xl bg-surface p-6 ring-1 ring-line md:p-8">
           <p className="t-eyebrow text-accent">Already have one?</p>
           <h2 className="t-h3">It’s in another wallet.</h2>
-          <p className="text-muted">Link that wallet on Matrica, then log in again. Your LADS show up right away.</p>
-          <div className="mt-auto flex flex-wrap gap-3 pt-2">
-            <Button href="https://matrica.io" external>
-              Link a wallet on Matrica ↗
-            </Button>
-            <Button href={`${LOGIN}?again`} variant="secondary">
-              Log in again
-            </Button>
-          </div>
+          {session.wallet ? (
+            <>
+              <p className="text-muted">Link it once and your LADS show up here, without logging in with it every time. Handy for a Ledger.</p>
+              <div className="mt-auto pt-2">
+                <LinkedWallets wallet={session.wallet} vaults={session.vaults ?? []} defaultOpen />
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="text-muted">Link that wallet on Matrica, then log in again. Your LADS show up right away.</p>
+              <div className="mt-auto flex flex-wrap gap-3 pt-2">
+                <Button href="https://matrica.io" external>
+                  Link a wallet on Matrica ↗
+                </Button>
+                <Button href={`${LOGIN}?again`} variant="secondary">
+                  Log in again
+                </Button>
+              </div>
+            </>
+          )}
         </section>
 
         <section className="flex flex-col items-start gap-4 rounded-2xl bg-surface p-6 ring-1 ring-line md:p-8">
           <p className="t-eyebrow text-accent">Not yet?</p>
           <h2 className="t-h3">Pick your LAD.</h2>
           <p className="text-muted">MAD LADS trade on Magic Eden and Tensor. Find one you like first: every LAD has its own page.</p>
-          <ul className="flex -space-x-3 pt-1" aria-label="A few MAD LADS">
-            {picks.map((id, i) => (
-              <li key={`${id}-${i}`} style={{ rotate: `${[-6, 4, -3, 5, -4, 3][i]}deg` }}>
-                <Link href={`/madlads/${id}`} className="relative block size-16 overflow-hidden rounded-xl bg-sunken ring-4 ring-surface transition hover:z-10 hover:-translate-y-1 md:size-20">
-                  <Image src={thumbImage(id)} alt={`MAD LADS #${id}`} fill sizes="80px" quality={70} className="object-cover" />
+          <ul className="grid w-full grid-cols-5 gap-y-2 pt-1 pr-3 sm:grid-cols-6 xl:grid-cols-7" aria-label="A few MAD LADS">
+            {[...picks].map((id, i) => (
+              <li
+                key={id}
+                className="relative -mr-3 transition hover:z-10 hover:-translate-y-1 max-sm:nth-[n+11]:hidden sm:max-xl:nth-[n+13]:hidden"
+                style={{ rotate: `${TILT[i % TILT.length]}deg` }}
+              >
+                <Link href={`/madlads/${id}`} className="relative block aspect-square w-full overflow-hidden rounded-xl bg-sunken ring-4 ring-surface">
+                  <Image src={thumbImage(id)} alt={`MAD LADS #${id}`} fill sizes="96px" quality={70} className="object-cover" />
                 </Link>
               </li>
             ))}
@@ -141,7 +181,6 @@ function NoLads({ session }: { session: HolderSession }) {
           </div>
         </section>
       </div>
-      <Perks />
       <div className="flex justify-center px-4 py-10">
         <Logout />
       </div>
@@ -159,27 +198,13 @@ function Holder({ session }: { session: HolderSession }) {
       roles={session.roles}
       lads={session.lads}
       photo={session.photo}
+      wallet={session.wallet}
+      vaults={session.vaults}
     />
   );
 }
 
 /* ------------------------------------------------------------ Pieces */
-
-function Perks() {
-  return (
-    <section className="bg-sunken px-4 py-20 md:px-page md:py-section" aria-label="What holders get">
-      <ul className="grid gap-10 md:grid-cols-3">
-        {perks.map(({ Icon, title, text }) => (
-          <li key={title} className="flex flex-col gap-3">
-            <Icon className="size-8" />
-            <p className="text-xl font-semibold tracking-tight">{title}</p>
-            <p className="text-muted">{text}</p>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
 
 function Logout() {
   return (
