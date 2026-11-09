@@ -32,9 +32,10 @@ export const matricaConfig = () => ({
   scope: "profile wallets nfts socials.twitter socials.discord",
   // Roles: only from the Mad Lads Discord server, and (if listed) only these names earn a passport stamp
   discordServerId: env.MADLADS_DISCORD_SERVER_ID ?? "",
+  // names only: entries are "role id:Name" (lib/accounts/discord.ts) or, older format, just "Name"
   stampRoles: (env.MADLADS_STAMP_ROLES ?? "")
     .split(",")
-    .map((r) => r.trim())
+    .map((r) => r.trim().replace(/^\d{5,25}\s*:\s*/, ""))
     .filter(Boolean),
 });
 

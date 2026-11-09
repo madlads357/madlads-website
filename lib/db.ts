@@ -48,3 +48,29 @@ export async function unlinkVault(vault: string, hot: string) {
   if (!db) return;
   await db`delete from wallet_links where vault = ${vault} and hot = ${hot}`;
 }
+
+/* ------------------------------------------------------------ linked accounts (Discord, X) */
+
+export type Provider = "discord" | "x";
+export type LinkedAccount = { provider: Provider; accountId: string; name: string; roles: string[] };
+
+export async function accountsOf(holderId: string): Promise<LinkedAccount[]> {
+  if (!db) return [];
+  const rows = await db`select provider, account_id, name, roles from holder_accounts where holder_id = ${holderId}`;
+  return rows.map((r) => ({ provider: r.provider as Provider, accountId: r.account_id as string, name: r.name as string, roles: (r.roles as string[] | null) ?? [] }));
+}
+
+// Links the account to this holder, taking it away from any other holder first.
+export async function saveAccount(holderId: string, a: LinkedAccount) {
+  if (!db) throw new Error("No database");
+  await db.transaction((tx) => [
+    tx`delete from holder_accounts where provider = ${a.provider} and account_id = ${a.accountId} and holder_id <> ${holderId}`,
+    tx`insert into holder_accounts (holder_id, provider, account_id, name, roles) values (${holderId}, ${a.provider}, ${a.accountId}, ${a.name}, ${JSON.stringify(a.roles)})
+       on conflict (holder_id, provider) do update set account_id = excluded.account_id, name = excluded.name, roles = excluded.roles, linked_at = now()`,
+  ]);
+}
+
+export async function removeAccount(holderId: string, provider: Provider) {
+  if (!db) return;
+  await db`delete from holder_accounts where holder_id = ${holderId} and provider = ${provider}`;
+}

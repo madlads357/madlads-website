@@ -11,7 +11,8 @@ export type HolderSession = {
   lads: number[]; // Mad Lad numbers held in the wallet and its linked vaults (or the wallets linked to Matrica)
   wallet?: string; // wallet login: the address that logged in
   vaults?: string[]; // wallet login: vault wallets linked to it (their LADS count too)
-  handle?: string; // X handle, for the passport (Matrica only, for now)
+  handle?: string; // X handle, for the passport (linked X account, or Matrica)
+  discord?: string; // linked Discord account's name (its stamp roles are in `roles`)
   since?: string; // "holder since" date, ISO (from Helius, cached in the database)
   roles?: string[]; // Mad Lads Discord roles that earn a passport stamp (at most two)
   photo?: number; // the Lad chosen as passport photo (saved in the database)
@@ -36,6 +37,7 @@ export type WalletFlow = {
 const SESSION = "ml_session";
 const FLOW = "ml_login";
 const WALLET_FLOW = "ml_wallet";
+const ACCOUNT_FLOW = "ml_link";
 const SESSION_HOURS = 8;
 export const MAX_LADS = 500; // keeps the cookie under the browser's 4 KB limit
 
@@ -104,5 +106,19 @@ export async function takeWalletFlow(): Promise<WalletFlow | null> {
   const store = await cookies();
   const flow = unseal<WalletFlow>(store.get(WALLET_FLOW)?.value);
   store.delete(WALLET_FLOW); // one use only: a signature can't be replayed
+  return flow && flow.exp > Date.now() ? flow : null;
+}
+
+// Linking an account (Discord, X): the state sent to the provider, checked when it sends the holder back.
+export type AccountFlow = { provider: "discord" | "x"; state: string; holderId: string; exp: number };
+
+export async function setAccountFlow(flow: AccountFlow) {
+  (await cookies()).set(ACCOUNT_FLOW, seal(flow), { ...base, maxAge: 600 }); // 10 minutes to finish
+}
+
+export async function takeAccountFlow(): Promise<AccountFlow | null> {
+  const store = await cookies();
+  const flow = unseal<AccountFlow>(store.get(ACCOUNT_FLOW)?.value);
+  store.delete(ACCOUNT_FLOW); // one use only
   return flow && flow.exp > Date.now() ? flow : null;
 }

@@ -148,6 +148,10 @@ const sections: LegalSection[] = [
           gives no access to the vault’s funds or NFTs. You can remove a link at any time.
         </p>
         <p>
+          You can also link your Discord account to show your MAD LADS server roles as stamps on your passport. Only link your own account. Stamps reflect your
+          roles when you linked or last refreshed, and can be removed if they no longer match.
+        </p>
+        <p>
           Your MAD LADS Passport can be shared through a public link. You decide whether to share it, and you can stop sharing at any time. Please don’t share links
           in a way that suggests a passport is someone else’s. How we handle your data is in our <Link href="/privacy">Privacy Policy</Link>.
         </p>

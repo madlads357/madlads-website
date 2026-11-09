@@ -10,6 +10,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { thumbImage } from "@/lib/madlads";
 import { links } from "@/data/site";
+import { discordEnabled } from "@/lib/accounts/discord";
+import { db } from "@/lib/db";
 import { LinkedWallets, WalletLogin } from "@/components/WalletLogin";
 
 const MAX_LAD = 9971; // numbers in the collection (#1 to #9971)
@@ -31,10 +33,21 @@ const errors: Record<string, string> = {
   matrica: "We couldn’t reach Matrica. Please try again in a moment.",
 };
 
-export default async function HoldersPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+// After linking an account (?linked=discord, ?link=…).
+const linkNotices: Record<string, { text: string; ok: boolean }> = {
+  discord: { text: "Discord linked. Your server roles are on your passport.", ok: true },
+  cancelled: { text: "Linking cancelled. Try again whenever you’re ready.", ok: false },
+  expired: { text: "That took too long or was started in another tab. Please try again.", ok: false },
+  error: { text: "We couldn’t reach Discord. Please try again in a moment.", ok: false },
+  off: { text: "Linking accounts isn’t available yet.", ok: false },
+};
+
+export default async function HoldersPage({ searchParams }: { searchParams: Promise<{ error?: string; linked?: string; link?: string }> }) {
   const mode = authMode();
   const session = mode === "off" ? null : await getSession();
-  const error = errors[(await searchParams).error ?? ""];
+  const params = await searchParams;
+  const error = errors[params.error ?? ""];
+  const notice = linkNotices[params.linked ?? params.link ?? ""];
 
   return (
     <>
@@ -47,7 +60,7 @@ export default async function HoldersPage({ searchParams }: { searchParams: Prom
         ) : session.lads.length === 0 ? (
           <NoLads session={session} />
         ) : (
-          <Holder session={session} />
+          <Holder session={session} notice={notice} />
         )}
       </main>
       <Footer />
@@ -189,7 +202,7 @@ function NoLads({ session }: { session: HolderSession }) {
 }
 
 // The profile: welcome, the holder's Lads, and the backpack the objects fall out of.
-function Holder({ session }: { session: HolderSession }) {
+function Holder({ session, notice }: { session: HolderSession; notice?: { text: string; ok: boolean } }) {
   return (
     <HolderProfile
       name={session.name}
@@ -200,6 +213,9 @@ function Holder({ session }: { session: HolderSession }) {
       photo={session.photo}
       wallet={session.wallet}
       vaults={session.vaults}
+      discord={session.discord}
+      discordEnabled={discordEnabled() && !!db && authMode() !== "matrica"}
+      notice={notice}
     />
   );
 }

@@ -32,3 +32,17 @@ create table if not exists wallet_links (
   primary key (vault, hot)
 );
 create index if not exists wallet_links_hot on wallet_links (hot);
+
+-- Accounts a holder linked on the profile (Discord now, X later). One row per holder and provider;
+-- an account can belong to one holder only (linking it again from another wallet moves it).
+-- No tokens are kept: the account is read once when linked (or refreshed), then the token is revoked.
+create table if not exists holder_accounts (
+  holder_id   text not null,
+  provider    text not null,         -- "discord" | "x"
+  account_id  text not null,         -- the provider's user id
+  name        text not null,         -- display name / handle
+  roles       jsonb,                 -- Discord: the stamp roles held on the MAD LADS server
+  linked_at   timestamptz not null default now(),
+  primary key (holder_id, provider),
+  unique (provider, account_id)
+);

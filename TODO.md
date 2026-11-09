@@ -44,7 +44,14 @@ How it works: `lib/auth/wallet.ts` (server) and `lib/wallet/backpack.ts` (browse
   - `HELIUS_API_KEY`: already set.
   - Then `NEXT_PUBLIC_HOLDERS_LIVE=1` and redeploy to go live.
 - [ ] Run `npm run db:setup` against the production database once (new table `wallet_links`).
-- [ ] Next: link X and Discord from the profile page (passport handle and role stamps; Matrica gave these before).
+# Link Discord / X (holder profile)
+- [x] Link Discord built (lib/accounts/discord.ts, /api/accounts/discord/*, table holder_accounts). Token revoked after use; "Refresh roles" re-reads them.
+- [ ] Discord developer portal: add redirects http://localhost:3000/api/accounts/discord/callback and https://madlads.com/api/accounts/discord/callback.
+- [ ] Set DISCORD_CLIENT_ID and DISCORD_CLIENT_SECRET (.env.local and Vercel).
+- [ ] Set MADLADS_STAMP_ROLES as "role id:Stamp name" pairs (see .env.example), locally and in Vercel.
+- [ ] Test a real link, refresh and unlink. Check that guilds.members.read works without Discord approval.
+- [ ] Run npm run db:setup on the production database (new table holder_accounts).
+- [ ] Next: Link X. Create the X developer app with a $0 spend cap, try OAuth 1.0a (returns the handle at login, maybe free); fall back to OAuth 2.0 + users/me (~$0.001 per link).
 - [ ] Legal review of the updated Privacy and Terms (now about the wallet login).
 
 # Matrica login (built, kept for later: AUTH_PROVIDER=matrica)

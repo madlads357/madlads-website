@@ -15,6 +15,7 @@ import { type HolderSession, type WalletFlow, MAX_LADS } from "./session";
 import { isSolanaAddress, memoTransaction, readSignIn, signedMemo } from "./solana";
 import { holderSince, latestBlockhash, madLadsOf } from "@/lib/helius";
 import { getSettings, saveSince, vaultsOf } from "@/lib/db";
+import { withAccounts } from "@/lib/accounts/apply";
 
 const WEEK_MS = 7 * 86_400_000;
 const FLOW_MS = 5 * 60_000;
@@ -99,7 +100,7 @@ export async function holderFromWallet(address: string, recheck = false): Promis
     await saveSince(id, since ?? null).catch(() => {});
   }
 
-  return {
+  return withAccounts({
     id,
     name: shortAddress(address),
     wallet: address,
@@ -107,5 +108,5 @@ export async function holderFromWallet(address: string, recheck = false): Promis
     lads,
     since,
     photo: settings?.photo && lads.includes(settings.photo) ? settings.photo : undefined,
-  };
+  }, shortAddress(address)); // linked Discord / X: name, handle and stamps
 }

@@ -5,7 +5,8 @@ import { links } from "@/data/site";
 
 // TODO: legal review before launch (Backpack legal).
 // Keep this page true to the code: if analytics, cookies, stored data or outside services change, this page must too.
-// What the code does today: lib/auth (login, cookies), lib/wallet/backpack.ts, lib/helius.ts, lib/db.ts + db/schema.sql, lib/passport-share.ts.
+// What the code does today: lib/auth (login, cookies), lib/wallet/backpack.ts, lib/accounts (Discord), lib/helius.ts, lib/db.ts + db/schema.sql,
+// lib/passport-share.ts.
 // Written for Login with Backpack. If Matrica comes back (AUTH_PROVIDER=matrica), the Matrica wording is in git history (before Nov 9, 2026).
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -64,6 +65,10 @@ const sections: LegalSection[] = [
         <ul>
           <li>
             <strong>ml_wallet</strong>: keeps the one-time message your wallet signs while you log in. Deleted as soon as you have signed, or after 5 minutes.
+          </li>
+          <li>
+            <strong>ml_link</strong>: keeps a one-time code while you link your Discord account. Deleted as soon as you come back from Discord, or after 10
+            minutes.
           </li>
           <li>
             <strong>ml_session</strong>: keeps you logged in (encrypted, unreadable by the page). Deleted when you log out, or after 8 hours.
@@ -138,13 +143,35 @@ const sections: LegalSection[] = [
     ),
   },
   {
+    id: "accounts",
+    title: "Linked accounts",
+    body: (
+      <>
+        <p>
+          In the holder area you can choose to link your Discord account, to show your name and your roles on the MAD LADS Discord server as stamps on your
+          passport. Discord asks for your permission first. We then receive your Discord user ID, your Discord name and the list of your roles on the MAD LADS
+          server, and nothing else: not your email, your messages or your other servers.
+        </p>
+        <p>
+          Discord gives us a key to read this once. We use it right away and then cancel it, so we keep no access to your Discord account. “Refresh roles”
+          asks Discord again. Unlink Discord in the holder area and what we stored about it is deleted at once.
+        </p>
+        <p>
+          Once linked, your Discord name replaces your shortened wallet address as your name in the holder area and on your passport. Discord’s own{" "}
+          {ext("https://discord.com/privacy", "privacy policy")} applies to your Discord account.
+        </p>
+      </>
+    ),
+  },
+  {
     id: "stored",
     title: "What we keep",
     body: (
       <>
         <p>
           For holders who log in, our database keeps your wallet address, the wallets you linked to it, the LAD you chose as passport photo and your “MAD since”
-          date, so they follow you on every device. Linked wallets stay linked until you remove them in the holder area, which deletes the link at once. The database is hosted by {ext("https://neon.com", "Neon")} in the European Union (Frankfurt).
+          date, so they follow you on every device. If you link Discord, it also keeps your Discord user ID, name and stamp roles. Linked wallets and accounts
+          stay linked until you remove them in the holder area, which deletes them at once. The database is hosted by {ext("https://neon.com", "Neon")} in the European Union (Frankfurt).
         </p>
         <p>
           The passport video and image are made in your browser. They are not uploaded to us, unless you share them yourself on another service.
@@ -159,7 +186,7 @@ const sections: LegalSection[] = [
       <>
         <p>
           When you open your passport, the site prepares a public link to it (madlads.com/p/…). Anyone with that link can see your passport: your name (your
-          shortened wallet address, like 7xKX…9fQ2), passport LAD, number of LADS, “MAD since” and stamps. Never your full wallet address or your linked
+          Discord name if you linked it, otherwise your shortened wallet address, like 7xKX…9fQ2), passport LAD, number of LADS, “MAD since” and stamps. Never your full wallet address or your linked
           wallets.
         </p>
         <p>
