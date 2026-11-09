@@ -6,6 +6,7 @@
 // Settings (.env.example): DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, MADLADS_DISCORD_SERVER_ID,
 // MADLADS_STAMP_ROLES. Register the redirect <site>/api/accounts/discord/callback in the Discord app.
 import type { LinkedAccount } from "@/lib/db";
+import { accountsAvailable } from "./available";
 
 const API = "https://discord.com/api/v10";
 const SCOPE = "identify guilds.members.read";
@@ -13,8 +14,8 @@ const TIMEOUT_MS = 8000;
 const MAX_STAMPS = 2; // the passport has room for two role stamps
 
 const env = process.env;
-export const discordEnabled = () => !!(env.DISCORD_CLIENT_ID && env.DISCORD_CLIENT_SECRET);
-export const redirectUri = (origin: string) => `${origin}/api/accounts/discord/callback`;
+export const discordEnabled = () => !!(env.DISCORD_CLIENT_ID && env.DISCORD_CLIENT_SECRET) && accountsAvailable();
+const redirectUri = (origin: string) => `${origin}/api/accounts/discord/callback`;
 
 // MADLADS_STAMP_ROLES: the roles that earn a stamp, most important first, as "role id:Stamp name".
 // Discord only returns role ids, so the names come from here. e.g. "1234567890:OG,2345678901:Mad Coach"
@@ -52,14 +53,17 @@ export async function discordAccount(origin: string, code: string): Promise<Link
   const auth = { headers: { Authorization: `Bearer ${accessToken}` } };
 
   try {
-    const user = await call<{ id: string; username: string; global_name?: string | null }>("/users/@me", auth);
+    // Who they are, and (in parallel) their roles on the MAD LADS server.
+    const server = env.MADLADS_DISCORD_SERVER_ID;
+    const [user, member] = await Promise.all([
+      call<{ id: string; username: string; global_name?: string | null }>("/users/@me", auth),
+      server ? call<{ roles?: string[] }>(`/users/@me/guilds/${server}/member`, auth) : null,
+    ]);
     if (!user.body?.id) throw new Error(`Discord user ${user.status}`);
 
-    // Their roles on the MAD LADS server. Not a member (404): linked, just no stamps.
+    // Not a member (404): linked, just no stamps.
     let roles: string[] = [];
-    const server = env.MADLADS_DISCORD_SERVER_ID;
-    if (server) {
-      const member = await call<{ roles?: string[] }>(`/users/@me/guilds/${server}/member`, auth);
+    if (member) {
       if (member.status !== 200 && member.status !== 404) throw new Error(`Discord member ${member.status}`);
       const held = new Set(member.body?.roles ?? []);
       roles = stampRoles()

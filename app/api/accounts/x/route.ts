@@ -1,4 +1,4 @@
-import { getSession, setSession } from "@/lib/auth/session";
+import { getSession } from "@/lib/auth/session";
 import { refreshAccounts } from "@/lib/accounts/apply";
 import { removeAccount } from "@/lib/db";
 
@@ -7,7 +7,6 @@ export async function DELETE() {
   const session = await getSession();
   if (!session) return Response.json({ error: "Not logged in" }, { status: 401 });
   await removeAccount(session.id, "x");
-  const { exp: _exp, ...rest } = session;
-  await setSession(await refreshAccounts(rest), session.exp); // same expiry: only a wallet signature starts a new session
+  await refreshAccounts(session); // keeps the session's expiry
   return Response.json({ ok: true });
 }

@@ -4,6 +4,9 @@
 export const HINT = "ml_user";
 export type HeaderHint = { name: string; lad: number | null };
 
+// 7xKXtg…9fQ2 → "7xKX…9fQ2": how a wallet is shown (the profile, the header, shared passports).
+export const shortAddress = (a: string) => `${a.slice(0, 4)}…${a.slice(-4)}`;
+
 export function readHint(cookie: string): HeaderHint | null {
   const raw = cookie.split("; ").find((c) => c.startsWith(`${HINT}=`));
   if (!raw) return null;

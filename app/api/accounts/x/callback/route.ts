@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getSession, setSession, takeAccountFlow } from "@/lib/auth/session";
+import { getSession, takeAccountFlow } from "@/lib/auth/session";
 import { finishLink, XNeedsCredits } from "@/lib/accounts/x";
 import { refreshAccounts } from "@/lib/accounts/apply";
 import { saveAccount } from "@/lib/db";
@@ -19,8 +19,7 @@ export async function GET(request: Request) {
   let result = "x-error";
   try {
     await saveAccount(session.id, await finishLink(token, flow.secret, verifier));
-    const { exp: _exp, ...rest } = session;
-    await setSession(await refreshAccounts(rest), session.exp); // same expiry: only a wallet signature starts a new session
+    await refreshAccounts(session); // keeps the session's expiry
     result = "ok";
   } catch (e) {
     if (e instanceof XNeedsCredits) result = "x-credits";

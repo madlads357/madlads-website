@@ -30,7 +30,7 @@ export async function saveSince(holderId: string, since: string | null) {
 
 /* ------------------------------------------------------------ vault links (wallet login) */
 
-const MAX_VAULTS = 10; // same cap as lib/auth/wallet.ts
+export const MAX_VAULTS = 10; // vault wallets one hot wallet can link
 
 // The vault wallets linked to this hot wallet, oldest first.
 export async function vaultsOf(hot: string): Promise<string[]> {
@@ -79,8 +79,8 @@ export async function removeAccount(holderId: string, provider: Provider) {
 // Without the database the sealed flow cookie (deleted after one use) is the only guard.
 export async function claimNonce(nonce: string, expiresAt: number): Promise<boolean> {
   if (!db) return true;
-  await db`delete from used_nonces where expires_at < now()`;
-  const rows = await db`insert into used_nonces (nonce, expires_at) values (${nonce}, ${new Date(expiresAt).toISOString()}) on conflict do nothing returning nonce`;
+  const rows = await db`with purge as (delete from used_nonces where expires_at < now())
+                       insert into used_nonces (nonce, expires_at) values (${nonce}, ${new Date(expiresAt).toISOString()}) on conflict do nothing returning nonce`;
   return rows.length === 1;
 }
 

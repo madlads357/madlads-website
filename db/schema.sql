@@ -33,7 +33,7 @@ create table if not exists wallet_links (
 );
 create index if not exists wallet_links_hot on wallet_links (hot);
 
--- Accounts a holder linked on the profile (Discord now, X later). One row per holder and provider;
+-- Accounts a holder linked on the profile (Discord and X). One row per holder and provider;
 -- an account can belong to one holder only (linking it again from another wallet moves it).
 -- No tokens are kept: the account is read once when linked (or refreshed), then the token is revoked.
 create table if not exists holder_accounts (

@@ -35,13 +35,7 @@ async function rpc<T>(method: string, params: unknown, signal: AbortSignal): Pro
 // Runs `fn` with an abort signal that fires after the time budget.
 async function withBudget<T>(fn: (signal: AbortSignal) => Promise<T>): Promise<T> {
   if (!process.env.HELIUS_API_KEY) throw new Error("HELIUS_API_KEY is not set");
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
-  try {
-    return await fn(ctrl.signal);
-  } finally {
-    clearTimeout(timer);
-  }
+  return fn(AbortSignal.timeout(TIMEOUT_MS));
 }
 
 // "Mad Lads #1234" → 1234 (the on-chain name).

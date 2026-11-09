@@ -11,7 +11,7 @@ import { MemeVault } from "./MemeVault";
 import { DressingRoom } from "./DressingRoom";
 import { Playlist } from "./Playlist";
 import { Wallpapers } from "./Wallpapers";
-import { LinkedWallets } from "@/components/WalletLogin";
+import { LinkedWallets } from "./LinkedWallets";
 import { Socials } from "./Socials";
 import { PHOTO_EVENT, PHOTO_KEY } from "@/lib/auth/hint";
 import "./bag.css";

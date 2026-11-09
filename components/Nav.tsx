@@ -7,6 +7,7 @@ import { LogoHorizontal } from "./Logo";
 import { CloseIcon, MenuIcon } from "./Icons";
 import { links, nav } from "@/data/site";
 import { PHOTO_EVENT, PHOTO_KEY, readHint, type HeaderHint } from "@/lib/auth/hint";
+import { useDismiss } from "@/lib/useDismiss";
 import { thumbImage } from "@/lib/madlads";
 
 // Mirrors the Figma "Nav" component: "On Hero" (transparent, white) until the page
@@ -124,18 +125,7 @@ function Account({ user, light }: { user: HeaderHint; light: boolean }) {
     return () => window.removeEventListener(PHOTO_EVENT, onPhoto);
   }, []);
 
-  useEffect(() => {
-    if (!menu) return;
-    const close = (e: Event) => {
-      if (e instanceof KeyboardEvent ? e.key === "Escape" : !box.current?.contains(e.target as Node)) setMenu(false);
-    };
-    document.addEventListener("pointerdown", close);
-    document.addEventListener("keydown", close);
-    return () => {
-      document.removeEventListener("pointerdown", close);
-      document.removeEventListener("keydown", close);
-    };
-  }, [menu]);
+  useDismiss(menu, box, setMenu);
 
   return (
     <div ref={box} className="relative">

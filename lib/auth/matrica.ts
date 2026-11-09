@@ -3,7 +3,7 @@
 import { MatricaOAuthClient } from "@matrica/oauth-sdk";
 import { matricaConfig } from "./config";
 import { MAX_LADS, type HolderSession } from "./session";
-import { holderSince } from "@/lib/helius";
+import { holderSince, ladNumber } from "@/lib/helius";
 import { getSettings, saveSince } from "@/lib/db";
 
 const WEEK_MS = 7 * 86_400_000;
@@ -19,12 +19,6 @@ export async function loginUrl(state: string) {
   const { url, codeVerifier } = await client().getAuthorizationUrl(matricaConfig().scope);
   return { url: `${url}&state=${encodeURIComponent(state)}`, verifier: codeVerifier };
 }
-
-// "Mad Lads #1234" → 1234 (the on-chain name format, checked via Helius; Matrica should return the same).
-const ladNumber = (name: string) => {
-  const m = name.match(/#\s?(\d{1,5})\b/);
-  return m ? Number(m[1]) : null;
-};
 
 type MatricaSession = Awaited<ReturnType<MatricaOAuthClient["createSession"]>>;
 

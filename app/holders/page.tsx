@@ -12,8 +12,9 @@ import { thumbImage } from "@/lib/madlads";
 import { links } from "@/data/site";
 import { discordEnabled } from "@/lib/accounts/discord";
 import { xEnabled } from "@/lib/accounts/x";
-import { db, hotsOf } from "@/lib/db";
-import { LinkedWallets, WalletLogin } from "@/components/WalletLogin";
+import { hotsOf } from "@/lib/db";
+import { WalletLogin } from "@/components/WalletLogin";
+import { LinkedWallets } from "@/components/holder/LinkedWallets";
 
 const MAX_LAD = 9971; // numbers in the collection (#1 to #9971)
 const PICKS = 14; // LADS shown on "Pick your LAD" (fewer on small screens, see NoLads)
@@ -49,10 +50,10 @@ const linkNotices: Record<string, { text: string; ok: boolean }> = {
 export default async function HoldersPage({ searchParams }: { searchParams: Promise<{ error?: string; linked?: string; link?: string }> }) {
   const mode = authMode();
   const session = mode === "off" ? null : await getSession();
-  const params = await searchParams;
+  // Read the query string and, for a wallet login, the wallets that can log in for this one, together.
+  const [params, hots] = await Promise.all([searchParams, session?.wallet ? hotsOf(session.wallet).catch(() => []) : []]);
   const error = errors[params.error ?? ""];
   const notice = linkNotices[params.linked ?? params.link ?? ""];
-  const hots = session?.wallet ? await hotsOf(session.wallet).catch(() => []) : []; // wallets that can log in for this one
 
   return (
     <>
@@ -220,8 +221,8 @@ function Holder({ session, notice, hots }: { session: HolderSession; notice?: { 
       vaults={session.vaults}
       hots={hots}
       discord={session.discord}
-      discordEnabled={discordEnabled() && !!db && authMode() !== "matrica"}
-      xEnabled={xEnabled() && !!db && authMode() !== "matrica"}
+      discordEnabled={discordEnabled()}
+      xEnabled={xEnabled()}
       notice={notice}
     />
   );

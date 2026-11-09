@@ -25,7 +25,7 @@ import { supportsSignInWithOffchainMessage, walletSigner } from "@solana/kit-plu
 import { signInText } from "@/lib/auth/siws";
 import type { Challenge } from "@/lib/auth/wallet";
 
-export const BACKPACK = "Backpack";
+const BACKPACK = "Backpack";
 export const BACKPACK_DOWNLOAD = "https://backpack.app/download";
 
 // One client for the site. Nothing is sent from the browser, so no RPC plugin; no remembered wallet
@@ -33,7 +33,7 @@ export const BACKPACK_DOWNLOAD = "https://backpack.app/download";
 export const walletClient = createClient().use(
   walletSigner({ chain: "solana:mainnet", filter: (w) => w.name === BACKPACK, storage: null, autoConnect: false }),
 );
-export type WalletClient = typeof walletClient;
+type WalletClient = typeof walletClient;
 type UiWallet = ReturnType<WalletClient["wallet"]["getState"]>["wallets"][number];
 
 // Backpack, if this browser has it (the extension, or the Backpack app's built-in browser).

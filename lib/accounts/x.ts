@@ -10,13 +10,14 @@
 // Register the callback <site>/api/accounts/x/callback in the X app's user authentication settings.
 import { createHmac, randomBytes } from "node:crypto";
 import type { LinkedAccount } from "@/lib/db";
+import { accountsAvailable } from "./available";
 
 const API = "https://api.x.com";
 const TIMEOUT_MS = 8000;
 
 const env = process.env;
-export const xEnabled = () => !!(env.X_API_KEY && env.X_API_SECRET);
-export const callbackUrl = (origin: string) => `${origin}/api/accounts/x/callback`;
+export const xEnabled = () => !!(env.X_API_KEY && env.X_API_SECRET) && accountsAvailable();
+const callbackUrl = (origin: string) => `${origin}/api/accounts/x/callback`;
 
 export class XNeedsCredits extends Error {} // the handle needs a paid read and the app has no credits
 
@@ -33,11 +34,9 @@ type Signing = {
   consumerKey: string;
   consumerSecret: string;
   tokenSecret?: string;
-  nonce?: string; // tests only
-  timestamp?: string; // tests only
 };
 
-export function oauthSignature({ method, url, params = {}, oauth = {}, consumerSecret, tokenSecret = "" }: Signing & { oauth: Record<string, string> }) {
+function oauthSignature({ method, url, params = {}, oauth = {}, consumerSecret, tokenSecret = "" }: Signing & { oauth: Record<string, string> }) {
   const all = { ...params, ...oauth };
   const paramString = Object.keys(all)
     .map((k) => [enc(k), enc(all[k])] as const)
@@ -48,12 +47,12 @@ export function oauthSignature({ method, url, params = {}, oauth = {}, consumerS
   return createHmac("sha1", `${enc(consumerSecret)}&${enc(tokenSecret)}`).update(base).digest("base64");
 }
 
-export function authorizationHeader(s: Signing): string {
+function authorizationHeader(s: Signing): string {
   const oauth: Record<string, string> = {
     oauth_consumer_key: s.consumerKey,
-    oauth_nonce: s.nonce ?? randomBytes(16).toString("hex"),
+    oauth_nonce: randomBytes(16).toString("hex"),
     oauth_signature_method: "HMAC-SHA1",
-    oauth_timestamp: s.timestamp ?? String(Math.floor(Date.now() / 1000)),
+    oauth_timestamp: String(Math.floor(Date.now() / 1000)),
     oauth_version: "1.0",
     ...s.oauth,
   };

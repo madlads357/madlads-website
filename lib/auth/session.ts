@@ -96,41 +96,31 @@ export async function clearSession() {
   store.delete(HINT);
 }
 
-export async function setLoginFlow(flow: LoginFlow) {
-  (await cookies()).set(FLOW, seal(flow, FLOW), { ...base, maxAge: 600 }); // 10 minutes to finish logging in
+// The short-lived flow cookies (log in with Matrica, sign a wallet challenge, link an account): one sealed
+// cookie each, deleted as soon as it is read ("one use only"), and ignored once its `exp` has passed.
+async function setFlow(name: string, flow: object, maxAge: number) {
+  (await cookies()).set(name, seal(flow, name), { ...base, maxAge });
 }
 
-export async function takeLoginFlow(): Promise<LoginFlow | null> {
+async function takeFlow<T extends object>(name: string): Promise<T | null> {
   const store = await cookies();
-  const flow = unseal<LoginFlow>(store.get(FLOW)?.value, FLOW);
-  store.delete(FLOW); // one use only
-  return flow;
+  const flow = unseal<T>(store.get(name)?.value, name);
+  store.delete(name);
+  const exp = (flow as { exp?: number } | null)?.exp;
+  return flow && (exp === undefined || exp > Date.now()) ? flow : null;
 }
 
 export const randomState = () => randomBytes(16).toString("base64url");
 
-export async function setWalletFlow(flow: WalletFlow) {
-  (await cookies()).set(WALLET_FLOW, seal(flow, WALLET_FLOW), { ...base, maxAge: 300 }); // 5 minutes to sign
-}
+export const setLoginFlow = (flow: LoginFlow) => setFlow(FLOW, flow, 600); // 10 minutes to finish logging in
+export const takeLoginFlow = () => takeFlow<LoginFlow>(FLOW);
 
-export async function takeWalletFlow(): Promise<WalletFlow | null> {
-  const store = await cookies();
-  const flow = unseal<WalletFlow>(store.get(WALLET_FLOW)?.value, WALLET_FLOW);
-  store.delete(WALLET_FLOW); // one use only (the nonce is also recorded server-side: see claimNonce in lib/db.ts)
-  return flow && flow.exp > Date.now() ? flow : null;
-}
+// The wallet nonce is also recorded server-side (claimNonce in lib/db.ts): the cookie alone can be copied.
+export const setWalletFlow = (flow: WalletFlow) => setFlow(WALLET_FLOW, flow, 300); // 5 minutes to sign
+export const takeWalletFlow = () => takeFlow<WalletFlow>(WALLET_FLOW);
 
 // Linking an account (Discord, X): the state sent to the provider, checked when it sends the holder back.
 // X (OAuth 1.0a): state is the request token, secret its token secret (needed to finish the link).
 export type AccountFlow = { provider: "discord" | "x"; state: string; secret?: string; holderId: string; exp: number };
-
-export async function setAccountFlow(flow: AccountFlow) {
-  (await cookies()).set(ACCOUNT_FLOW, seal(flow, ACCOUNT_FLOW), { ...base, maxAge: 600 }); // 10 minutes to finish
-}
-
-export async function takeAccountFlow(): Promise<AccountFlow | null> {
-  const store = await cookies();
-  const flow = unseal<AccountFlow>(store.get(ACCOUNT_FLOW)?.value, ACCOUNT_FLOW);
-  store.delete(ACCOUNT_FLOW); // one use only
-  return flow && flow.exp > Date.now() ? flow : null;
-}
+export const setAccountFlow = (flow: AccountFlow) => setFlow(ACCOUNT_FLOW, flow, 600); // 10 minutes to finish
+export const takeAccountFlow = () => takeFlow<AccountFlow>(ACCOUNT_FLOW);

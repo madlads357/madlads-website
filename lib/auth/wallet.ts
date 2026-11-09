@@ -13,16 +13,29 @@
 import { randomBytes } from "node:crypto";
 import { type HolderSession, type WalletFlow, MAX_LADS } from "./session";
 import { isSolanaAddress, memoTransaction, readSignIn, signedMemo } from "./solana";
+import { authMode } from "./config";
+import { shortAddress } from "./hint";
 import { holdingsOf, latestBlockhash, sinceOfHeld } from "@/lib/helius";
-import { getSettings, saveSince, vaultsOf } from "@/lib/db";
-import { withAccounts } from "@/lib/accounts/apply";
+import { accountsOf, getSettings, MAX_VAULTS, saveSince, vaultsOf } from "@/lib/db";
+import { applyAccounts } from "@/lib/accounts/apply";
+import { rateLimit } from "@/lib/rate-limit";
 
 const WEEK_MS = 7 * 86_400_000;
 const FLOW_MS = 5 * 60_000;
-export const MAX_VAULTS = 10; // vault wallets one hot wallet can link (also capped in lib/db.ts)
+export { MAX_VAULTS };
 
-export const isAddress = isSolanaAddress;
-export const shortAddress = (a: string) => `${a.slice(0, 4)}…${a.slice(-4)}`;
+// The answers both wallet routes (challenge, verify) give.
+export const walletFail = (error: string, message: string, status: number) => Response.json({ error, message }, { status });
+export const vaultsFullMessage = `You can link up to ${MAX_VAULTS} wallets.`;
+export const sameWalletMessage = "That’s the wallet you’re logged in with. Switch to your vault wallet in Backpack, then sign again.";
+
+// What both wallet routes check first: wallet login on, a request from our own pages, not too many tries.
+export function walletRouteGuard(request: Request, bucket: string, max: number): Response | null {
+  if (authMode() !== "wallet") return Response.json({ error: "Wallet login is off" }, { status: 404 });
+  if (request.headers.get("origin") !== new URL(request.url).origin) return Response.json({ error: "Wrong origin" }, { status: 403 });
+  if (!rateLimit(request, bucket, max)) return walletFail("slow", "Too many attempts. Please wait a minute and try again.", 429);
+  return null;
+}
 
 // What the browser passes to the wallet's signIn (SolanaSignInInput), or the Ledger fallback transaction.
 export type Challenge =
@@ -87,9 +100,10 @@ export async function signerOf(flow: WalletFlow, body: { signedMessage?: unknown
 // recheck: the linked wallets just changed, so work "MAD since" out again.
 export async function holderFromWallet(address: string, recheck = false): Promise<Omit<HolderSession, "exp">> {
   const id = `wallet:${address}`;
-  const vaults = await vaultsOf(address); // throws if the database is down: better no login than silently missing a vault's LADS
-  const wallets = [address, ...vaults];
-  const [{ lads, held }, settings] = await Promise.all([holdingsOf(wallets, MAX_LADS), getSettings(id).catch(() => null)]);
+  // Three independent reads at once. vaultsOf throws if the database is down: better no login than
+  // silently missing a vault's LADS (the saved settings and linked accounts are nice to have).
+  const [vaults, settings, accounts] = await Promise.all([vaultsOf(address), getSettings(id).catch(() => null), accountsOf(id).catch(() => [])]);
+  const { lads, held } = await holdingsOf([address, ...vaults], MAX_LADS);
 
   // "MAD since" from the blockchain, saved in the database and only worked out again after a week
   // (or right away when the linked wallets change).
@@ -106,13 +120,17 @@ export async function holderFromWallet(address: string, recheck = false): Promis
     }
   }
 
-  return withAccounts({
-    id,
-    name: shortAddress(address),
-    wallet: address,
-    vaults,
-    lads,
-    since,
-    photo: settings?.photo && lads.includes(settings.photo) ? settings.photo : undefined,
-  }, shortAddress(address)); // linked Discord / X: name, handle and stamps
+  // Linked Discord / X: name, handle and stamps
+  return applyAccounts(
+    {
+      id,
+      name: shortAddress(address),
+      wallet: address,
+      vaults,
+      lads,
+      since,
+      photo: settings?.photo && lads.includes(settings.photo) ? settings.photo : undefined,
+    },
+    accounts,
+  );
 }

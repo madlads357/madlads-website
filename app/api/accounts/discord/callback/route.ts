@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getSession, setSession, takeAccountFlow } from "@/lib/auth/session";
+import { getSession, takeAccountFlow } from "@/lib/auth/session";
 import { discordAccount } from "@/lib/accounts/discord";
 import { refreshAccounts } from "@/lib/accounts/apply";
 import { saveAccount } from "@/lib/db";
@@ -22,8 +22,7 @@ export async function GET(request: Request) {
   let ok = false;
   try {
     await saveAccount(session.id, await discordAccount(url.origin, code));
-    const { exp: _exp, ...rest } = session;
-    await setSession(await refreshAccounts(rest), session.exp); // same expiry: only a wallet signature starts a new session
+    await refreshAccounts(session); // keeps the session's expiry
     ok = true;
   } catch (e) {
     console.error("[accounts] Discord link failed:", (e as Error).message);
