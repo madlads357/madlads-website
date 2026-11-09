@@ -74,3 +74,19 @@ export async function removeAccount(holderId: string, provider: Provider) {
   if (!db) return;
   await db`delete from holder_accounts where holder_id = ${holderId} and provider = ${provider}`;
 }
+
+// Marks a wallet login nonce as used. False if it was already used: that proof is a replay.
+// Without the database the sealed flow cookie (deleted after one use) is the only guard.
+export async function claimNonce(nonce: string, expiresAt: number): Promise<boolean> {
+  if (!db) return true;
+  await db`delete from used_nonces where expires_at < now()`;
+  const rows = await db`insert into used_nonces (nonce, expires_at) values (${nonce}, ${new Date(expiresAt).toISOString()}) on conflict do nothing returning nonce`;
+  return rows.length === 1;
+}
+
+// The hot wallets that can log in for this vault wallet (the vault can remove them: DELETE /api/holder/wallets).
+export async function hotsOf(vault: string): Promise<string[]> {
+  if (!db) return [];
+  const rows = await db`select hot from wallet_links where vault = ${vault} order by created_at limit 20`;
+  return rows.map((r) => r.hot as string);
+}

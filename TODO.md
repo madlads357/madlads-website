@@ -43,14 +43,16 @@ How it works: `lib/auth/wallet.ts` (server) and `lib/wallet/backpack.ts` (browse
     (that also needs the `MATRICA_*` settings below).
   - `HELIUS_API_KEY`: already set.
   - Then `NEXT_PUBLIC_HOLDERS_LIVE=1` and redeploy to go live.
-- [ ] Run `npm run db:setup` against the production database once (new table `wallet_links`).
+- [ ] Run `npm run db:setup` against the production database once (new tables `wallet_links`, `used_nonces`).
+- [ ] Vercel Firewall: add a rate-limit rule on `/api/auth/*` (for example 20 requests a minute per IP). The limit in the code (`lib/rate-limit.ts`) only counts inside one server instance, so it's a speed bump, not a wall.
 # Link Discord / X (holder profile)
 - [x] Link Discord built (lib/accounts/discord.ts, /api/accounts/discord/*, table holder_accounts). Token revoked after use; "Refresh roles" re-reads them.
 - [ ] Discord developer portal: add redirects http://localhost:3000/api/accounts/discord/callback and https://madlads.com/api/accounts/discord/callback.
 - [ ] Set DISCORD_CLIENT_ID and DISCORD_CLIENT_SECRET (.env.local and Vercel).
 - [ ] Set MADLADS_STAMP_ROLES as "role id:Stamp name" pairs (see .env.example), locally and in Vercel.
 - [ ] Test a real link, refresh and unlink. Check that guilds.members.read works without Discord approval.
-- [ ] Run npm run db:setup on the production database (new table holder_accounts).
+- [ ] Run npm run db:setup on the production database (new table holder_accounts; same command as above).
+- [x] Code review of the login (Nov 9): packed session cookie, fixed session expiry, kept "MAD since" on Helius errors, awaited token revokes, shared passport follows unlinks, rate limit, one-time login proofs, vault-side revoke.
 - [x] Link X built (lib/accounts/x.ts, /api/accounts/x/*): OAuth 1.0a, handle read from the free access-token reply; users/me (paid, ~$0.001) only if X leaves it out.
 - [ ] X Developer Console: app (ideally on the MAD LADS X account), spend cap $0, User authentication settings (Web App, Read, callbacks, website/terms/privacy URLs).
 - [ ] Set X_API_KEY and X_API_SECRET (consumer keys) in .env.local and Vercel.

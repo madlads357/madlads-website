@@ -13,7 +13,7 @@
 import { randomBytes } from "node:crypto";
 import { type HolderSession, type WalletFlow, MAX_LADS } from "./session";
 import { isSolanaAddress, memoTransaction, readSignIn, signedMemo } from "./solana";
-import { holderSince, latestBlockhash, madLadsOf } from "@/lib/helius";
+import { holdingsOf, latestBlockhash, sinceOfHeld } from "@/lib/helius";
 import { getSettings, saveSince, vaultsOf } from "@/lib/db";
 import { withAccounts } from "@/lib/accounts/apply";
 
@@ -44,7 +44,7 @@ export async function challenge(
   const statement =
     purpose === "login"
       ? "Log in to the MAD LADS holder area. Signing is free: no transaction, no fees."
-      : `Let ${hot} log in to the MAD LADS holder area for this wallet, so its LADS count too. Signing is free. You can remove the link anytime in the holder area.`;
+      : `Let ${hot} log in to the MAD LADS holder area for this wallet, so its LADS count too. Signing is free. You can remove the link anytime in the holder area, from either wallet.`;
   const signIn = { domain, uri: origin, statement, nonce, issuedAt: new Date(now).toISOString(), expirationTime: new Date(now + FLOW_MS).toISOString() };
   const flow: WalletFlow = { purpose, hot, signIn, exp: now + FLOW_MS };
 
@@ -87,17 +87,23 @@ export async function signerOf(flow: WalletFlow, body: { signedMessage?: unknown
 // recheck: the linked wallets just changed, so work "MAD since" out again.
 export async function holderFromWallet(address: string, recheck = false): Promise<Omit<HolderSession, "exp">> {
   const id = `wallet:${address}`;
-  const vaults = await vaultsOf(address).catch(() => []);
+  const vaults = await vaultsOf(address); // throws if the database is down: better no login than silently missing a vault's LADS
   const wallets = [address, ...vaults];
-  const [lads, settings] = await Promise.all([madLadsOf(wallets, MAX_LADS), getSettings(id).catch(() => null)]);
+  const [{ lads, held }, settings] = await Promise.all([holdingsOf(wallets, MAX_LADS), getSettings(id).catch(() => null)]);
 
   // "MAD since" from the blockchain, saved in the database and only worked out again after a week
   // (or right away when the linked wallets change).
   let since = settings?.since ?? undefined;
   const fresh = settings?.sinceCheckedAt && Date.now() - new Date(settings.sinceCheckedAt).getTime() < WEEK_MS;
   if (lads.length && (recheck || !fresh)) {
-    since = (await holderSince(wallets)) ?? undefined;
-    await saveSince(id, since ?? null).catch(() => {});
+    try {
+      const found = await sinceOfHeld(held); // reuses the Lads already read: no second round of lookups
+      since = found ?? undefined;
+      await saveSince(id, found).catch(() => {});
+    } catch (e) {
+      // Helius hiccup: keep the date we had and try again at the next login (nothing saved, so not "fresh").
+      console.warn("[wallet] could not work out MAD since:", (e as Error).message);
+    }
   }
 
   return withAccounts({

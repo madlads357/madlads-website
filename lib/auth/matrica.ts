@@ -78,8 +78,13 @@ export async function holderFromCode(code: string, verifier: string): Promise<Om
   const fresh = settings?.sinceCheckedAt && Date.now() - new Date(settings.sinceCheckedAt).getTime() < WEEK_MS;
   if (held.length && process.env.HELIUS_API_KEY && !fresh) {
     const wallets = await session.getUserWallets().catch(() => []);
-    since = (await holderSince(wallets.filter((w) => w.networkSymbol === "SOL").map((w) => w.id))) ?? undefined;
-    await saveSince(id, since ?? null).catch(() => {});
+    try {
+      const found = await holderSince(wallets.filter((w) => w.networkSymbol === "SOL").map((w) => w.id));
+      since = found ?? undefined;
+      await saveSince(id, found).catch(() => {});
+    } catch (e) {
+      console.warn("[matrica] could not work out MAD since:", (e as Error).message); // keep the saved date, try again next login
+    }
   }
 
   return {

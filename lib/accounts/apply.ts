@@ -3,6 +3,7 @@
 // the X handle first, then the Discord name, then the short wallet address.
 import type { HolderSession } from "@/lib/auth/session";
 import { accountsOf, type LinkedAccount } from "@/lib/db";
+import { updateShareIdentity } from "@/lib/passport-share";
 
 type Holder = Omit<HolderSession, "exp">;
 
@@ -30,7 +31,12 @@ export function fallbackName(session: { id: string; wallet?: string }) {
   return session.id.startsWith("mock:") ? "Test LAD" : "MAD LAD";
 }
 
-// After linking or unlinking: the session again, with the accounts as they are now.
+// After linking or unlinking: the session again, with the accounts as they are now. The holder's public
+// passport link shows the same name, handle and stamps (an unlinked X handle must not stay online).
 export async function refreshAccounts<T extends Holder>(session: T): Promise<Holder> {
-  return withAccounts(session, fallbackName(session));
+  const holder = await withAccounts(session, fallbackName(session));
+  await updateShareIdentity(holder.id, { name: holder.name, handle: holder.handle, roles: holder.roles }).catch((e) =>
+    console.warn("[accounts] could not update the shared passport:", (e as Error).message),
+  );
+  return holder;
 }

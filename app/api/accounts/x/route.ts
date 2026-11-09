@@ -8,6 +8,6 @@ export async function DELETE() {
   if (!session) return Response.json({ error: "Not logged in" }, { status: 401 });
   await removeAccount(session.id, "x");
   const { exp: _exp, ...rest } = session;
-  await setSession(await refreshAccounts(rest));
+  await setSession(await refreshAccounts(rest), session.exp); // same expiry: only a wallet signature starts a new session
   return Response.json({ ok: true });
 }

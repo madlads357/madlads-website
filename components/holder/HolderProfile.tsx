@@ -25,6 +25,7 @@ type Props = {
   photo?: number; // the saved passport photo (database), if any
   wallet?: string; // wallet login: the address logged in, and the vault wallets linked to it
   vaults?: string[];
+  hots?: string[]; // wallets that can log in for this one, when it is a vault
   discord?: string; // linked Discord name (its stamp roles are `roles`)
   discordEnabled?: boolean; // Discord linking is set up on the server
   xEnabled?: boolean; // X linking is set up on the server
@@ -36,7 +37,7 @@ const MOUTH = { x: 0.25, y: 0.62 };
 // Desktop: where the sticky bag sits on screen (px). The fall maths in Items uses the same numbers.
 const STICKY = { top: 110, pad: 40 };
 
-export function HolderProfile({ name, handle, since, roles, lads, photo: saved, wallet, vaults = [], discord, discordEnabled = false, xEnabled = false, notice }: Props) {
+export function HolderProfile({ name, handle, since, roles, lads, photo: saved, wallet, vaults = [], hots = [], discord, discordEnabled = false, xEnabled = false, notice }: Props) {
   const [photo, setPhoto] = useState(saved ?? lads[0]);
   const [windowOpen, setWindowOpen] = useState<BagWindow | null>(null); // the window a backpack object opened (data/bag.ts)
   const [scrolled, setScrolled] = useState(false);
@@ -95,7 +96,7 @@ export function HolderProfile({ name, handle, since, roles, lads, photo: saved, 
               {/* Accounts: socials and wallets, one block of chips */}
               <div className="flex flex-col items-start gap-2">
                 <Socials discord={discord} roles={roles} discordEnabled={discordEnabled} handle={handle} xEnabled={xEnabled} />
-                {wallet && <LinkedWallets wallet={wallet} vaults={vaults} />}
+                {wallet && <LinkedWallets wallet={wallet} vaults={vaults} hots={hots} />}
               </div>
             </header>
 

@@ -12,7 +12,7 @@ import { thumbImage } from "@/lib/madlads";
 import { links } from "@/data/site";
 import { discordEnabled } from "@/lib/accounts/discord";
 import { xEnabled } from "@/lib/accounts/x";
-import { db } from "@/lib/db";
+import { db, hotsOf } from "@/lib/db";
 import { LinkedWallets, WalletLogin } from "@/components/WalletLogin";
 
 const MAX_LAD = 9971; // numbers in the collection (#1 to #9971)
@@ -52,6 +52,7 @@ export default async function HoldersPage({ searchParams }: { searchParams: Prom
   const params = await searchParams;
   const error = errors[params.error ?? ""];
   const notice = linkNotices[params.linked ?? params.link ?? ""];
+  const hots = session?.wallet ? await hotsOf(session.wallet).catch(() => []) : []; // wallets that can log in for this one
 
   return (
     <>
@@ -62,9 +63,9 @@ export default async function HoldersPage({ searchParams }: { searchParams: Prom
         ) : !session ? (
           <LoggedOut mode={mode} error={error} />
         ) : session.lads.length === 0 ? (
-          <NoLads session={session} />
+          <NoLads session={session} hots={hots} />
         ) : (
-          <Holder session={session} notice={notice} />
+          <Holder session={session} notice={notice} hots={hots} />
         )}
       </main>
       <Footer />
@@ -131,7 +132,7 @@ function LoggedOut({ mode, error }: { mode: AuthMode; error?: string }) {
 // Logged in, but no LAD in the wallet(s): two ways forward, not a dead end. Already have one in
 // another wallet → link it as a vault (wallet login), or on Matrica and log in again. Not yet → where to get one, a few LADS to look at,
 // and what holders get.
-function NoLads({ session }: { session: HolderSession }) {
+function NoLads({ session, hots }: { session: HolderSession; hots: string[] }) {
   // New ones on every visit, no repeats. Two rows: 10 on phones, 12 on tablets, 14 on wide screens.
   const picks = new Set<number>();
   while (picks.size < PICKS) picks.add(1 + Math.floor(Math.random() * MAX_LAD));
@@ -150,7 +151,7 @@ function NoLads({ session }: { session: HolderSession }) {
             <>
               <p className="text-muted">Link it once and your LADS show up here, without logging in with it every time. Handy for a Ledger.</p>
               <div className="mt-auto pt-2">
-                <LinkedWallets wallet={session.wallet} vaults={session.vaults ?? []} defaultOpen />
+                <LinkedWallets wallet={session.wallet} vaults={session.vaults ?? []} hots={hots} defaultOpen />
               </div>
             </>
           ) : (
@@ -206,7 +207,7 @@ function NoLads({ session }: { session: HolderSession }) {
 }
 
 // The profile: welcome, the holder's Lads, and the backpack the objects fall out of.
-function Holder({ session, notice }: { session: HolderSession; notice?: { text: string; ok: boolean } }) {
+function Holder({ session, notice, hots }: { session: HolderSession; notice?: { text: string; ok: boolean }; hots: string[] }) {
   return (
     <HolderProfile
       name={session.name}
@@ -217,6 +218,7 @@ function Holder({ session, notice }: { session: HolderSession; notice?: { text: 
       photo={session.photo}
       wallet={session.wallet}
       vaults={session.vaults}
+      hots={hots}
       discord={session.discord}
       discordEnabled={discordEnabled() && !!db && authMode() !== "matrica"}
       xEnabled={xEnabled() && !!db && authMode() !== "matrica"}

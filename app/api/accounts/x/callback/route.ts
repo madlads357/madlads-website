@@ -20,7 +20,7 @@ export async function GET(request: Request) {
   try {
     await saveAccount(session.id, await finishLink(token, flow.secret, verifier));
     const { exp: _exp, ...rest } = session;
-    await setSession(await refreshAccounts(rest));
+    await setSession(await refreshAccounts(rest), session.exp); // same expiry: only a wallet signature starts a new session
     result = "ok";
   } catch (e) {
     if (e instanceof XNeedsCredits) result = "x-credits";

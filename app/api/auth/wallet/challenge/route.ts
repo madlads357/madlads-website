@@ -2,6 +2,7 @@ import { authMode } from "@/lib/auth/config";
 import { getSession, setWalletFlow } from "@/lib/auth/session";
 import { challenge, isAddress, MAX_VAULTS } from "@/lib/auth/wallet";
 import { db } from "@/lib/db";
+import { rateLimit } from "@/lib/rate-limit";
 
 
 
@@ -12,6 +13,7 @@ export async function POST(request: Request) {
   if (authMode() !== "wallet") return Response.json({ error: "Wallet login is off" }, { status: 404 });
   const origin = new URL(request.url).origin;
   if (request.headers.get("origin") !== origin) return Response.json({ error: "Wrong origin" }, { status: 403 });
+  if (!rateLimit(request, "wallet-challenge", 30)) return Response.json({ error: "slow", message: "Too many attempts. Please wait a minute and try again." }, { status: 429 });
 
   const body = (await request.json().catch(() => ({}))) as { purpose?: unknown; memoPayer?: unknown };
   const purpose = body.purpose === "link" ? "link" : "login";

@@ -46,3 +46,10 @@ create table if not exists holder_accounts (
   primary key (holder_id, provider),
   unique (provider, account_id)
 );
+
+-- Wallet login proofs already used, so a signed proof can't be replayed within its 5 minutes
+-- (lib/db.ts claimNonce). Rows are only needed until they expire and are cleaned up as new ones arrive.
+create table if not exists used_nonces (
+  nonce       text primary key,
+  expires_at  timestamptz not null
+);

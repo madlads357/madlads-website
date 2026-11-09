@@ -11,6 +11,6 @@ export async function POST(request: Request) {
   if (!session.lads.includes(id)) return Response.json({ error: "Not one of your LADS" }, { status: 400 });
   await savePhoto(session.id, id);
   const { exp: _exp, ...rest } = session;
-  await setSession({ ...rest, photo: id }); // also refreshes the header cookie
+  await setSession({ ...rest, photo: id }, session.exp); // also refreshes the header cookie (same expiry)
   return Response.json({ ok: true });
 }

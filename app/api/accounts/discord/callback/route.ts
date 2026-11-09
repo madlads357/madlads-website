@@ -23,7 +23,7 @@ export async function GET(request: Request) {
   try {
     await saveAccount(session.id, await discordAccount(url.origin, code));
     const { exp: _exp, ...rest } = session;
-    await setSession(await refreshAccounts(rest));
+    await setSession(await refreshAccounts(rest), session.exp); // same expiry: only a wallet signature starts a new session
     ok = true;
   } catch (e) {
     console.error("[accounts] Discord link failed:", (e as Error).message);

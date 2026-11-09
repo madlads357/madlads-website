@@ -175,7 +175,7 @@ const sections: LegalSection[] = [
       <>
         <p>
           For holders who log in, our database keeps your wallet address, the wallets you linked to it, the LAD you chose as passport photo and your “MAD since”
-          date, so they follow you on every device. If you link Discord, it also keeps your Discord user ID, name and stamp roles; if you link X, your X user ID and handle. Linked wallets and accounts
+          date, so they follow you on every device. If you link Discord, it also keeps your Discord user ID, name and stamp roles; if you link X, your X user ID and handle. A short-lived one-time code for each login is kept for a few minutes so a signed login can’t be used twice, then deleted. Linked wallets and accounts
           stay linked until you remove them in the holder area, which deletes them at once. The database is hosted by {ext("https://neon.com", "Neon")} in the European Union (Frankfurt).
         </p>
         <p>

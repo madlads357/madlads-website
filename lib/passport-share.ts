@@ -109,3 +109,12 @@ export async function deleteShareLink(holderId: string) {
 
 // Link previews (X, Discord, Slack…) fetch the page too: they shouldn't count as views.
 export const isBot = (userAgent: string | null) => !userAgent || /bot|crawl|spider|preview|facebookexternalhit|whatsapp|telegram|slack|discord|embedly|x\.com|twitter/i.test(userAgent);
+
+// A holder linked or unlinked X or Discord: the public link shows the new name, handle and stamps
+// (the rest of the passport is left as it was). No link, or a withdrawn one: nothing to do.
+export async function updateShareIdentity(holderId: string, who: { name: string; handle?: string; roles?: string[] }) {
+  if (!db) return;
+  const patch = JSON.stringify({ name: who.name, ...(who.handle && { handle: who.handle }), ...(who.roles?.length && { roles: who.roles.slice(0, 2) }) });
+  await db`update share_links set passport = (passport - 'handle' - 'roles') || ${patch}::jsonb, updated_at = now()
+           where holder_id = ${holderId} and deleted_at is null`;
+}

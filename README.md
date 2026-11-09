@@ -74,7 +74,7 @@ lib/
 ├── helius.ts, db.ts, passport-share.ts     blockchain reads, database, share links
 └── madlads.ts, news.ts, og.tsx…            collection helpers, MAD News, link previews
 data/              editable content: lore, art, news, links, the backpack, memes, dressing room
-db/schema.sql      the four tables
+db/schema.sql      the five tables
 public/            lads, art, irl, video, holder objects, collection data (generated)
 scripts/           collection data, database setup, README screenshots
 docs/images/       the images in this README
@@ -180,7 +180,12 @@ Without `AUTH_MOCK`, the holder shots are skipped.
 
 - **“MAD since”** is when the wallet got a Lad it still holds, read from the blockchain by Helius, and saved for a week. Lads in linked vault wallets count too.
 - **Names.** The profile and the passport show your X handle, otherwise your Discord name, otherwise your shortened wallet address. Share links never show full addresses or linked wallets.
-- **Up to 500 Lads** are kept in the login cookie, which has a size limit.
+- **Up to 500 Lads** are kept in the login cookie. They are packed (14 bits each, `lib/auth/lads-pack.ts`) so the cookie stays around 2.5 KB, under the browsers' 4 KB limit.
+- **Sessions last 8 hours from the wallet signature.** Linking an account or a vault, choosing a photo and unlinking never extend them: only logging in again does.
+- **A login proof works once.** Each challenge is also recorded in the database (`used_nonces`), so a copied cookie and signature can't be replayed.
+- **Either wallet can end a vault link:** the everyday wallet removes a vault, and the vault, logged in, removes the wallets that can log in for it.
+- **If Helius is down at login,** the saved “MAD since” date is kept and tried again next time, instead of being erased.
+- **Unlinking X or Discord** also updates the public passport link, so the old handle and stamps leave it.
 - **Share links** are public and expire after a year. With a database they are short (`/p/<code>`) and can be switched off; without one they are long signed links.
 - **Backpack only is a rule of the page, not of the server.** A signature proves who owns an address, not which wallet app signed it. That is all the holder area needs.
 - **Privacy and Terms** describe exactly what the code stores: update them when you change what is collected. They still need review by Backpack's legal team (see [TODO.md](TODO.md)).

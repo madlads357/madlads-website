@@ -70,7 +70,8 @@ export async function discordAccount(origin: string, code: string): Promise<Link
 
     return { provider: "discord", accountId: user.body.id, name: user.body.global_name || user.body.username, roles };
   } finally {
-    // We don't keep the token: revoke it so it can't be used again.
-    call("/oauth2/token/revoke", form({ token: accessToken, token_type_hint: "access_token" })).catch(() => {});
+    // We don't keep the token: revoke it so it can't be used again. Awaited (errors ignored): on serverless
+    // hosting the function can stop as soon as the response is sent, and a revoke still in flight would be lost.
+    await call("/oauth2/token/revoke", form({ token: accessToken, token_type_hint: "access_token" })).catch(() => {});
   }
 }

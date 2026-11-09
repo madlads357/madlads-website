@@ -84,7 +84,7 @@ const sections: LegalSection[] = [
           <li>We will never ask for your seed phrase or private key. Nobody legitimate will.</li>
           <li>
             Logging in to the holder area only asks your wallet to sign a free sign-in for madlads.com. It never asks you to send, approve or pay anything. If a
-            “MAD LADS login” does, it isn’t us.
+            “MAD LADS login” does, it isn’t us. (With a Ledger, the transaction you approve only contains a short note naming this site and is never sent.)
           </li>
           <li>
             For peer-to-peer trades, only use {ext(links.foxySwap, "FoxySwap")}. Use the official links on this site for everything else.
@@ -145,7 +145,7 @@ const sections: LegalSection[] = [
         <p>
           You can link other wallets you own (“vaults”, for example a Ledger) to the wallet you log in with, by signing once with each of them. Only link
           wallets you control. A link lets anyone who can log in with your everyday wallet see the vault’s MAD LADS in the holder area, and nothing more: it
-          gives no access to the vault’s funds or NFTs. You can remove a link at any time.
+          gives no access to the vault’s funds or NFTs. You can remove a link at any time, from either wallet: log in with the vault wallet to see which wallets can log in for it.
         </p>
         <p>
           You can also link your Discord account, to show your MAD LADS server roles as stamps on your passport, and your X account, to show your handle.

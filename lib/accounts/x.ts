@@ -108,8 +108,9 @@ export async function finishLink(token: string, tokenSecret: string, verifier: s
     if (!id || !handle) ({ id, handle } = await usersMe(userToken, userSecret)); // paid read, only if needed
     return { provider: "x", accountId: id, name: handle, roles: [] };
   } finally {
-    // We don't keep the token. Ask X to invalidate it; if that isn't allowed, it simply goes unused.
-    signedPost("/1.1/oauth/invalidate_token", { oauth_token: userToken }, userSecret).catch(() => {});
+    // We don't keep the token. Ask X to invalidate it (awaited, errors ignored: serverless hosting can stop
+    // the function once the response is sent); if X doesn't allow it, the token simply goes unused.
+    await signedPost("/1.1/oauth/invalidate_token", { oauth_token: userToken }, userSecret).catch(() => {});
   }
 }
 

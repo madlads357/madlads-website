@@ -77,6 +77,10 @@ function LedgerOption({ ledger, onChange, disabled, linking }: { ledger: boolean
           <li>Plug in your Ledger, unlock it and open the Solana app.</li>
           <li>In Backpack, select your Ledger account{linking ? " (the vault you want to link)" : ""}.</li>
           <li>Approve the transaction in Backpack, then on the Ledger. It’s free and never sent: it only proves the wallet is yours.</li>
+          <li>
+            It must only contain a short note naming this site, and no transfer. Reject it if it asks for anything else, or if you didn’t just press the button
+            here.
+          </li>
         </ol>
       )}
     </div>
@@ -146,16 +150,17 @@ const short = (a: string) => `${a.slice(0, 4)}…${a.slice(-4)}`;
 
 // The wallets the holder area reads LADS from: the one logged in, plus vaults linked to it.
 // Linking: switch to the vault in Backpack, then sign once with it (Ledger or not).
-export function LinkedWallets({ wallet, vaults, defaultOpen = false }: { wallet: string; vaults: string[]; defaultOpen?: boolean }) {
+// hots: logged in with a vault wallet, the wallets that can log in for it (it can remove them).
+export function LinkedWallets({ wallet, vaults, hots = [], defaultOpen = false }: { wallet: string; vaults: string[]; hots?: string[]; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
   const { run, ledger, chooseLedger, step, busy, error } = useBackpackSignIn("link", () => location.reload()); // page and header pick up the new LADS
   const [removing, setRemoving] = useState<string | null>(null);
   const [removeError, setRemoveError] = useState<string | null>(null);
 
-  const remove = async (vault: string) => {
-    setRemoving(vault);
+  const remove = async (who: { vault: string } | { hot: string }) => {
+    setRemoving(Object.values(who)[0]);
     setRemoveError(null);
-    const res = await fetch("/api/holder/wallets", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ vault }) }).catch(() => null);
+    const res = await fetch("/api/holder/wallets", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify(who) }).catch(() => null);
     if (res?.ok) return location.reload();
     setRemoveError("Couldn’t remove that wallet. Please try again.");
     setRemoving(null);
@@ -172,9 +177,23 @@ export function LinkedWallets({ wallet, vaults, defaultOpen = false }: { wallet:
             {short(v)} <span className="font-sans text-muted">· vault</span>
             <button
               type="button"
-              onClick={() => remove(v)}
+              onClick={() => remove({ vault: v })}
               disabled={removing !== null}
               aria-label={`Remove vault ${short(v)}`}
+              className="ml-1 grid size-6 place-items-center rounded-full font-sans text-muted hover:bg-line hover:text-ink disabled:opacity-50"
+            >
+              ×
+            </button>
+          </li>
+        ))}
+        {hots.map((h) => (
+          <li key={h} className="flex items-center gap-1 rounded-full bg-sunken py-1.5 pr-1.5 pl-3 font-mono" title={h}>
+            {short(h)} <span className="font-sans text-muted">· can log in for you</span>
+            <button
+              type="button"
+              onClick={() => remove({ hot: h })}
+              disabled={removing !== null}
+              aria-label={`Stop ${short(h)} from logging in for this wallet`}
               className="ml-1 grid size-6 place-items-center rounded-full font-sans text-muted hover:bg-line hover:text-ink disabled:opacity-50"
             >
               ×
