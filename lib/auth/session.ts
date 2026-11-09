@@ -110,7 +110,8 @@ export async function takeWalletFlow(): Promise<WalletFlow | null> {
 }
 
 // Linking an account (Discord, X): the state sent to the provider, checked when it sends the holder back.
-export type AccountFlow = { provider: "discord" | "x"; state: string; holderId: string; exp: number };
+// X (OAuth 1.0a): state is the request token, secret its token secret (needed to finish the link).
+export type AccountFlow = { provider: "discord" | "x"; state: string; secret?: string; holderId: string; exp: number };
 
 export async function setAccountFlow(flow: AccountFlow) {
   (await cookies()).set(ACCOUNT_FLOW, seal(flow), { ...base, maxAge: 600 }); // 10 minutes to finish

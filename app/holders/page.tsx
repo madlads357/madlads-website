@@ -11,6 +11,7 @@ import Link from "next/link";
 import { thumbImage } from "@/lib/madlads";
 import { links } from "@/data/site";
 import { discordEnabled } from "@/lib/accounts/discord";
+import { xEnabled } from "@/lib/accounts/x";
 import { db } from "@/lib/db";
 import { LinkedWallets, WalletLogin } from "@/components/WalletLogin";
 
@@ -36,9 +37,12 @@ const errors: Record<string, string> = {
 // After linking an account (?linked=discord, ?link=…).
 const linkNotices: Record<string, { text: string; ok: boolean }> = {
   discord: { text: "Discord linked. Your server roles are on your passport.", ok: true },
+  x: { text: "X linked. Your handle is on your passport.", ok: true },
   cancelled: { text: "Linking cancelled. Try again whenever you’re ready.", ok: false },
   expired: { text: "That took too long or was started in another tab. Please try again.", ok: false },
   error: { text: "We couldn’t reach Discord. Please try again in a moment.", ok: false },
+  "x-error": { text: "We couldn’t reach X. Please try again in a moment.", ok: false },
+  "x-credits": { text: "X wouldn’t share your handle without API credits. We’re on it: please try again later.", ok: false },
   off: { text: "Linking accounts isn’t available yet.", ok: false },
 };
 
@@ -215,6 +219,7 @@ function Holder({ session, notice }: { session: HolderSession; notice?: { text: 
       vaults={session.vaults}
       discord={session.discord}
       discordEnabled={discordEnabled() && !!db && authMode() !== "matrica"}
+      xEnabled={xEnabled() && !!db && authMode() !== "matrica"}
       notice={notice}
     />
   );

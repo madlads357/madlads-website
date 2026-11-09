@@ -51,7 +51,10 @@ How it works: `lib/auth/wallet.ts` (server) and `lib/wallet/backpack.ts` (browse
 - [ ] Set MADLADS_STAMP_ROLES as "role id:Stamp name" pairs (see .env.example), locally and in Vercel.
 - [ ] Test a real link, refresh and unlink. Check that guilds.members.read works without Discord approval.
 - [ ] Run npm run db:setup on the production database (new table holder_accounts).
-- [ ] Next: Link X. Create the X developer app with a $0 spend cap, try OAuth 1.0a (returns the handle at login, maybe free); fall back to OAuth 2.0 + users/me (~$0.001 per link).
+- [x] Link X built (lib/accounts/x.ts, /api/accounts/x/*): OAuth 1.0a, handle read from the free access-token reply; users/me (paid, ~$0.001) only if X leaves it out.
+- [ ] X Developer Console: app (ideally on the MAD LADS X account), spend cap $0, User authentication settings (Web App, Read, callbacks, website/terms/privacy URLs).
+- [ ] Set X_API_KEY and X_API_SECRET (consumer keys) in .env.local and Vercel.
+- [x] First real link works locally with the spend cap at $0 (handle comes free in the OAuth reply).
 - [ ] Legal review of the updated Privacy and Terms (now about the wallet login).
 
 # Matrica login (built, kept for later: AUTH_PROVIDER=matrica)
