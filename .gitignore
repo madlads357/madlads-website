@@ -47,3 +47,21 @@ desktop.ini
 madlads_images/
 # Early ChatGPT design explorations (the Figma file is the design reference now).
 mockup_chatgpt/
+
+# AI tooling: solo project, kept on disk only, never pushed
+# (AGENTS.md is rewritten by `next dev`; skills-lock.json comes from the installed solana-dev skill)
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+skills-lock.json
+.agents/
+.claude/
+.cursor/
+.cursorrules
+.windsurf/
+.windsurfrules
+.gemini/
+.codex/
+.continue/
+.aider*
+.mcp.json
