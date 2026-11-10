@@ -168,3 +168,22 @@ export async function removePin(holderId: string) {
   if (!db) return;
   await db`delete from holder_locations where holder_id = ${holderId}`;
 }
+
+/* ------------------------------------------------------------ "Curious" (the MAD Horoscope's hidden spots) */
+
+// Did this holder find enough hidden spots? Without the column (npm run db:setup not run yet) or the database: no.
+export async function getCurious(holderId: string): Promise<boolean> {
+  if (!db) return false;
+  try {
+    const rows = await db`select curious from holder_settings where holder_id = ${holderId}`;
+    return !!rows[0]?.curious;
+  } catch {
+    return false;
+  }
+}
+
+export async function saveCurious(holderId: string) {
+  if (!db) throw new Error("No database");
+  await db`insert into holder_settings (holder_id, curious) values (${holderId}, true)
+           on conflict (holder_id) do update set curious = true, updated_at = now()`;
+}

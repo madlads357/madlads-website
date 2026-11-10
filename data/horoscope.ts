@@ -198,6 +198,77 @@ export const moods: string[] = [
   "Cosmically late",
 ];
 
+// What the hidden spots of the caravan say when they are clicked (one line each time, at random).
+export const quips: Record<string, string[]> = {
+  fock: [
+    "Hands off the cards, darling.",
+    "Yes, I see you. I see everyone.",
+    "The cards are not a touchscreen. Fine, they are.",
+    "Compliments are accepted in biscuits.",
+    "Careful. I bite. Only biscuits.",
+    "You are staring. I allow it.",
+  ],
+  ball: [
+    "The ball hums. It says: later.",
+    "I see... a snack in your near future.",
+    "The mist spells a word. It is “maybe”.",
+    "The ball is busy. It is watching a tiny weather.",
+    "Something glows. It is the ball. Obviously.",
+    "It showed me your day. We will not discuss it.",
+  ],
+  crow: [
+    "CAW. (The crow disagrees.)",
+    "The crow knows what you did.",
+    "Caw, caw. (Translation: snacks.)",
+    "A crow never forgets a biscuit.",
+    "The crow is judging you gently.",
+    "Caw. It is a compliment. Probably.",
+  ],
+  lampOff: [
+    "Lights out. Spooky. Still cosy.",
+    "Better. Now the ball does the work.",
+    "Look: stars. They were there all along.",
+    "The dark is just the day with its eyes closed.",
+  ],
+  lampOn: [
+    "Lights on. Nothing to see. Mostly.",
+    "And there is the room again. Tidy, for a caravan.",
+    "Bright. Too bright. Wonderful.",
+    "The lamp thanks you. It was bored.",
+  ],
+  window: [
+    "A shooting star! Make a wish. Not that one.",
+    "The moon waves. It is shy.",
+    "Somewhere a wolf is writing a poem.",
+    "The night is full of small business.",
+    "Quick: a wish. Something kind. Or snacks.",
+  ],
+  cat: [
+    "Mrrrp. (This means: fock off, politely.)",
+    "Do not wake the oracle.",
+    "The cat has already predicted this.",
+    "Purr. This is a binding contract.",
+    "The cat allows exactly one pet. This was it.",
+  ],
+  candles: [
+    "Whoosh. The flames are showing off.",
+    "Careful. Wax has feelings.",
+    "The candles gossip when the room is quiet.",
+    "A flare! Someone is thinking about you.",
+    "Hot wax, warm words. Nice combination.",
+  ],
+  teapot: [
+    "Steam. It is tea. It is always tea.",
+    "The kettle whistles. It has opinions.",
+    "Chamomile, mostly. Plus a little fate.",
+    "Pour yourself a cup. Pour the cat one too.",
+    "The teapot is older than your problems.",
+  ],
+  found: [
+    "You found enough secrets. Madame Fock is impressed. A stamp is on its way to your passport.",
+  ],
+};
+
 // An extra line, sometimes: about the kind of Lad the holder has, or how many.
 export const byKind = {
   skull: [

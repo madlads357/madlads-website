@@ -67,3 +67,7 @@ create table if not exists holder_locations (
   show_identity  boolean not null default true,
   updated_at     timestamptz not null default now()   -- put or last refreshed: a holder with a Lad opening the map or the holder area refreshes it, and after 12 months without one the pin stops showing
 );
+
+-- "Curious": the holder found enough of the hidden spots in the MAD Horoscope caravan (the passport stamp). Just a yes/no.
+-- Added to an existing table, so run npm run db:setup again to get it (safe to repeat).
+alter table holder_settings add column if not exists curious boolean not null default false;

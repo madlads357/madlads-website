@@ -147,6 +147,26 @@ export function Role({ name, shape }: { name: string; shape: "hex" | "tri" }) {
   );
 }
 
+// "Curious": a ticket with an eye. Earned by finding the hidden spots in the MAD Horoscope caravan.
+export function Curious() {
+  return (
+    <Svg w={260} h={120}>
+      <path d="M12 8H248V44a15 15 0 0 0 0 32V112H12V76a15 15 0 0 0 0-32Z" strokeWidth="6" strokeLinejoin="round" />
+      <path d="M26 20H234V100H26Z" strokeWidth="2" strokeDasharray="5 5" />
+      <path d="M36 60C54 36 82 36 100 60C82 84 54 84 36 60Z" strokeWidth="4.5" strokeLinejoin="round" />
+      <circle cx="68" cy="60" r="12" strokeWidth="4" />
+      <circle cx="68" cy="60" r="4.5" fill="currentColor" stroke="none" />
+      <path d="M52 34l-4-9M68 30v-10M84 34l4-9" strokeWidth="3.5" strokeLinecap="round" />
+      <text x="170" y="64" textAnchor="middle" fill="currentColor" stroke="none" fontSize="27" letterSpacing="1" style={font}>
+        CURIOUS
+      </text>
+      <text x="170" y="86" textAnchor="middle" fill="currentColor" stroke="none" fontSize="10.5" letterSpacing="2.5" style={font}>
+        SECRETS FOUND
+      </text>
+    </Svg>
+  );
+}
+
 // The holder map: round seal, a globe with a pin, "ON THE MAP" around. Earned by putting yourself on the map, and
 // it never says where (the passport link is public).
 export function OnTheMap() {

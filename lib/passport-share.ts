@@ -14,6 +14,7 @@ export type SharedPassport = {
   handle?: string;
   since?: string; // ISO date
   roles?: string[];
+  curious?: boolean; // found the hidden spots in the MAD Horoscope (the "Curious" stamp)
   onMap?: boolean; // has a pin on the holder map (the "On the map" stamp). Never where: the link is public
   photo: number;
   count: number; // Lads held
@@ -59,13 +60,14 @@ export function kindsOf(ids: number[]): SharedPassport["kinds"] {
   };
 }
 
-export function shareFromSession(s: HolderSession, photo: number, onMap = false): SharedPassport {
+export function shareFromSession(s: HolderSession, photo: number, onMap = false, curious = false): SharedPassport {
   return {
     name: s.name,
     handle: s.handle,
     since: s.since,
     roles: s.roles?.slice(0, 2),
     ...(onMap && { onMap: true }),
+    ...(curious && { curious: true }),
     photo: s.lads.includes(photo) ? photo : s.lads[0],
     count: s.lads.length,
     kinds: kindsOf(s.lads),
@@ -127,4 +129,10 @@ export async function updateShareOnMap(holderId: string, onMap: boolean) {
   if (!db) return;
   if (onMap) await db`update share_links set passport = passport || '{"onMap": true}'::jsonb, updated_at = now() where holder_id = ${holderId} and deleted_at is null`;
   else await db`update share_links set passport = passport - 'onMap', updated_at = now() where holder_id = ${holderId} and deleted_at is null`;
+}
+
+// A holder became "Curious": an existing public link gets the stamp too. No link, or a withdrawn one: nothing to do.
+export async function updateShareCurious(holderId: string) {
+  if (!db) return;
+  await db`update share_links set passport = passport || '{"curious": true}'::jsonb, updated_at = now() where holder_id = ${holderId} and deleted_at is null`;
 }

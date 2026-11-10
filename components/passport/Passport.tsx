@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { LogoHorizontal, LogoStacked } from "@/components/Logo";
 import { ONE_OF_ONE_TYPES, loadCollection, thumbImage, type Collection } from "@/lib/madlads";
-import { FockIt, HolderSeal, Issued, Lassie, OnTheMap, OneOfOne, Role, SkullClub, Tier } from "./Stamps";
+import { Curious, FockIt, HolderSeal, Issued, Lassie, OnTheMap, OneOfOne, Role, SkullClub, Tier } from "./Stamps";
 import { fmtDate, identityFields } from "./format";
 import "./passport.css";
 
@@ -13,6 +13,7 @@ export type PassportData = {
   handle?: string;
   since?: string; // ISO date
   roles?: string[];
+  curious?: boolean; // found the hidden spots in the MAD Horoscope (the "Curious" stamp)
   onMap?: boolean; // on the holder map (the "On the map" stamp): never where
   lads: number[];
   photo: number; // the Lad shown as the passport photo
@@ -50,6 +51,14 @@ const SLOTS_FULL: { x: number; y: number; w: number; r: number }[] = [
   { x: 46, y: 74, w: 42, r: 4 },
 ];
 
+// Everything at once (every kind of Lad, two roles, the map and Curious): eleven stamps, the last row with three.
+const SLOTS_MAX: { x: number; y: number; w: number; r: number }[] = [
+  ...SLOTS_FULL.slice(0, 8),
+  { x: 4, y: 68, w: 25, r: -9 }, // map
+  { x: 31, y: 76, w: 33, r: -4 }, // curious
+  { x: 64, y: 69, w: 34, r: 4 }, // issued
+];
+
 type Ink = "red" | "black" | "blue" | "gold";
 type StampItem = { key: string; ink: Ink; el: ReactNode };
 
@@ -82,9 +91,10 @@ export function Passport({ data, autoOpen, onDark }: { data: PassportData; autoO
     if (kinds?.lassie) out.push({ key: "lassie", ink: "red", el: <Lassie /> });
     (data.roles ?? []).slice(0, 2).forEach((r, i) => out.push({ key: `role-${r}`, ink: i ? "red" : "black", el: <Role name={r} shape={i ? "tri" : "hex"} /> }));
     if (data.onMap) out.push({ key: "map", ink: "blue", el: <OnTheMap /> });
+    if (data.curious) out.push({ key: "curious", ink: "red", el: <Curious /> });
     const issued = data.issued ?? today;
     if (issued) out.push({ key: "issued", ink: "blue", el: <Issued date={fmtDate(issued, { day: "2-digit", month: "short", year: "numeric" })} /> });
-    return out.slice(0, SLOTS_FULL.length);
+    return out.slice(0, SLOTS_MAX.length);
   }, [collection, data, today]);
 
   const identity = <IdentityPage data={data} />;
@@ -199,7 +209,7 @@ function IdentityPage({ data }: { data: PassportData }) {
 }
 
 function StampsPage({ stamps }: { stamps: StampItem[] }) {
-  const slots = stamps.length > SLOTS.length ? SLOTS_FULL : SLOTS;
+  const slots = stamps.length > SLOTS_FULL.length ? SLOTS_MAX : stamps.length > SLOTS.length ? SLOTS_FULL : SLOTS;
   return (
     <span className="pp-paper relative block h-full">
       <span className="absolute top-[4cqw] left-[7cqw] text-[3cqw] font-semibold tracking-[0.3em] text-muted">STAMPS</span>

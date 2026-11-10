@@ -154,6 +154,114 @@ function pad(ctx: BaseAudioContext, out: AudioNode, t: number, dur: number, vol:
   }
 }
 
+// A cat's purr: low noise, chopped about 24 times a second.
+function purr(ctx: BaseAudioContext, out: AudioNode, t: number, dur: number, vol: number) {
+  const n = ctx.createBufferSource();
+  n.buffer = noise(ctx);
+  n.loop = true;
+  const lp = ctx.createBiquadFilter();
+  lp.type = "lowpass";
+  lp.frequency.value = 190;
+  lp.Q.value = 0.8;
+  const chop = ctx.createGain();
+  chop.gain.value = 0.55;
+  const lfo = ctx.createOscillator();
+  lfo.frequency.value = 24;
+  const depth = ctx.createGain();
+  depth.gain.value = 0.45;
+  lfo.connect(depth).connect(chop.gain);
+  const env = ctx.createGain();
+  env.gain.setValueAtTime(0.0001, t);
+  env.gain.exponentialRampToValueAtTime(vol, t + 0.35);
+  env.gain.setValueAtTime(vol, t + dur - 0.5);
+  env.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  n.connect(lp).connect(chop).connect(env).connect(out);
+  n.start(t);
+  n.stop(t + dur + 0.1);
+  lfo.start(t);
+  lfo.stop(t + dur + 0.1);
+}
+
+// A caw: a rough falling tone through a throat-like band, with a rasp on top.
+function caw(ctx: BaseAudioContext, out: AudioNode, t: number, pitch: number, vol: number) {
+  const o = ctx.createOscillator();
+  o.type = "sawtooth";
+  o.frequency.setValueAtTime(640 * pitch, t);
+  o.frequency.exponentialRampToValueAtTime(360 * pitch, t + 0.24);
+  const band = ctx.createBiquadFilter();
+  band.type = "bandpass";
+  band.frequency.value = 1250;
+  band.Q.value = 2.4;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + 0.03);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.28);
+  o.connect(band).connect(g).connect(out);
+  o.start(t);
+  o.stop(t + 0.32);
+  sparkle(ctx, out, t, vol * 0.1);
+}
+
+// A small switch: two clicks and a warm hum.
+function click(ctx: BaseAudioContext, out: AudioNode, t: number, up: boolean) {
+  for (const at of [t, t + 0.06]) {
+    const n = ctx.createBufferSource();
+    n.buffer = noise(ctx);
+    const hp = ctx.createBiquadFilter();
+    hp.type = "highpass";
+    hp.frequency.value = 1800;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.exponentialRampToValueAtTime(0.5, at + 0.004);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + 0.04);
+    n.connect(hp).connect(g).connect(out);
+    n.start(at, Math.random());
+    n.stop(at + 0.06);
+  }
+  thump(ctx, out, t + 0.02, 0.25, up ? 220 : 160);
+}
+
+// Candles flaring: a quick breath and a few crackles.
+function crackle(ctx: BaseAudioContext, out: AudioNode, t: number, vol: number) {
+  for (let i = 0; i < 7; i++) {
+    const n = ctx.createBufferSource();
+    n.buffer = noise(ctx);
+    const hp = ctx.createBiquadFilter();
+    hp.type = "highpass";
+    hp.frequency.value = 2800 + ((i * 631) % 2200);
+    const g = ctx.createGain();
+    const at = t + 0.05 + i * 0.07 + ((i * 37) % 30) / 1000;
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.exponentialRampToValueAtTime(vol, at + 0.004);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + 0.03);
+    n.connect(hp).connect(g).connect(out);
+    n.start(at, Math.random());
+    n.stop(at + 0.05);
+  }
+}
+
+// Steam: a hiss that swells, and a thin whistle on top.
+function whistle(ctx: BaseAudioContext, out: AudioNode, t: number, dur: number, vol: number) {
+  const o = ctx.createOscillator();
+  o.type = "sine";
+  o.frequency.setValueAtTime(1800, t);
+  o.frequency.linearRampToValueAtTime(2250, t + dur);
+  const vib = ctx.createOscillator();
+  vib.frequency.value = 7;
+  const vibDepth = ctx.createGain();
+  vibDepth.gain.value = 22;
+  vib.connect(vibDepth).connect(o.frequency);
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + dur * 0.4);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(out);
+  o.start(t);
+  o.stop(t + dur + 0.05);
+  vib.start(t);
+  vib.stop(t + dur + 0.05);
+}
+
 const PENTATONIC = [440, 523.25, 659.25, 783.99, 880, 1046.5, 1318.5]; // A minor pentatonic, climbing
 
 /* ------------------------------------------------------------ the pieces, laid out in time (t0 = now) */
@@ -187,6 +295,55 @@ export function scheduleArrive(ctx: BaseAudioContext, out: AudioNode, t0: number
   bell(ctx, out, t0 + 0.18, 1318.5, 2, 0.05);
 }
 
+// The hidden spots of the caravan (about a second each).
+export type SpotSound = "fock" | "ball" | "crow" | "lampOn" | "lampOff" | "window" | "cat" | "candles" | "teapot" | "found";
+export function scheduleSpot(ctx: BaseAudioContext, out: AudioNode, t0: number, kind: SpotSound) {
+  switch (kind) {
+    case "cat":
+      purr(ctx, out, t0, 2, 1.1);
+      break;
+    case "crow":
+      caw(ctx, out, t0, 1, 0.5);
+      caw(ctx, out, t0 + 0.34, 0.88, 0.42);
+      break;
+    case "lampOff":
+      click(ctx, out, t0, false);
+      whoosh(ctx, out, t0 + 0.1, 0.7, 900, 200, 0.18);
+      break;
+    case "lampOn":
+      click(ctx, out, t0, true);
+      bell(ctx, out, t0 + 0.12, 880, 1.2, 0.05);
+      break;
+    case "window":
+      whoosh(ctx, out, t0, 0.6, 1800, 7000, 0.2);
+      [1760, 1568, 1318.5, 1046.5].forEach((f, i) => bell(ctx, out, t0 + 0.12 + i * 0.09, f, 1.4, 0.07));
+      sparkle(ctx, out, t0 + 0.5, 0.04);
+      break;
+    case "candles":
+      whoosh(ctx, out, t0, 0.45, 300, 2400, 0.4);
+      crackle(ctx, out, t0 + 0.1, 0.12);
+      break;
+    case "teapot":
+      whoosh(ctx, out, t0, 1.2, 3500, 6500, 0.22);
+      whistle(ctx, out, t0 + 0.25, 0.9, 0.045);
+      break;
+    case "ball":
+      whoosh(ctx, out, t0, 0.9, 500, 1500, 0.2);
+      [659.25, 880, 1174.7].forEach((f, i) => bell(ctx, out, t0 + 0.15 + i * 0.18, f, 1.6, 0.07));
+      sparkle(ctx, out, t0 + 0.7, 0.035);
+      break;
+    case "fock":
+      bell(ctx, out, t0, 1318.5, 1.3, 0.08);
+      bell(ctx, out, t0 + 0.07, 1975.5, 1, 0.05);
+      break;
+    case "found":
+      [880, 1046.5, 1318.5, 1760].forEach((f, i) => bell(ctx, out, t0 + i * 0.13, f, 2.2, 0.09));
+      bell(ctx, out, t0 + 0.6, 2093, 2.6, 0.07);
+      sparkle(ctx, out, t0 + 0.55, 0.05);
+      break;
+  }
+}
+
 /* ------------------------------------------------------------ playing them */
 
 let shared: AudioContext | null = null;
@@ -210,3 +367,4 @@ function play(schedule: (ctx: BaseAudioContext, out: AudioNode, t0: number) => v
 export const playDraw = () => play(scheduleDraw);
 export const playEnter = () => play(scheduleEnter);
 export const playArrive = () => play(scheduleArrive);
+export const playSpot = (kind: SpotSound) => play((ctx, out, t0) => scheduleSpot(ctx, out, t0, kind));

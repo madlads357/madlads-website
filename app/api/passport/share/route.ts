@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/auth/session";
-import { db, getMyPin } from "@/lib/db";
+import { db, getCurious, getMyPin } from "@/lib/db";
 import { deleteShareLink, makeShareToken, shareFromSession, storeShareLink } from "@/lib/passport-share";
 
 // POST /api/passport/share { photo } → { url, views?, removable }: the public link to the holder's passport.
@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   if (!session || session.lads.length === 0) return Response.json({ error: "Not logged in" }, { status: 401 });
   const { photo } = (await request.json().catch(() => ({}))) as { photo?: number };
   const onMap = !!(await getMyPin(session.id).catch(() => null)); // the stamp says "on the map", never where
-  const passport = shareFromSession(session, Number(photo), onMap);
+  const passport = shareFromSession(session, Number(photo), onMap, await getCurious(session.id));
   const origin = new URL(request.url).origin;
 
   const stored = await storeShareLink(session.id, passport).catch((e) => {

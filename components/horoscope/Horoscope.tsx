@@ -11,6 +11,8 @@ import { BANNER_PATH, RIBBON_PATH } from "./geometry";
 import { msUntilNextUtcDay, utcDay } from "@/lib/utc-day";
 import { arrive } from "./enter";
 import { playArrive, playDraw, setSoundWanted, soundWanted } from "./sound";
+import { SPOT_LABEL, TABLE_SPOTS, type SpotId } from "./spots";
+import { useSpots } from "./useSpots";
 import "./enter.css";
 import "./horoscope.css";
 
@@ -52,9 +54,9 @@ const clock = (ms: number) => {
   return [Math.floor(s / 3600), Math.floor((s % 3600) / 60), s % 60].map((n) => String(n).padStart(2, "0")).join(":");
 };
 
-type Props = { name: string; lad: number; reading: Reading; number: number; reader: string; site: string };
+type Props = { name: string; lad: number; reading: Reading; number: number; reader: string; site: string; quips: Record<string, string[]>; earned: boolean };
 
-export function Horoscope({ name, lad, reading, number, reader, site }: Props) {
+export function Horoscope({ name, lad, reading, number, reader, site, quips, earned }: Props) {
   const router = useRouter();
   const root = useRef<HTMLElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -64,6 +66,7 @@ export function Horoscope({ name, lad, reading, number, reader, site }: Props) {
   const [error, setError] = useState("");
   const [sound, setSound] = useState(true);
   const [arrived, setArrived] = useState(false); // we came through the crystal ball's mist
+  const spots = useSpots({ quips, earned });
 
   // What happened today in this browser.
   useEffect(() => {
@@ -162,10 +165,60 @@ export function Horoscope({ name, lad, reading, number, reader, site }: Props) {
   };
 
   const scene = phase === "idle" || phase === "drawing" || phase === "resting" || phase === "boot";
+  const spotsOn = phase === "idle" || phase === "resting"; // the hidden spots can be clicked while the room is calm
+
+  // Which spots can be seen on this screen? On a phone the room is cut at the sides, so part of the table (the cat, the teapot…) and
+  // most of the window are out of sight: those cannot be clicked and do not count towards "Curious".
+  const { setOutOfSight } = spots;
+  useEffect(() => {
+    if (!spotsOn) return;
+    const measure = () => {
+      const hidden: SpotId[] = [];
+      document.querySelectorAll<HTMLElement>(".hz-spot[data-spot]").forEach((el) => {
+        const r = el.getBoundingClientRect();
+        const w = Math.max(0, Math.min(r.right, innerWidth) - Math.max(r.left, 0));
+        const h = Math.max(0, Math.min(r.bottom, innerHeight) - Math.max(r.top, 0));
+        // seen enough of it (a crow cut by the screen edge still counts; a sliver of a window or a cat does not)
+        if (r.width * r.height > 0 && ((w * h) / (r.width * r.height) < 0.4 || w < 40 || h < 40)) hidden.push(el.dataset.spot as SpotId);
+      });
+      setOutOfSight(hidden);
+    };
+    measure();
+    const later = setTimeout(measure, 1600); // after the room has settled in
+    window.addEventListener("resize", measure);
+    return () => {
+      clearTimeout(later);
+      window.removeEventListener("resize", measure);
+    };
+  }, [spotsOn, setOutOfSight, spots.bg]);
+
+  // One of the hidden spots: an invisible button over the painted object.
+  const spot = (id: SpotId, style: React.CSSProperties, className = "hz-spot") => {
+    const off = spots.unseen.includes(id);
+    return (
+      <button
+        key={id}
+        type="button"
+        className={className}
+        style={style}
+        data-spot={id}
+        data-off={off || undefined}
+        disabled={off}
+        tabIndex={off ? -1 : undefined}
+        aria-label={SPOT_LABEL[id]}
+        onClick={(e) => spots.trigger(id, e.currentTarget)}
+      />
+    );
+  };
+  const onTable = (id: keyof typeof TABLE_SPOTS & SpotId) => {
+    const [l, t, w, h] = TABLE_SPOTS[id];
+    return spot(id, { left: `${l}%`, top: `${t}%`, width: `${w}%`, height: `${h}%` });
+  };
 
   return (
-    <main id="main" ref={root} className="hz" data-phase={phase} data-arrive={arrived || undefined}>
+    <main id="main" ref={root} className="hz" data-phase={phase} data-arrive={arrived || undefined} data-dark={(spots.dark && scene) || undefined}>
       <div className="hz-bg" aria-hidden />
+      <div className="hz-stars" aria-hidden />
       <Link href="/holders" className="hz-back">
         <span aria-hidden>←</span> Holder area
       </Link>
@@ -175,6 +228,15 @@ export function Horoscope({ name, lad, reading, number, reader, site }: Props) {
           {sound ? <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" /> : <path d="m16 9 5 6m0-6-5 6" />}
         </svg>
       </button>
+
+      {spotsOn && spots.bg && (
+        <>
+          {spot("crow", { ...spots.bg.crow }, "hz-spot hz-spot-bg")}
+          {spot("lamp", { ...spots.bg.lamp }, "hz-spot hz-spot-bg")}
+          {spot("window", { ...spots.bg.window }, "hz-spot hz-spot-bg")}
+        </>
+      )}
+      {spots.layer}
 
       <div className="hz-stage" data-phase={phase}>
         {/* the title banner, with the date line on its ribbon */}
@@ -194,16 +256,28 @@ export function Horoscope({ name, lad, reading, number, reader, site }: Props) {
               ))}
             </div>
 
-            <div className="hz-fock" aria-hidden>
+            <div className="hz-fock" data-smile={spots.smile || undefined}>
               <img className="hz-pose hz-pose-wink" src="/horoscope/fock-wink.webp" alt="" decoding="async" />
               <img className="hz-pose hz-pose-rest" src="/horoscope/fock-rest.webp" alt="" decoding="async" />
               <img className="hz-pose hz-pose-card" src="/horoscope/fock-card.webp" alt="" decoding="async" />
+              {spotsOn && spot("fock", { inset: "6% 16% 34% 16%" })}
             </div>
 
             <div className="hz-table">
               <img src="/horoscope/table.webp" alt="" width={1536} height={637} decoding="async" />
-              <span className="hz-glow hz-glow-candle" aria-hidden />
-              <span className="hz-glow hz-glow-ball" aria-hidden />
+              <span key={`c${spots.flare}`} className={`hz-glow hz-glow-candle${spots.flare ? " hz-flare" : ""}`} aria-hidden />
+              <span key={`b${spots.ballPop}`} className={`hz-glow hz-glow-ball${spots.ballPop ? " hz-pop" : ""}`} aria-hidden />
+              {spotsOn && (
+                <>
+                  {onTable("teapot")}
+                  {onTable("candles")}
+                  {onTable("ball")}
+                  {onTable("cat")}
+                  {phase === "idle" && (
+                    <button type="button" className="hz-spot" style={{ left: "38.4%", top: "26%", width: "21.6%", height: "36%" }} aria-label="Draw my card" onClick={draw} />
+                  )}
+                </>
+              )}
               {/* the card that comes off the deck and turns over (not once it is resting on the table: that is its own card) */}
               {phase !== "resting" && (
               <div className="hz-flip" aria-hidden>
