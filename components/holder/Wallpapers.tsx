@@ -33,19 +33,20 @@ export const LOGO_COLORS: Record<Exclude<LogoColor, "off">, string> = { black: "
 const readable = ([r, g, b]: Rgb): LogoColor => (0.299 * r + 0.587 * g + 0.114 * b > 150 ? "black" : "white"); // the one that reads on this LAD
 
 // Full-size LADS through our image server (same origin, so the canvas can read them), loaded once.
-const cache = new Map<number, Promise<HTMLImageElement>>();
-export const loadLad = (id: number) => {
-  if (!cache.has(id)) {
+const cache = new Map<string, Promise<HTMLImageElement>>();
+export const loadLad = (id: number, width = 2048) => {
+  const key = `${id}:${width}`;
+  if (!cache.has(key)) {
     const p = new Promise<HTMLImageElement>((resolve, reject) => {
       const img = new window.Image();
       img.onload = () => resolve(img);
       img.onerror = () => reject(new Error(`LAD #${id}`));
-      img.src = `/_next/image?url=${encodeURIComponent(originalImage(id))}&w=2048&q=75`;
+      img.src = `/_next/image?url=${encodeURIComponent(originalImage(id))}&w=${width}&q=75`;
     });
-    p.catch(() => cache.delete(id));
-    cache.set(id, p);
+    p.catch(() => cache.delete(key));
+    cache.set(key, p);
   }
-  return cache.get(id)!;
+  return cache.get(key)!;
 };
 
 // The art's background color: the average of its top edge, the part that meets the plain fill.

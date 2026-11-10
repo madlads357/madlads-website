@@ -2,18 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { HolderLads } from "./HolderLads";
 import { DaysMad } from "./DaysMad";
-import { PassportWindow } from "@/components/passport/PassportWindow";
 import { LockIcon } from "@/components/Icons";
 import { bagItems, isBagWindow, type BagItem, type BagWindow } from "@/data/bag";
-import { MemeVault } from "./MemeVault";
-import { DressingRoom } from "./DressingRoom";
-import { Playlist } from "./Playlist";
-import { Badge } from "./Badge";
-import { Wallpapers } from "./Wallpapers";
 import { LinkedWallets } from "./LinkedWallets";
 import { Socials } from "./Socials";
 import { PHOTO_EVENT, PHOTO_KEY } from "@/lib/auth/hint";
@@ -37,6 +32,15 @@ type Props = {
   xEnabled?: boolean; // X linking is set up on the server
   notice?: { text: string; ok: boolean }; // after coming back from linking an account
 };
+
+// The windows a backpack object opens: each is its own chunk, fetched when it is first opened (the badge alone brings a QR code
+// library and canvas code), so they do not weigh on the holder page itself.
+const PassportWindow = dynamic(() => import("@/components/passport/PassportWindow").then((m) => m.PassportWindow));
+const MemeVault = dynamic(() => import("./MemeVault").then((m) => m.MemeVault));
+const DressingRoom = dynamic(() => import("./DressingRoom").then((m) => m.DressingRoom));
+const Playlist = dynamic(() => import("./Playlist").then((m) => m.Playlist));
+const Badge = dynamic(() => import("./Badge").then((m) => m.Badge));
+const Wallpapers = dynamic(() => import("./Wallpapers").then((m) => m.Wallpapers));
 
 // Where the bag's opening is, as a fraction of the backpack image (objects fly out from there).
 const MOUTH = { x: 0.25, y: 0.62 };

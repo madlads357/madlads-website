@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import QRCode from "qrcode";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { CloseIcon } from "@/components/Icons";
 import { useDialogFocus } from "@/lib/useDialogFocus";
@@ -36,7 +35,7 @@ function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: numbe
 
 async function render(canvas: HTMLCanvasElement, opts: { photo: number; name: string; line: string; qr: string | null; font: string }) {
   const { photo, name, line, qr, font } = opts;
-  const img = await loadLad(photo);
+  const img = await loadLad(photo, 1080); // shown in a 330 px square: no need for the full-size picture
   const bg = backgroundOf(img);
   canvas.width = W;
   canvas.height = H;
@@ -114,6 +113,7 @@ async function render(canvas: HTMLCanvasElement, opts: { photo: number; name: st
   ctx.textAlign = "right";
   ctx.textBaseline = "alphabetic";
   if (qr) {
+    const QRCode = (await import("qrcode")).default; // only when a QR code is asked for
     const code = QRCode.create(qr, { errorCorrectionLevel: "M" });
     const n = code.modules.size;
     const box = 190;

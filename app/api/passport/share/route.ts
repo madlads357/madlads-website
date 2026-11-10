@@ -1,4 +1,5 @@
 import { getSession } from "@/lib/auth/session";
+import { rateLimit } from "@/lib/rate-limit";
 import { db, getCurious, getMyPin } from "@/lib/db";
 import { deleteShareLink, makeShareToken, shareFromSession, storeShareLink } from "@/lib/passport-share";
 
@@ -8,6 +9,7 @@ import { deleteShareLink, makeShareToken, shareFromSession, storeShareLink } fro
 export async function POST(request: Request) {
   const session = await getSession();
   if (!session || session.lads.length === 0) return Response.json({ error: "Not logged in" }, { status: 401 });
+  if (!rateLimit(request, "share", 30)) return Response.json({ error: "Slow down a little." }, { status: 429 });
   const { photo } = (await request.json().catch(() => ({}))) as { photo?: number };
   const onMap = !!(await getMyPin(session.id).catch(() => null)); // the stamp says "on the map", never where
   const passport = shareFromSession(session, Number(photo), onMap, await getCurious(session.id));

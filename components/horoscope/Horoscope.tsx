@@ -170,6 +170,7 @@ export function Horoscope({ name, lad, reading, number, reader, site, quips, ear
   // Which spots can be seen on this screen? On a phone the room is cut at the sides, so part of the table (the cat, the teapot…) and
   // most of the window are out of sight: those cannot be clicked and do not count towards "Curious".
   const { setOutOfSight } = spots;
+  const hasBg = !!spots.bg;
   useEffect(() => {
     if (!spotsOn) return;
     const measure = () => {
@@ -190,7 +191,7 @@ export function Horoscope({ name, lad, reading, number, reader, site, quips, ear
       clearTimeout(later);
       window.removeEventListener("resize", measure);
     };
-  }, [spotsOn, setOutOfSight, spots.bg]);
+  }, [spotsOn, setOutOfSight, hasBg]);
 
   // One of the hidden spots: an invisible button over the painted object.
   const spot = (id: SpotId, style: React.CSSProperties, className = "hz-spot") => {
