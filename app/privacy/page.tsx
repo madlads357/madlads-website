@@ -191,7 +191,7 @@ const sections: LegalSection[] = [
       <>
         <p>
           When you open your passport, the site prepares a public link to it (madlads.com/p/…). Anyone with that link can see your passport: your name (your
-          X handle or Discord name if you linked one, otherwise your shortened wallet address, like 7xKX…9fQ2), passport LAD, number of LADS, “MAD since” and stamps. Never your full wallet address or your linked
+          X handle or Discord name if you linked one, otherwise your shortened wallet address, like 7xKX…9fQ2), passport LAD, number of LADS, “MAD since” and stamps, including an “On the map” stamp if you have a pin on the holder map (it never says where). Never your full wallet address or your linked
           wallets.
         </p>
         <p>

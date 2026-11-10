@@ -14,6 +14,7 @@ export type SharedPassport = {
   handle?: string;
   since?: string; // ISO date
   roles?: string[];
+  onMap?: boolean; // has a pin on the holder map (the "On the map" stamp). Never where: the link is public
   photo: number;
   count: number; // Lads held
   kinds: { skull: boolean; oneOfOne: boolean; lassie: boolean }; // for the stamps
@@ -58,12 +59,13 @@ function kindsOf(ids: number[]): SharedPassport["kinds"] {
   };
 }
 
-export function shareFromSession(s: HolderSession, photo: number): SharedPassport {
+export function shareFromSession(s: HolderSession, photo: number, onMap = false): SharedPassport {
   return {
     name: s.name,
     handle: s.handle,
     since: s.since,
     roles: s.roles?.slice(0, 2),
+    ...(onMap && { onMap: true }),
     photo: s.lads.includes(photo) ? photo : s.lads[0],
     count: s.lads.length,
     kinds: kindsOf(s.lads),
@@ -117,4 +119,12 @@ export async function updateShareIdentity(holderId: string, who: { name: string;
   const patch = JSON.stringify({ name: who.name, ...(who.handle && { handle: who.handle }), ...(who.roles?.length && { roles: who.roles.slice(0, 2) }) });
   await db`update share_links set passport = (passport - 'handle' - 'roles') || ${patch}::jsonb, updated_at = now()
            where holder_id = ${holderId} and deleted_at is null`;
+}
+
+// A holder put themselves on the map or took their pin off: the public link's "On the map" stamp follows (the rest
+// of the passport is left as it was). No link, or a withdrawn one: nothing to do.
+export async function updateShareOnMap(holderId: string, onMap: boolean) {
+  if (!db) return;
+  if (onMap) await db`update share_links set passport = passport || '{"onMap": true}'::jsonb, updated_at = now() where holder_id = ${holderId} and deleted_at is null`;
+  else await db`update share_links set passport = passport - 'onMap', updated_at = now() where holder_id = ${holderId} and deleted_at is null`;
 }

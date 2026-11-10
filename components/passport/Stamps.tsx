@@ -147,6 +147,35 @@ export function Role({ name, shape }: { name: string; shape: "hex" | "tri" }) {
   );
 }
 
+// The holder map: round seal, a globe with a pin, "ON THE MAP" around. Earned by putting yourself on the map, and
+// it never says where (the passport link is public).
+export function OnTheMap() {
+  const ring = useId();
+  return (
+    <Svg w={200} h={200}>
+      <defs>
+        <path id={ring} d="M100,100 m-72,0 a72,72 0 1,1 144,0 a72,72 0 1,1 -144,0" />
+      </defs>
+      <circle cx="100" cy="100" r="94" strokeWidth="6" />
+      <circle cx="100" cy="100" r="58" strokeWidth="2.5" />
+      <text fill="currentColor" stroke="none" fontSize="17" style={font}>
+        <textPath href={`#${ring}`} textLength="448" lengthAdjust="spacing">ON THE MAP · ON THE MAP · ON THE MAP · </textPath>
+      </text>
+      {/* the globe */}
+      <circle cx="100" cy="104" r="36" strokeWidth="3.5" />
+      <ellipse cx="100" cy="104" rx="15" ry="36" strokeWidth="2.5" />
+      <path d="M64,104H136M69,86H131M69,122H131" strokeWidth="2.5" />
+      {/* the pin, solid, with a hole */}
+      <path
+        fill="currentColor"
+        stroke="none"
+        fillRule="evenodd"
+        d="M100,124C100,124 80,104 80,88a20,20 0 1,1 40,0C120,104 100,124 100,124ZM100,81a7,7 0 1,0 0,14a7,7 0 1,0 0,-14Z"
+      />
+    </Svg>
+  );
+}
+
 // Date the passport was looked at, like an entry stamp.
 export function Issued({ date }: { date: string }) {
   return (

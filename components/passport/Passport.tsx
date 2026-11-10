@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { LogoHorizontal, LogoStacked } from "@/components/Logo";
 import { ONE_OF_ONE_TYPES, loadCollection, thumbImage, type Collection } from "@/lib/madlads";
-import { FockIt, HolderSeal, Issued, Lassie, OneOfOne, Role, SkullClub, Tier } from "./Stamps";
+import { FockIt, HolderSeal, Issued, Lassie, OnTheMap, OneOfOne, Role, SkullClub, Tier } from "./Stamps";
 import { fmtDate, identityFields } from "./format";
 import "./passport.css";
 
@@ -13,6 +13,7 @@ export type PassportData = {
   handle?: string;
   since?: string; // ISO date
   roles?: string[];
+  onMap?: boolean; // on the holder map (the "On the map" stamp): never where
   lads: number[];
   photo: number; // the Lad shown as the passport photo
   // Shared links (/passport/<token>) carry these instead of the full list of Lads:
@@ -33,6 +34,20 @@ const SLOTS: { x: number; y: number; w: number; r: number }[] = [
   { x: 52, y: 58, w: 27, r: 8 },
   { x: 8, y: 75, w: 30, r: -9 },
   { x: 50, y: 82, w: 40, r: 4 },
+];
+
+// A full passport (every stamp, and the map one): ten stamps, a little smaller, in four rows.
+const SLOTS_FULL: { x: number; y: number; w: number; r: number }[] = [
+  { x: 4, y: 5, w: 54, r: -7 }, // FOCK IT.
+  { x: 61, y: 3, w: 33, r: 9 }, // holder seal
+  { x: 4, y: 24, w: 38, r: 5 }, // tier
+  { x: 45, y: 28, w: 24, r: -10 },
+  { x: 73, y: 30, w: 22, r: 14 },
+  { x: 3, y: 42, w: 41, r: -5 },
+  { x: 47, y: 50, w: 25, r: 8 },
+  { x: 74, y: 49, w: 22, r: -6 },
+  { x: 6, y: 62, w: 30, r: -9 },
+  { x: 46, y: 74, w: 42, r: 4 },
 ];
 
 type Ink = "red" | "black" | "blue" | "gold";
@@ -56,7 +71,7 @@ export function Passport({ data, autoOpen, onDark }: { data: PassportData; autoO
     return () => clearTimeout(t);
   }, [autoOpen]);
 
-  // Stamps earned from the Lads held and the Discord roles.
+  // Stamps earned from the Lads held, the Discord roles and the holder map.
   const stamps = useMemo<StampItem[]>(() => {
     const out: StampItem[] = [{ key: "fock", ink: "red", el: <FockIt /> }];
     out.push({ key: "seal", ink: "red", el: <HolderSeal year={data.since ? data.since.slice(0, 4) : "2023"} /> });
@@ -66,9 +81,10 @@ export function Passport({ data, autoOpen, onDark }: { data: PassportData; autoO
     if (kinds?.oneOfOne) out.push({ key: "one", ink: "gold", el: <OneOfOne /> });
     if (kinds?.lassie) out.push({ key: "lassie", ink: "red", el: <Lassie /> });
     (data.roles ?? []).slice(0, 2).forEach((r, i) => out.push({ key: `role-${r}`, ink: i ? "red" : "black", el: <Role name={r} shape={i ? "tri" : "hex"} /> }));
+    if (data.onMap) out.push({ key: "map", ink: "blue", el: <OnTheMap /> });
     const issued = data.issued ?? today;
     if (issued) out.push({ key: "issued", ink: "blue", el: <Issued date={fmtDate(issued, { day: "2-digit", month: "short", year: "numeric" })} /> });
-    return out.slice(0, SLOTS.length);
+    return out.slice(0, SLOTS_FULL.length);
   }, [collection, data, today]);
 
   const identity = <IdentityPage data={data} />;
@@ -183,11 +199,12 @@ function IdentityPage({ data }: { data: PassportData }) {
 }
 
 function StampsPage({ stamps }: { stamps: StampItem[] }) {
+  const slots = stamps.length > SLOTS.length ? SLOTS_FULL : SLOTS;
   return (
     <span className="pp-paper relative block h-full">
       <span className="absolute top-[4cqw] left-[7cqw] text-[3cqw] font-semibold tracking-[0.3em] text-muted">STAMPS</span>
       {stamps.map((s, i) => {
-        const slot = SLOTS[i];
+        const slot = slots[i];
         return (
           <span
             key={s.key}

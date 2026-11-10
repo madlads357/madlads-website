@@ -1,6 +1,7 @@
 import { getSession } from "@/lib/auth/session";
 import { removePin, savePin } from "@/lib/db";
 import { isKnownCity } from "@/lib/cities";
+import { updateShareOnMap } from "@/lib/passport-share";
 
 // The holder's own pin on the holder map (/holders/map). Only the signed-in holder can change their own pin.
 //   PUT    { city, country, lat, lng, showIdentity }  puts (or moves) the pin
@@ -27,6 +28,7 @@ export async function PUT(request: Request) {
 
   try {
     await savePin(session.id, { city, country, lat: round(lat), lng: round(lng), showIdentity: b.showIdentity }, session.photo ?? session.lads[0] ?? null);
+    await updateShareOnMap(session.id, true).catch(() => {}); // the shared passport link gets its "On the map" stamp
     return Response.json({ ok: true });
   } catch (e) {
     console.error("[map] save failed:", (e as Error).message);
@@ -39,6 +41,7 @@ export async function DELETE() {
   if (!session) return Response.json({ error: "Not logged in" }, { status: 401 });
   try {
     await removePin(session.id);
+    await updateShareOnMap(session.id, false).catch(() => {}); // and loses it
     return Response.json({ ok: true });
   } catch (e) {
     console.error("[map] remove failed:", (e as Error).message);

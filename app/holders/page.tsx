@@ -12,7 +12,7 @@ import { thumbImage } from "@/lib/madlads";
 import { links } from "@/data/site";
 import { discordEnabled } from "@/lib/accounts/discord";
 import { xEnabled } from "@/lib/accounts/x";
-import { hotsOf, renewPin } from "@/lib/db";
+import { getMyPin, hotsOf, renewPin } from "@/lib/db";
 import { WalletLogin } from "@/components/WalletLogin";
 import { LinkedWallets } from "@/components/holder/LinkedWallets";
 
@@ -51,7 +51,11 @@ export default async function HoldersPage({ searchParams }: { searchParams: Prom
   const mode = authMode();
   const session = mode === "off" ? null : await getSession();
   // Read the query string and, for a wallet login, the wallets that can log in for this one, together.
-  const [params, hots] = await Promise.all([searchParams, session?.wallet ? hotsOf(session.wallet).catch(() => []) : []]);
+  const [params, hots, pin] = await Promise.all([
+    searchParams,
+    session?.wallet ? hotsOf(session.wallet).catch(() => []) : [],
+    session && session.lads.length > 0 ? getMyPin(session.id).catch(() => null) : null, // on the holder map? (the passport's map stamp)
+  ]);
   if (session && session.lads.length > 0) await renewPin(session.id).catch(() => {}); // a holder is here: their map pin stays fresh
   const error = errors[params.error ?? ""];
   const notice = linkNotices[params.linked ?? params.link ?? ""];
@@ -67,7 +71,7 @@ export default async function HoldersPage({ searchParams }: { searchParams: Prom
         ) : session.lads.length === 0 ? (
           <NoLads session={session} hots={hots} />
         ) : (
-          <Holder session={session} notice={notice} hots={hots} />
+          <Holder session={session} notice={notice} hots={hots} onMap={!!pin} />
         )}
       </main>
       <Footer />
@@ -209,13 +213,14 @@ function NoLads({ session, hots }: { session: HolderSession; hots: string[] }) {
 }
 
 // The profile: welcome, the holder's Lads, and the backpack the objects fall out of.
-function Holder({ session, notice, hots }: { session: HolderSession; notice?: { text: string; ok: boolean }; hots: string[] }) {
+function Holder({ session, notice, hots, onMap }: { session: HolderSession; notice?: { text: string; ok: boolean }; hots: string[]; onMap: boolean }) {
   return (
     <HolderProfile
       name={session.name}
       handle={session.handle}
       since={session.since}
       roles={session.roles}
+      onMap={onMap}
       lads={session.lads}
       photo={session.photo}
       wallet={session.wallet}

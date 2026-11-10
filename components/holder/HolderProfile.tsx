@@ -22,6 +22,7 @@ type Props = {
   handle?: string;
   since?: string;
   roles?: string[];
+  onMap?: boolean; // the holder has a pin on the holder map: the passport gets its stamp
   lads: number[];
   photo?: number; // the saved passport photo (database), if any
   wallet?: string; // wallet login: the address logged in, and the vault wallets linked to it
@@ -38,7 +39,7 @@ const MOUTH = { x: 0.25, y: 0.62 };
 // Desktop: where the sticky bag sits on screen (px). The fall maths in Items uses the same numbers.
 const STICKY = { top: 110, pad: 40 };
 
-export function HolderProfile({ name, handle, since, roles, lads, photo: saved, wallet, vaults = [], hots = [], discord, discordEnabled = false, xEnabled = false, notice }: Props) {
+export function HolderProfile({ name, handle, since, roles, onMap, lads, photo: saved, wallet, vaults = [], hots = [], discord, discordEnabled = false, xEnabled = false, notice }: Props) {
   const [photo, setPhoto] = useState(saved ?? lads[0]);
   const [windowOpen, setWindowOpen] = useState<BagWindow | null>(null); // the window a backpack object opened (data/bag.ts)
   const [scrolled, setScrolled] = useState(false);
@@ -120,7 +121,7 @@ export function HolderProfile({ name, handle, since, roles, lads, photo: saved, 
         </div>
       </div>
 
-      {windowOpen === "passport" && <PassportWindow data={{ name, handle, since, roles, lads, photo }} onClose={closeWindow} />}
+      {windowOpen === "passport" && <PassportWindow data={{ name, handle, since, roles, onMap, lads, photo }} onClose={closeWindow} />}
       {windowOpen === "memes" && <MemeVault onClose={closeWindow} />}
       {windowOpen === "dressing" && <DressingRoom lads={lads} photo={photo} onClose={closeWindow} />}
       {windowOpen === "playlist" && <Playlist onClose={closeWindow} />}

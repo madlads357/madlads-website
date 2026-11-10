@@ -47,6 +47,7 @@ Every setting is described in `.env.example`.
 - [ ] **X:** link, switch account, unlink. The first local link worked with the $0 cap (the handle comes free in the OAuth reply).
 - [ ] The shared passport link (`/p/<code>`) shows the new name and stamps, and loses them after an unlink.
 - [ ] **Holder map** (`/holders/map`): put a pin (it starts anonymous; then show your name and Lad), move it, remove it, and look at the map as a second holder. Check it on a phone, and that a logged-out visitor is sent to `/holders`.
+- [ ] **Passport map stamp:** after pinning, the passport shows the blue “On the map” stamp, the shared link (`/p/<code>`) gets it too, and both lose it when the pin is removed. Look at a passport with few stamps (a holder with one Lad and no Discord roles): the layout was only checked with a full set.
 - [ ] The Privacy page and Terms describe the holder map (an opt-in pin at city level, anonymous by default, shown to other holders, removed on request). Have the legal review cover it.
 - [ ] **Remove the test holders** from the database before launch: `npm run db:seed-map -- --remove --yes` (they are the rows with ids like `test:12`). Never run the seed script against the production database.
 - [ ] Check the pin lifecycle on the deployed site: a wallet with no Lad but a pin sees “Your pin is still on the map” and can remove it, and a pin whose `updated_at` is older than 12 months does not show (then comes back when its holder opens the map).
