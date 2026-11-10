@@ -7,10 +7,11 @@ import { links } from "@/data/site";
 //         "dressing"  opens the Dressing Room (a window on the page)
 //         "playlist"  opens the playlist, Spotify's player (a window on the page)
 //         "wallpapers" opens the wallpaper and X banner maker (a window on the page)
+//         "badge"     opens the meetup badge maker (a window on the page)
 //         "/path"     opens a page of this site (same tab)
 //         a URL       opens that page in a new tab
 //         null        not available yet: shown greyed out with "Soon"
-const windows = ["passport", "memes", "dressing", "playlist", "wallpapers"] as const;
+const windows = ["passport", "memes", "dressing", "playlist", "wallpapers", "badge"] as const;
 export type BagWindow = (typeof windows)[number];
 export const isBagWindow = (open: string | null): open is BagWindow => (windows as readonly (string | null)[]).includes(open);
 
@@ -31,8 +32,9 @@ export const bagItems: BagItem[] = [
   { id: "passport", label: "Passport", hint: "Your MAD LADS Passport", image: "/holders/bag/passport.webp", w: 491, h: 560, open: "passport", tilt: -6, scale: 1 },
   { id: "map", label: "Holder map", hint: "Where the LADS are", image: "/holders/bag/map.webp", w: 560, h: 491, open: "/holders/map", tilt: 4, scale: 1 },
   { id: "wallpapers", label: "Wallpapers", hint: "Phone, watch, desktop, X banner", image: "/holders/bag/wallpapers.webp", w: 514, h: 560, open: "wallpapers", tilt: -5, scale: 1 },
-  { id: "dressing", label: "Dressing room", hint: "Dress up your LADS", image: "/holders/bag/hanger.webp", w: 460, h: 560, open: "dressing", tilt: 6, scale: 1 },
   { id: "horoscope", label: "MAD Horoscope", hint: "Your card of the day", image: "/holders/bag/horoscope.webp", w: 407, h: 560, open: "/holders/horoscope", tilt: -4, scale: 1, enter: true },
+  { id: "dressing", label: "Dressing room", hint: "Dress up your LADS", image: "/holders/bag/hanger.webp", w: 460, h: 560, open: "dressing", tilt: 6, scale: 1 },
+  { id: "badge", label: "Meetup badge", hint: "Print your name tag", image: "/holders/bag/badge.webp", w: 481, h: 560, open: "badge", tilt: 5, scale: 1 },
   { id: "news", label: "MAD News", hint: "The monthly newsletter", image: "/holders/bag/newspaper.webp", w: 560, h: 286, open: links.newsletter, tilt: -3, scale: 1 },
   { id: "playlist", label: "Playlist", hint: "The MAD LADS mix", image: "/holders/bag/cassette.webp", w: 560, h: 378, open: "playlist", tilt: 5, scale: 0.96 },
   { id: "discord", label: "Discord", hint: "Talk to the LADS", image: "/holders/bag/walkie-talkie.webp", w: 391, h: 560, open: links.discord, tilt: 8, scale: 1.15 },

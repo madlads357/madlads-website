@@ -13,7 +13,7 @@ import "./meme-vault.css";
 // LAD's own background color (read from the art) and its edges fade into it, so there's no seam; the MAD
 // LADS logo sits where the phone clock and the X profile picture don't cover it. Drawn in the browser at
 // full size, nothing is sent anywhere. Styles: meme-vault.css.
-const MAX_ID = 9971;
+export const MAX_ID = 9971;
 const BANNER_MAX = 3; // LADS side by side on the X banner
 
 type Format = "phone" | "watch" | "desktop" | "banner";
@@ -24,17 +24,17 @@ const FORMATS: Record<Format, { label: string; name: string; w: number; h: numbe
   banner: { label: "X banner", name: "X banner", w: 1500, h: 500, file: "x-banner" },
 };
 
-type Rgb = [number, number, number];
-const css = ([r, g, b]: Rgb, a = 1) => `rgba(${r},${g},${b},${a})`;
+export type Rgb = [number, number, number];
+export const css = ([r, g, b]: Rgb, a = 1) => `rgba(${r},${g},${b},${a})`;
 
 // The logo: the official stacked MAD LADS logo (brand/media-kit/SVG/Default_Logo.svg), in black, white or red.
 type LogoColor = "black" | "white" | "red" | "off";
-const LOGO_COLORS: Record<Exclude<LogoColor, "off">, string> = { black: "#111111", white: "#ffffff", red: "#f62038" };
+export const LOGO_COLORS: Record<Exclude<LogoColor, "off">, string> = { black: "#111111", white: "#ffffff", red: "#f62038" };
 const readable = ([r, g, b]: Rgb): LogoColor => (0.299 * r + 0.587 * g + 0.114 * b > 150 ? "black" : "white"); // the one that reads on this LAD
 
 // Full-size LADS through our image server (same origin, so the canvas can read them), loaded once.
 const cache = new Map<number, Promise<HTMLImageElement>>();
-const loadLad = (id: number) => {
+export const loadLad = (id: number) => {
   if (!cache.has(id)) {
     const p = new Promise<HTMLImageElement>((resolve, reject) => {
       const img = new window.Image();
@@ -49,7 +49,7 @@ const loadLad = (id: number) => {
 };
 
 // The art's background color: the average of its top edge, the part that meets the plain fill.
-function backgroundOf(img: HTMLImageElement): Rgb {
+export function backgroundOf(img: HTMLImageElement): Rgb {
   const c = document.createElement("canvas");
   c.width = 64;
   c.height = 4;
@@ -97,8 +97,8 @@ function drawLad(ctx: CanvasRenderingContext2D, img: HTMLImageElement, bg: Rgb, 
   ctx.drawImage(off, x, y, w, h);
 }
 
-const LOGO_RATIO = 176 / 191; // the stacked logo's viewBox is 176×191
-function drawLogo(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, color: string) {
+export const LOGO_RATIO = 176 / 191; // the stacked logo's viewBox is 176×191
+export function drawLogo(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, color: string) {
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(h / 191, h / 191);

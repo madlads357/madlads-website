@@ -84,6 +84,7 @@ These don't block the technical steps, but they block the launch.
 - [ ] **Mad Horoscope share card:** its footer shows the site address from `NEXT_PUBLIC_SITE_URL` (it says `localhost:3000` in development). Once the final domain is set (step 2 above), download a card and check the footer reads the real address, and update the "Post on X" text if the wording should change.
 - [ ] Add the Culture Hub ticket to the backpack (`data/bag.ts`) once its image exists.
 - [x] **Mad Horoscope** (holder only, one reading per holder per UTC day, tarot-caravan look): built (`/holders/horoscope`, backpack object, share card). Left: the copy review (see Reviews), a look on a real phone, and a listen: the sounds are synthesised and were only measured (levels, no clipping), never heard. Tune the volume and timing in `components/horoscope/sound.ts` (on an iPhone the silent switch mutes web sound). **Hidden spots + “Curious” stamp:** built; re-run `npm run db:setup` on every other database (production) for the `holder_settings.curious` column, listen to the new spot sounds, and try the spots on a real phone.
+- [ ] **Meetup badge:** the window is built and tested (`components/holder/Badge.tsx`, `"badge"` in `data/bag.ts`). The backpack object is in (`public/holders/bag/badge.webp`, cut from `mockup_chatgpt/backpack/badge.png`). Left: print one test badge at 4 × 3 in and scan the QR code with a phone.
 
 ---
 
