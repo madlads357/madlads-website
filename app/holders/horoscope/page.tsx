@@ -21,14 +21,11 @@ export const metadata: Metadata = {
 const display = Cinzel({ subsets: ["latin"], weight: ["600", "800"], variable: "--font-hz-display", display: "swap" });
 const body = Alegreya({ subsets: ["latin"], weight: ["400", "500", "700"], style: ["normal", "italic"], variable: "--font-hz-body", display: "swap" });
 
-export default async function HoroscopePage({ searchParams }: { searchParams: Promise<{ day?: string }> }) {
+export default async function HoroscopePage() {
   const session = authMode() === "off" ? null : await getSession();
   if (!session || session.lads.length === 0) redirect("/holders"); // /holders has the login, and what to do without a LAD
 
-  // While building (never in production): ?day=2026-11-11 shows that day's reading, to see other cards and lines.
-  const { day } = await searchParams;
-  const date = process.env.NODE_ENV !== "production" && day && /^\d{4}-\d{2}-\d{2}$/.test(day) ? day : utcDay();
-  const reading = readingFor(session.id, date, { count: session.lads.length, ...kindsOf(session.lads) });
+  const reading = readingFor(session.id, utcDay(), { count: session.lads.length, ...kindsOf(session.lads) });
 
   return (
     <div className={`${display.variable} ${body.variable}`}>

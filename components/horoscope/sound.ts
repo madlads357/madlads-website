@@ -210,8 +210,3 @@ function play(schedule: (ctx: BaseAudioContext, out: AudioNode, t0: number) => v
 export const playDraw = () => play(scheduleDraw);
 export const playEnter = () => play(scheduleEnter);
 export const playArrive = () => play(scheduleArrive);
-
-// While building: a hook to render the pieces offline and check their levels (see the notes in the README).
-if (typeof window !== "undefined" && process.env.NODE_ENV !== "production") {
-  (window as unknown as { __hzSound?: unknown }).__hzSound = { scheduleDraw, scheduleEnter, scheduleArrive, output };
-}

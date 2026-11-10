@@ -69,8 +69,6 @@ export function Horoscope({ name, lad, reading, number, reader, site }: Props) {
   useEffect(() => {
     let drawn = false;
     try {
-      // While building (never in production): /holders/horoscope?replay forgets today's draw, so the whole animation plays again.
-      if (process.env.NODE_ENV !== "production" && new URLSearchParams(location.search).has("replay")) localStorage.removeItem(KEY);
       drawn = localStorage.getItem(KEY) === reading.date;
     } catch {
       /* storage blocked: start from the deck */
@@ -79,14 +77,13 @@ export function Horoscope({ name, lad, reading, number, reader, site }: Props) {
   }, [reading.date]);
 
   // The clock to midnight UTC. Once the day has really changed and the page still shows yesterday's reading, it asks the server
-  // again, every few seconds, up to five times (a clock that is wrong must not make it ask for ever). Not with ?day= (building).
+  // again, every few seconds, up to five times (a clock that is wrong must not make it ask for ever).
   useEffect(() => {
-    const overridden = process.env.NODE_ENV !== "production" && new URLSearchParams(location.search).has("day");
     let lastAsk = 0;
     let asked = 0;
     const tick = () => {
       setLeft(msUntilNextUtcDay());
-      if (!overridden && asked < 5 && utcDay() !== reading.date && Date.now() - lastAsk > 4000) {
+      if (asked < 5 && utcDay() !== reading.date && Date.now() - lastAsk > 4000) {
         lastAsk = Date.now();
         asked++;
         router.refresh();
