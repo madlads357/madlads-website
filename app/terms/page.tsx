@@ -153,6 +153,11 @@ const sections: LegalSection[] = [
           roles when you linked or last refreshed, and can be removed if they no longer match.
         </p>
         <p>
+          The holder map is optional. Your pin is an anonymous dot unless you choose to show your name and LAD. Only pin a city you really live in or are near, and remember that other
+          holders can see your pin, and your name and LAD if you choose to show them. Don’t use the map to track down, contact or harass other holders, and don’t copy or scrape it. You
+          can move or remove your pin, or switch your name and LAD on or off, at any time.
+        </p>
+        <p>
           Your MAD LADS Passport can be shared through a public link. You decide whether to share it, and you can stop sharing at any time. Please don’t share links
           in a way that suggests a passport is someone else’s. How we handle your data is in our <Link href="/privacy">Privacy Policy</Link>.
         </p>

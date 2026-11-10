@@ -12,7 +12,7 @@ import { thumbImage } from "@/lib/madlads";
 import { links } from "@/data/site";
 import { discordEnabled } from "@/lib/accounts/discord";
 import { xEnabled } from "@/lib/accounts/x";
-import { hotsOf } from "@/lib/db";
+import { hotsOf, renewPin } from "@/lib/db";
 import { WalletLogin } from "@/components/WalletLogin";
 import { LinkedWallets } from "@/components/holder/LinkedWallets";
 
@@ -52,6 +52,7 @@ export default async function HoldersPage({ searchParams }: { searchParams: Prom
   const session = mode === "off" ? null : await getSession();
   // Read the query string and, for a wallet login, the wallets that can log in for this one, together.
   const [params, hots] = await Promise.all([searchParams, session?.wallet ? hotsOf(session.wallet).catch(() => []) : []]);
+  if (session && session.lads.length > 0) await renewPin(session.id).catch(() => {}); // a holder is here: their map pin stays fresh
   const error = errors[params.error ?? ""];
   const notice = linkNotices[params.linked ?? params.link ?? ""];
 

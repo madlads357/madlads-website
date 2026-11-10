@@ -90,3 +90,81 @@ export async function hotsOf(vault: string): Promise<string[]> {
   const rows = await db`select hot from wallet_links where vault = ${vault} order by created_at limit 20`;
   return rows.map((r) => r.hot as string);
 }
+
+/* ------------------------------------------------------------ holder map (/holders/map) */
+
+export const MAX_PINS = 10_000; // pins sent to the map page
+export const PIN_MONTHS = 12; // a pin nobody has refreshed for this long stops showing (see renewPin)
+
+// What the map sends to a logged-in holder. A pin with showIdentity off has no name, Lad, handle or date, even for
+// its owner: the server never sends them, so they can't be read from the page, and the owner sees the dot others see.
+export type MapPin = { id: number; lat: number; lng: number; city: string; country: string; you: boolean; name?: string; handle?: string; lad?: number; since?: string };
+export type MapCity = { city: string; country: string; lat: number; lng: number; count: number };
+export type MapData = { pins: MapPin[]; cities: MapCity[]; holders: number; cityCount: number; countryCount: number };
+export type MyPin = { city: string; country: string; lat: number; lng: number; showIdentity: boolean };
+
+export async function getMapData(viewer: string): Promise<MapData> {
+  const empty: MapData = { pins: [], cities: [], holders: 0, cityCount: 0, countryCount: 0 };
+  if (!db) return empty;
+  // The name follows the same rule as everywhere else (applyAccounts): X handle, then Discord name, then the short wallet address.
+  const rows = await db`
+    select l.holder_id, l.city, l.country, l.lat, l.lng, l.show_identity,
+           coalesce(s.photo, l.lad) as lad, s.since::text as since, x.name as x_name,
+           case when x.name is not null then '@' || x.name
+                when d.name is not null then d.name
+                when l.holder_id like 'wallet:%' then left(substr(l.holder_id, 8), 4) || '…' || right(l.holder_id, 4)
+                else 'MAD LAD' end as name
+    from holder_locations l
+    left join holder_settings s on s.holder_id = l.holder_id
+    left join holder_accounts x on x.holder_id = l.holder_id and x.provider = 'x'
+    left join holder_accounts d on d.holder_id = l.holder_id and d.provider = 'discord'
+    where l.updated_at > now() - make_interval(months => ${PIN_MONTHS})
+    order by l.updated_at desc
+    limit ${MAX_PINS}`;
+  const pins: MapPin[] = rows.map((r, id) => ({
+    id,
+    lat: r.lat as number,
+    lng: r.lng as number,
+    city: r.city as string,
+    country: r.country as string,
+    you: r.holder_id === viewer,
+    ...(r.show_identity
+      ? { name: r.name as string, handle: (r.x_name as string | null) ?? undefined, lad: (r.lad as number | null) ?? undefined, since: (r.since as string | null) ?? undefined }
+      : {}),
+  }));
+  const byCity = new Map<string, MapCity>();
+  for (const p of pins) {
+    const k = `${p.city}|${p.country}|${p.lat}|${p.lng}`; // by place, so two cities with one name (Portland, US) stay apart
+    const c = byCity.get(k);
+    if (c) c.count++;
+    else byCity.set(k, { city: p.city, country: p.country, lat: p.lat, lng: p.lng, count: 1 });
+  }
+  const cities = [...byCity.values()].sort((a, b) => b.count - a.count || a.city.localeCompare(b.city));
+  return { pins, cities, holders: pins.length, cityCount: cities.length, countryCount: new Set(pins.map((p) => p.country)).size };
+}
+
+export async function getMyPin(holderId: string): Promise<MyPin | null> {
+  if (!db) return null;
+  const rows = await db`select city, country, lat, lng, show_identity from holder_locations where holder_id = ${holderId}`;
+  const r = rows[0];
+  return r ? { city: r.city as string, country: r.country as string, lat: r.lat as number, lng: r.lng as number, showIdentity: r.show_identity as boolean } : null;
+}
+
+export async function savePin(holderId: string, pin: MyPin, lad: number | null) {
+  if (!db) throw new Error("No database");
+  await db`insert into holder_locations (holder_id, city, country, lat, lng, lad, show_identity)
+           values (${holderId}, ${pin.city}, ${pin.country}, ${pin.lat}, ${pin.lng}, ${lad}, ${pin.showIdentity})
+           on conflict (holder_id) do update set city = excluded.city, country = excluded.country, lat = excluded.lat,
+             lng = excluded.lng, lad = excluded.lad, show_identity = excluded.show_identity, updated_at = now()`;
+}
+
+// A holder with a Lad showed up (the map or the holder area): their pin counts as fresh again. At most once a day, so most calls change nothing.
+export async function renewPin(holderId: string) {
+  if (!db) return;
+  await db`update holder_locations set updated_at = now() where holder_id = ${holderId} and updated_at < now() - interval '1 day'`;
+}
+
+export async function removePin(holderId: string) {
+  if (!db) return;
+  await db`delete from holder_locations where holder_id = ${holderId}`;
+}

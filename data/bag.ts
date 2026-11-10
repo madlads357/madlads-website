@@ -7,6 +7,7 @@ import { links } from "@/data/site";
 //         "dressing"  opens the Dressing Room (a window on the page)
 //         "playlist"  opens the playlist, Spotify's player (a window on the page)
 //         "wallpapers" opens the wallpaper and X banner maker (a window on the page)
+//         "/path"     opens a page of this site (same tab)
 //         a URL       opens that page in a new tab
 //         null        not available yet: shown greyed out with "Soon"
 const windows = ["passport", "memes", "dressing", "playlist", "wallpapers"] as const;
@@ -27,6 +28,7 @@ export type BagItem = {
 
 export const bagItems: BagItem[] = [
   { id: "passport", label: "Passport", hint: "Your MAD LADS Passport", image: "/holders/bag/passport.webp", w: 491, h: 560, open: "passport", tilt: -6, scale: 1 },
+  { id: "map", label: "Holder map", hint: "Where the LADS are", image: "/holders/bag/map.webp", w: 560, h: 491, open: "/holders/map", tilt: 4, scale: 1 },
   { id: "wallpapers", label: "Wallpapers", hint: "Phone, watch, desktop, X banner", image: "/holders/bag/wallpapers.webp", w: 514, h: 560, open: "wallpapers", tilt: -5, scale: 1 },
   { id: "dressing", label: "Dressing room", hint: "Dress up your LADS", image: "/holders/bag/hanger.webp", w: 460, h: 560, open: "dressing", tilt: 6, scale: 1 },
   { id: "news", label: "MAD News", hint: "The monthly newsletter", image: "/holders/bag/newspaper.webp", w: 560, h: 286, open: links.newsletter, tilt: -3, scale: 1 },

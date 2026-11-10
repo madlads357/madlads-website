@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { HolderLads } from "./HolderLads";
 import { DaysMad } from "./DaysMad";
@@ -217,7 +218,8 @@ function Items({ onOpen }: { onOpen: (w: BagWindow) => void }) {
 
 function Item({ item, onOpen }: { item: BagItem; onOpen: (w: BagWindow) => void }) {
   const locked = item.open === null;
-  const external = !locked && !isBagWindow(item.open); // opens another site in a new tab
+  const internal = typeof item.open === "string" && item.open.startsWith("/"); // a page of this site: same tab
+  const external = !locked && !internal && !isBagWindow(item.open); // opens another site in a new tab
   const body = (
     <>
       {/* fixed box, image centered inside: every label lines up whatever the object's shape */}
@@ -266,6 +268,12 @@ function Item({ item, onOpen }: { item: BagItem; onOpen: (w: BagWindow) => void 
       <div className={`${cls} cursor-default`} aria-label={`${item.label}, coming soon`}>
         {body}
       </div>
+    );
+  if (internal)
+    return (
+      <Link href={item.open!} className={cls}>
+        {body}
+      </Link>
     );
   return (
     <a href={item.open!} target="_blank" rel="noopener noreferrer" className={cls}>

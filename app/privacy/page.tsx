@@ -175,7 +175,7 @@ const sections: LegalSection[] = [
       <>
         <p>
           For holders who log in, our database keeps your wallet address, the wallets you linked to it, the LAD you chose as passport photo and your “MAD since”
-          date, so they follow you on every device. If you link Discord, it also keeps your Discord user ID, name and stamp roles; if you link X, your X user ID and handle. A short-lived one-time code for each login is kept for a few minutes so a signed login can’t be used twice, then deleted. Linked wallets and accounts
+          date, so they follow you on every device. If you put yourself on the holder map, it also keeps the city you picked and whether to show your name and LAD (see “The holder map”). If you link Discord, it also keeps your Discord user ID, name and stamp roles; if you link X, your X user ID and handle. A short-lived one-time code for each login is kept for a few minutes so a signed login can’t be used twice, then deleted. Linked wallets and accounts
           stay linked until you remove them in the holder area, which deletes them at once. The database is hosted by {ext("https://neon.com", "Neon")} in the European Union (Frankfurt).
         </p>
         <p>
@@ -197,6 +197,32 @@ const sections: LegalSection[] = [
         <p>
           We store that passport with the link and count how many times it was opened. You can stop sharing at any time from your passport (Copy, then “Stop
           sharing my link”): the link stops working at once. Otherwise it expires after a year.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "map",
+    title: "The holder map",
+    body: (
+      <>
+        <p>
+          The holder map is optional: you are only on it if you put yourself there. We then keep the city you picked from a list (its name, country and centre point, never an address)
+          and your choice to show your name and LAD or not. Your pin is an anonymous dot unless you turn on “Show my name and Lad to other holders” yourself. Other logged-in holders can see
+          your pin. If you turned that on, they see your name (your X handle or Discord name if you linked one, otherwise your shortened wallet address), your passport LAD, how long you
+          have been MAD and the city, plus a link to your X profile if you linked X. If you didn’t, they see an anonymous dot that only counts towards the city and the totals, and so do you:
+          the map shows you the same dot. People who are not logged in as holders see nothing. We never ask for your device’s location.
+        </p>
+        <p>
+          You can move your pin, switch your name and LAD on or off, or remove your pin at any time from the map. Removing it deletes it from our database at once. If you no longer hold a
+          LAD, the map is closed to you, but you can still log in and remove your pin. A pin also stops showing by itself after twelve months in which no holder session has refreshed it:
+          opening the map or the holder area while you hold a LAD refreshes it. The city search runs on our own server, from the public{" "}
+          {ext("https://www.geonames.org", "GeoNames")} list of cities (CC BY 4.0): what you type is not sent to anyone else.
+        </p>
+        <p>
+          The map itself is drawn by {ext("https://www.mapbox.com", "Mapbox")}. When you open it, your browser loads map tiles from Mapbox, which therefore receives your IP address and the
+          address of the page, like any site you load content from, and may collect usage statistics under its{" "}
+          {ext("https://www.mapbox.com/legal/privacy", "privacy policy")}. We don’t send Mapbox your pin, name or wallet.
         </p>
       </>
     ),

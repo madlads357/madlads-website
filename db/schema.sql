@@ -53,3 +53,17 @@ create table if not exists used_nonces (
   nonce       text primary key,
   expires_at  timestamptz not null
 );
+
+-- The holder map (/holders/map): one opt-in pin per holder, at city level only (the centre of the city the
+-- holder picked, never an address). Only logged-in holders can see the map. show_identity false means an
+-- anonymous dot: the pin counts on the map, but the name and Lad are not sent to anyone. Removing the pin deletes the row.
+create table if not exists holder_locations (
+  holder_id      text primary key,
+  city           text not null,
+  country        text not null,       -- ISO 3166-1 alpha-2, e.g. NL
+  lat            double precision not null,
+  lng            double precision not null,
+  lad            integer,             -- the Lad shown on the pin when the holder has no passport photo saved
+  show_identity  boolean not null default true,
+  updated_at     timestamptz not null default now()   -- put or last refreshed: a holder with a Lad opening the map or the holder area refreshes it, and after 12 months without one the pin stops showing
+);

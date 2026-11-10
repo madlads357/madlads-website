@@ -21,7 +21,7 @@ Browsing needs no wallet and no account. Holders log in with Backpack to open th
 | **Home** `/` | Hero video, a Mad Lads preview, the manifesto and stats, a marquee of Lads, a Lore teaser, the art (1/1s and specials), the holders section, the latest MAD News, Backpack and the FAQ. The “Bolt strike” intro plays each time the page is opened. |
 | **Lore** `/lore` | “The story so far”: nine chapters from the mint (April 2023) to three years MAD, then **Beyond the screen**: real-life photos on a pinned horizontal reel and meetup videos. |
 | **Mad Lads** `/madlads` | The explorer: all 9,971 Lads, search by number, 16 trait filters, sort, and a page for every Lad (`/madlads/1234`). |
-| **Holders** `/holders` | Log in with Backpack, see your Lads and “Days MAD”, link your X and Discord, and open your backpack: **Passport**, **Wallpapers**, **Dressing room**, **Playlist**, **Memes**, plus MAD News, Discord and Games. |
+| **Holders** `/holders` | Log in with Backpack, see your Lads and “Days MAD”, link your X and Discord, and open your backpack: **Passport**, **Wallpapers**, **Dressing room**, **Playlist**, **Memes**, the **Holder map**, plus MAD News, Discord and Games. |
 | **Shared passport** `/p/<code>` | The public page behind a passport share link, with its own link-preview card. |
 | **Privacy** and **Terms** | `/privacy`, `/terms`. Written for the code as it is: they change when the code does. |
 
@@ -54,16 +54,16 @@ Browsing needs no wallet and no account. Holders log in with Backpack to open th
 
 ```
 app/
-├── page.tsx, lore/, madlads/, holders/     the pages (public ones static)
+├── page.tsx, lore/, madlads/, holders/     the pages (public ones static); holders/map is the holder map
 ├── p/[code], passport/[token]/             shared passports (database link, or signed link without a database)
 ├── privacy/, terms/, not-found.tsx         legal pages and the 404
 ├── api/auth/                               login: wallet/challenge + wallet/verify, login, logout (callback = Matrica)
 ├── api/accounts/{discord,x}/               link: start, callback, and DELETE to unlink
-├── api/holder/                             passport photo, vault wallets
+├── api/holder/                             passport photo, vault wallets, map pin (map/), city search (cities/)
 ├── api/passport/share                      create or stop a share link
 ├── layout.tsx, globals.css                 shell and design tokens
 components/
-├── holder/        profile, the backpack windows, Socials, bag.css
+├── holder/        profile, the backpack windows, Socials, the holder map (HolderMap, PinDialog), bag.css
 ├── passport/      the passport, its window, stamps, share view, video export
 ├── WalletLogin.tsx  "Login with Backpack", the Ledger option, vault links
 └── intro/, lore/, beyond/, Nav, Footer…    the rest of the site
@@ -72,11 +72,12 @@ lib/
 ├── accounts/      Discord and X linking, and how linked accounts shape the session
 ├── wallet/        Backpack in the browser (Solana Kit)
 ├── helius.ts, db.ts, passport-share.ts     blockchain reads, database, share links
+├── cities.ts                               city search and check for the holder map (data/cities.json)
 └── madlads.ts, news.ts, og.tsx…            collection helpers, MAD News, link previews
-data/              editable content: lore, art, news, links, the backpack, memes, dressing room
-db/schema.sql      the five tables
+data/              editable content: lore, art, news, links, the backpack, memes, dressing room; cities.json (GeoNames, generated)
+db/schema.sql      the six tables
 public/            lads, art, irl, video, holder objects, collection data (generated)
-scripts/           collection data, database setup, README screenshots
+scripts/           collection data, cities list, database setup, test holders for the map, README screenshots
 docs/images/       the images in this README
 ```
 
@@ -100,6 +101,7 @@ The public pages work with no settings. Everything else is optional and describe
 | Vault links, X and Discord, share links, “MAD since” saved | `DATABASE_URL`, then `npm run db:setup` once |
 | Link Discord | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `MADLADS_DISCORD_SERVER_ID`, `MADLADS_STAMP_ROLES` (`role id:Stamp name`, most important first) |
 | Link X | `X_API_KEY`, `X_API_SECRET` (keep the app's spend cap at $0: the login is free) |
+| Holder map | `DATABASE_URL` and a public Mapbox token in `MAPBOX_TOKEN` (restricted by URL). To try it with made-up holders in development: `npm run db:seed-map -- --yes`, and `-- --remove --yes` to take them off again |
 | The login buttons live | `NEXT_PUBLIC_HOLDERS_LIVE=1` (until then they point to the homepage section) |
 | Canonical URLs and link previews | `NEXT_PUBLIC_SITE_URL=https://madlads.com` |
 | Matrica instead of Backpack | `AUTH_PROVIDER=matrica` plus the `MATRICA_*` settings (kept for later) |
@@ -188,8 +190,9 @@ Without `AUTH_MOCK`, the holder shots are skipped.
 - **Unlinking X or Discord** also updates the public passport link, so the old handle and stamps leave it.
 - **Share links** are public and expire after a year. With a database they are short (`/p/<code>`) and can be switched off; without one they are long signed links.
 - **Backpack only is a rule of the page, not of the server.** A signature proves who owns an address, not which wallet app signed it. That is all the holder area needs.
+- **The holder map** (`/holders/map`) is for logged-in holders with a Lad, and is optional. A pin is a city centre picked from a GeoNames list (`data/cities.json`, built by `scripts/build-cities.mjs`), never an address, and is **an anonymous dot by default**: the holder turns on “Show my name and Lad” to be shown, and sees the same dot others see. The server sends no name, Lad or date for an anonymous pin. A pin stops showing 12 months after it was last refreshed (`PIN_MONTHS` in `lib/db.ts`): a holder with a Lad opening the map or `/holders` refreshes it (`renewPin`), and a holder with no Lad left still gets a page to remove it. Mapbox only draws the map: the city search never leaves our server, because Mapbox's terms don't let geocoding results be stored. The Mapbox token (`MAPBOX_TOKEN`) is read on the server and only handed to logged-in holders, but it is still visible to them, so restrict it by URL in the Mapbox account.
 - **Privacy and Terms** describe exactly what the code stores: update them when you change what is collected. They still need review by Backpack's legal team (see [TODO.md](TODO.md)).
 
 ## Credits & rights
 
-Mad Lads artwork, logos and the honorary 1/1s belong to the Mad Lads / Backpack team; usage rights for all content on the site are confirmed by the team. The hero video comes from the [Mad Lads Culture Hub](https://www.madlads-hub.xyz/); event photos from Mad News and meetup videos from the Backpack Exchange YouTube channel; sketches and previews by [@yannpenno](https://x.com/yannpenno).
+Mad Lads artwork, logos and the honorary 1/1s belong to the Mad Lads / Backpack team; usage rights for all content on the site are confirmed by the team. The hero video comes from the [Mad Lads Culture Hub](https://www.madlads-hub.xyz/); event photos from Mad News and meetup videos from the Backpack Exchange YouTube channel; sketches and previews by [@yannpenno](https://x.com/yannpenno). City data for the holder map is from [GeoNames](https://www.geonames.org) (CC BY 4.0); the map is drawn by [Mapbox](https://www.mapbox.com) with © OpenStreetMap contributors data, credited on the map itself.

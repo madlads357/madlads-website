@@ -1,0 +1,115 @@
+/* The holder map (components/holder/HolderMap.tsx). The pins are plain DOM elements that Mapbox positions,
+   so they are styled here and not with Tailwind classes. */
+
+.hm-map .mapboxgl-ctrl-bottom-left,
+.hm-map .mapboxgl-ctrl-bottom-right {
+  z-index: 1;
+}
+
+/* The markers below must never have a CSS transition or animation on `transform`: Mapbox moves every marker by
+   rewriting its inline transform on each frame, so a transition makes the pins lag behind the map and slide in from the corner. */
+
+/* A holder who shows their name and Lad: the Lad in a round frame, with a red pointer to the city. */
+/* No `position` here: Mapbox gives every marker position: absolute. Overriding it (relative) leaves each pin in the page flow, shifted by the pins before it. */
+.hm-pin {
+  width: 48px;
+  height: 48px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background-color: var(--color-sunken);
+  background-size: cover;
+  background-position: center 20%;
+  box-shadow: 0 2px 8px rgb(17 17 17 / 0.28);
+  cursor: pointer;
+}
+.hm-pin::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -9px;
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 9px solid var(--color-red);
+}
+.hm-pin:hover,
+.hm-pin[data-active] {
+  outline: 3px solid rgb(246 32 56 / 0.45); /* not a transform: Mapbox positions markers with their transform */
+  outline-offset: 1px;
+  z-index: 2;
+}
+.hm-pin[data-you] {
+  border-color: var(--color-red);
+}
+.hm-pin[data-you]::before {
+  content: "You";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--color-red);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 14px;
+}
+
+/* A holder who chose to stay anonymous: just a dot. */
+.hm-dot {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--color-red);
+  box-shadow: 0 1px 4px rgb(17 17 17 / 0.3);
+  cursor: pointer;
+}
+.hm-dot[data-you] {
+  width: 18px;
+  height: 18px;
+  outline: 2px solid var(--color-red);
+}
+
+/* Several holders close together: a red circle with how many. */
+.hm-cluster {
+  display: grid;
+  place-items: center;
+  border: 3px solid rgb(255 255 255 / 0.9);
+  border-radius: 50%;
+  background: var(--color-red);
+  box-shadow: 0 2px 8px rgb(17 17 17 / 0.25);
+  color: #fff;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+.hm-cluster:hover {
+  filter: brightness(1.1); /* not a transform: Mapbox positions markers with theirs */
+}
+
+/* The card on a pin is a Mapbox popup, but only as a holder for our own card: no frame, no pointer, no shadow of its own. */
+.hm-popup {
+  z-index: 5;
+}
+.hm-popup .mapboxgl-popup-content {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.hm-popup .mapboxgl-popup-tip {
+  display: none;
+}
+
+/* On a phone the bottom sheet covers the bottom of the map: lift Mapbox's logo and attribution above it. */
+@media (max-width: 1023px) {
+  .hm-map .mapboxgl-ctrl-bottom-left,
+  .hm-map .mapboxgl-ctrl-bottom-right {
+    bottom: min(var(--sheet-vis, 0px), 45%);
+    transition: bottom 0.3s ease;
+  }
+}
