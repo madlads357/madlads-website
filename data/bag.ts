@@ -24,6 +24,7 @@ export type BagItem = {
   open: BagWindow | string | null;
   tilt: number; // resting angle once it has landed, in degrees
   scale?: number; // evens out how big objects look (wide ones read small, tall ones big); 1 = default
+  enter?: boolean; // an internal page entered with a transition (the crystal ball: components/horoscope/enter.ts)
 };
 
 export const bagItems: BagItem[] = [
@@ -31,6 +32,7 @@ export const bagItems: BagItem[] = [
   { id: "map", label: "Holder map", hint: "Where the LADS are", image: "/holders/bag/map.webp", w: 560, h: 491, open: "/holders/map", tilt: 4, scale: 1 },
   { id: "wallpapers", label: "Wallpapers", hint: "Phone, watch, desktop, X banner", image: "/holders/bag/wallpapers.webp", w: 514, h: 560, open: "wallpapers", tilt: -5, scale: 1 },
   { id: "dressing", label: "Dressing room", hint: "Dress up your LADS", image: "/holders/bag/hanger.webp", w: 460, h: 560, open: "dressing", tilt: 6, scale: 1 },
+  { id: "horoscope", label: "MAD Horoscope", hint: "Your card of the day", image: "/holders/bag/horoscope.webp", w: 407, h: 560, open: "/holders/horoscope", tilt: -4, scale: 1, enter: true },
   { id: "news", label: "MAD News", hint: "The monthly newsletter", image: "/holders/bag/newspaper.webp", w: 560, h: 286, open: links.newsletter, tilt: -3, scale: 1 },
   { id: "playlist", label: "Playlist", hint: "The MAD LADS mix", image: "/holders/bag/cassette.webp", w: 560, h: 378, open: "playlist", tilt: 5, scale: 0.96 },
   { id: "discord", label: "Discord", hint: "Talk to the LADS", image: "/holders/bag/walkie-talkie.webp", w: 391, h: 560, open: links.discord, tilt: 8, scale: 1.15 },

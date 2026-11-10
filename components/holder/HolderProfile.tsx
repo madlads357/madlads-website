@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { HolderLads } from "./HolderLads";
 import { DaysMad } from "./DaysMad";
@@ -15,6 +16,7 @@ import { Wallpapers } from "./Wallpapers";
 import { LinkedWallets } from "./LinkedWallets";
 import { Socials } from "./Socials";
 import { PHOTO_EVENT, PHOTO_KEY } from "@/lib/auth/hint";
+import { enterCaravan } from "@/components/horoscope/enter";
 import "./bag.css";
 
 type Props = {
@@ -218,6 +220,7 @@ function Items({ onOpen }: { onOpen: (w: BagWindow) => void }) {
 }
 
 function Item({ item, onOpen }: { item: BagItem; onOpen: (w: BagWindow) => void }) {
+  const router = useRouter();
   const locked = item.open === null;
   const internal = typeof item.open === "string" && item.open.startsWith("/"); // a page of this site: same tab
   const external = !locked && !internal && !isBagWindow(item.open); // opens another site in a new tab
@@ -270,12 +273,22 @@ function Item({ item, onOpen }: { item: BagItem; onOpen: (w: BagWindow) => void 
         {body}
       </div>
     );
-  if (internal)
+  if (internal) {
+    // The crystal ball: the click opens a doorway (a swirl) before the page changes. A modified click or reduced motion gets the plain link.
+    const enter = item.enter
+      ? (e: React.MouseEvent<HTMLAnchorElement>) => {
+          if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+          if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+          e.preventDefault();
+          enterCaravan(e.currentTarget, () => router.push(item.open!));
+        }
+      : undefined;
     return (
-      <Link href={item.open!} className={cls}>
+      <Link href={item.open!} className={cls} onClick={enter}>
         {body}
       </Link>
     );
+  }
   return (
     <a href={item.open!} target="_blank" rel="noopener noreferrer" className={cls}>
       {body}

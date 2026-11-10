@@ -45,7 +45,7 @@ export function readShareToken(token: string): SharedPassport | null {
 }
 
 // Which kinds of Lad the holder has (Skull, 1/1, Lassie), from the collection data on disk.
-function kindsOf(ids: number[]): SharedPassport["kinds"] {
+export function kindsOf(ids: number[]): SharedPassport["kinds"] {
   const c = collection();
   const ti = c.traits.findIndex((t) => t.name === "Type");
   const gi = c.traits.findIndex((t) => t.name === "Gender");

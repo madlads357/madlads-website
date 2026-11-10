@@ -72,6 +72,7 @@ These don't block the technical steps, but they block the launch.
 - [ ] Decide whether to name the legal entity and the governing law (the drafts name neither).
 - [ ] Link the Mad Lads art license from the Terms (section “Owning a Mad Lad”), if there is one.
 - [ ] **Copy (community manager):** the FAQ answers (`app/page.tsx`) and the Lore chapters (`data/lore.ts`).
+- [ ] **Copy (community manager):** the Mad Horoscope lines (`data/horoscope.ts`, about 200 lines shown, plus some unused openers and farewells: cheeky, absurd, never about money). Trim, add jokes, and check the fortune teller's name (`READER`, "Madame Fock" for now).
 
 ## After launch
 - [ ] Add the domain to Google Search Console and submit `https://madlads.com/sitemap.xml`.
@@ -80,7 +81,9 @@ These don't block the technical steps, but they block the launch.
 
 ## Later: the holder area
 - [ ] Decide what else goes in it. Done: passport, wallpapers, dressing room, playlist, meme vault, holder map, the Heist game link. Still on the Culture Hub: events, directory (the map could show events later).
+- [ ] **Mad Horoscope share card:** its footer shows the site address from `NEXT_PUBLIC_SITE_URL` (it says `localhost:3000` in development). Once the final domain is set (step 2 above), download a card and check the footer reads the real address, and update the "Post on X" text if the wording should change.
 - [ ] Add the Culture Hub ticket to the backpack (`data/bag.ts`) once its image exists.
+- [x] **Mad Horoscope** (holder only, one reading per holder per UTC day, tarot-caravan look): built (`/holders/horoscope`, backpack object, share card). Left: the copy review (see Reviews), a look on a real phone, and a listen: the sounds are synthesised and were only measured (levels, no clipping), never heard. Tune the volume and timing in `components/horoscope/sound.ts` (on an iPhone the silent switch mutes web sound).
 
 ---
 

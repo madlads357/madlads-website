@@ -1,0 +1,880 @@
+/* The MAD Horoscope page (components/horoscope/Horoscope.tsx): a tarot caravan, with its own look.
+   The pictures are layers (public/horoscope). Their places are percentages of the "stage", a 3:2 box on a desktop
+   (a tall box on a phone); text sizes are in cqw (1% of the stage's width) times --k, which is 1 on a desktop and larger on a phone. */
+
+.hz {
+  --k: 1;
+  --gold: #e2b45a;
+  --ink: #3b2410;
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  overflow-x: clip;
+  background: #1d0a14;
+  color: var(--ink);
+  font-family: var(--font-hz-body), Georgia, serif;
+}
+
+/* The room, behind everything (a wide picture on a desktop, a tall one on a phone). */
+.hz-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: #1d0a14 url(/horoscope/scene-wide.webp) center / cover no-repeat;
+}
+.hz-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 58%, transparent 45%, rgb(18 3 10 / 0.6) 100%);
+}
+
+.hz-back {
+  position: fixed;
+  top: 14px;
+  left: 16px;
+  z-index: 10;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgb(29 10 20 / 0.72);
+  border: 1px solid rgb(226 180 90 / 0.55);
+  color: #f6e6c2;
+  font: 600 14px/1 var(--font-hz-display), Georgia, serif;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  backdrop-filter: blur(4px);
+}
+.hz-back:hover {
+  background: rgb(143 20 32 / 0.85);
+}
+
+/* the sound switch, top right */
+.hz-sound {
+  position: fixed;
+  top: 12px;
+  right: 14px;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgb(29 10 20 / 0.72);
+  border: 1px solid rgb(226 180 90 / 0.55);
+  color: #f6e6c2;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s ease;
+}
+.hz-sound svg {
+  width: 22px;
+  height: 22px;
+}
+.hz-sound:hover {
+  background: rgb(143 20 32 / 0.85);
+}
+.hz-sound[aria-pressed="false"] {
+  color: rgb(246 230 194 / 0.6);
+}
+
+/* ------------------------------------------------------------------ the stage */
+.hz-stage {
+  position: relative;
+  z-index: 1;
+  width: min(100%, calc(100svh * 1.5));
+  aspect-ratio: 3 / 2;
+  container-type: inline-size;
+}
+
+.hz-title {
+  position: absolute;
+  z-index: 4;
+  top: 0.5%;
+  left: 33%;
+  width: 34%;
+}
+.hz-title h1 {
+  margin: 0;
+}
+.hz-title img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.5));
+}
+.hz-sub {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ------------------------------------------------------------------ the table scene (idle, drawing, resting) */
+.hz-scene {
+  position: absolute;
+  inset: 0;
+}
+
+.hz-fock {
+  position: absolute;
+  z-index: 1;
+  left: 35%;
+  width: 30%;
+  top: 21.5%;
+  aspect-ratio: 483 / 507;
+}
+.hz-pose {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.hz-scene[data-phase="boot"] .hz-pose-wink,
+.hz-scene[data-phase="idle"] .hz-pose-wink,
+.hz-scene[data-phase="drawing"] .hz-pose-card,
+.hz-scene[data-phase="resting"] .hz-pose-rest {
+  opacity: 1;
+}
+.hz-scene[data-phase="boot"] .hz-fock {
+  visibility: hidden; /* until the browser has said whether a card was drawn today: no flash of the wrong pose */
+}
+
+/* No z-index on the table itself (that would make it a layer of its own): its picture is raised, and the card that
+   turns over inside it (.hz-flip, z-index 30) can come out on top of the whole page, the title included. */
+.hz-table {
+  position: absolute;
+  left: 7%;
+  width: 86%;
+  bottom: -3%;
+  aspect-ratio: 1536 / 637;
+}
+.hz-table > img {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Candlelight and the glow of the ball: soft, slow, and still when the visitor asks for less motion. */
+.hz-glow {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: 50%;
+  mix-blend-mode: screen;
+}
+.hz-glow-candle {
+  left: 10%;
+  top: -2%;
+  width: 22%;
+  aspect-ratio: 1;
+  background: radial-gradient(circle, rgb(255 190 90 / 0.55), rgb(255 150 50 / 0.16) 45%, transparent 70%);
+  animation: hz-flicker 3.4s ease-in-out infinite;
+}
+.hz-glow-ball {
+  left: 59%;
+  top: 14%;
+  width: 18%;
+  aspect-ratio: 1;
+  background: radial-gradient(circle, rgb(255 190 255 / 0.5), rgb(200 120 255 / 0.15) 50%, transparent 70%);
+  animation: hz-pulse 4.2s ease-in-out infinite;
+}
+@keyframes hz-flicker {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  30% { opacity: 1; transform: scale(1.06); }
+  60% { opacity: 0.7; transform: scale(0.97); }
+}
+@keyframes hz-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.96); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+/* "Madame Fock has your card. Ready?" on a small parchment */
+.hz-ask {
+  position: absolute;
+  z-index: 3;
+  left: 27%;
+  width: 46%;
+  bottom: 3%;
+  box-sizing: border-box;
+  border: solid transparent;
+  border-width: calc(3.4cqw * var(--k));
+  border-image: url(/horoscope/parchment.webp) 78 fill / calc(3.4cqw * var(--k)) stretch;
+  padding: calc(0.2cqw * var(--k)) calc(2cqw * var(--k)) calc(0.6cqw * var(--k));
+  text-align: center;
+  filter: drop-shadow(0 8px 12px rgb(0 0 0 / 0.5));
+}
+.hz-ask p {
+  margin: 0 0 calc(1cqw * var(--k));
+  font: 700 calc(2cqw * var(--k)) / 1.15 var(--font-hz-body), Georgia, serif;
+  color: var(--ink);
+}
+
+/* Buttons: red velvet and dark velvet, gold trim. */
+.hz-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  min-height: 44px;
+  padding: 0.7em 2.2em;
+  border: 2px solid var(--gold);
+  border-radius: 999px;
+  font: 800 max(15px, calc(1.45cqw * var(--k))) / 1 var(--font-hz-display), Georgia, serif;
+  letter-spacing: 0.05em;
+  color: #fbe9c3;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25), 0 3px 8px rgb(0 0 0 / 0.45);
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+.hz-btn:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+.hz-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.hz-btn:focus-visible,
+.hz-back:focus-visible,
+.hz-sound:focus-visible,
+.hz-chip:focus-visible,
+.hz-close:focus-visible,
+.hz-restcard:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+.hz-btn-red {
+  background: linear-gradient(#d52d38, #8c1421);
+}
+.hz-btn-dark {
+  background: linear-gradient(#5a1832, #2a0a19);
+}
+.hz-x {
+  width: 1em;
+  height: 1em;
+}
+
+/* ------------------------------------------------------------------ the card turning over */
+.hz-flip {
+  position: absolute;
+  z-index: 30;
+  left: 49.5%;
+  top: 36%;
+  width: 17%;
+  aspect-ratio: 484 / 805;
+  perspective: 1100px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+.hz-flip-inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+.hz-flip-back,
+.hz-flip-front {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  filter: drop-shadow(0 10px 14px rgb(0 0 0 / 0.55));
+}
+.hz-flip-front {
+  transform: rotateY(180deg);
+}
+.hz-scene[data-phase="drawing"] .hz-flip {
+  animation: hz-rise 3s cubic-bezier(0.3, 0.1, 0.2, 1) forwards;
+}
+.hz-scene[data-phase="drawing"] .hz-flip-inner {
+  animation: hz-turn 3s ease-in-out forwards;
+}
+@keyframes hz-rise {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+  6% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  24% { opacity: 1; transform: translate(-50%, -78%) scale(1.45); }
+  50% { opacity: 1; transform: translate(-50%, -118%) scale(2.05); }
+  100% { opacity: 1; transform: translate(-50%, -123%) scale(2.3); }
+}
+@keyframes hz-turn {
+  0%, 46% { transform: rotateY(0deg); }
+  62% { transform: rotateY(98deg); }
+  80%, 100% { transform: rotateY(180deg); }
+}
+
+/* ------------------------------------------------------------------ the magic: dim room, aura, stardust, a sweep of light, a burst */
+.hz-dim {
+  position: absolute;
+  z-index: 25;
+  inset: -60vh -60vw;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 46%, rgb(70 20 90 / 0.3), rgb(8 2 14 / 0.84) 62%);
+  animation: hz-dim 3s ease both;
+}
+@keyframes hz-dim {
+  0% { opacity: 0; }
+  14% { opacity: 1; }
+  86% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* a halo with slow rays, behind the card */
+.hz-aura {
+  position: absolute;
+  z-index: -1;
+  inset: -70% -95%;
+  border-radius: 50%;
+  opacity: 0;
+  background: radial-gradient(circle, rgb(255 222 140 / 0.65) 0, rgb(206 140 255 / 0.38) 30%, transparent 62%);
+}
+.hz-aura::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, rgb(255 232 170 / 0.2) 0 3deg, transparent 3deg 12deg);
+  mask-image: radial-gradient(circle, #000 10%, transparent 58%);
+}
+.hz-scene[data-phase="drawing"] .hz-aura {
+  animation: hz-aura 3s ease both;
+}
+.hz-scene[data-phase="drawing"] .hz-aura::before {
+  animation: hz-spin 16s linear infinite;
+}
+@keyframes hz-aura {
+  0% { opacity: 0; transform: scale(0.3); }
+  30% { opacity: 0.9; transform: scale(0.7); }
+  70% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0.85; transform: scale(1.06); }
+}
+@keyframes hz-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* stardust: four-point stars thrown outwards from the card. Each spark is a box the size of the card, turned towards
+   its direction and slid along it, so the distance is a share of the card; the star itself is drawn inside it. */
+.hz-spark {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.hz-spark::before,
+.hz-spark::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.hz-spark::before {
+  width: calc(var(--s) * 3.2);
+  height: calc(var(--s) * 3.2);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(255 214 120 / 0.6), transparent 66%);
+}
+.hz-spark::after {
+  width: var(--s);
+  height: var(--s);
+  background: #fff2c4;
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+}
+.hz-scene[data-phase="drawing"] .hz-spark {
+  animation: hz-spark 1.7s var(--delay) ease-out both;
+}
+@keyframes hz-spark {
+  0% { opacity: 0; transform: rotate(var(--a)) translateX(8%) scale(0.3); }
+  22% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(var(--a)) translateX(var(--d)) scale(1.15); }
+}
+
+/* a ring of light when the card shows its face */
+.hz-burst {
+  position: absolute;
+  z-index: -1;
+  inset: -10%;
+  border-radius: 50%;
+  opacity: 0;
+  border: 3px solid rgb(255 232 170 / 0.9);
+  box-shadow: 0 0 30px 8px rgb(255 214 120 / 0.55), inset 0 0 30px 6px rgb(255 214 120 / 0.35);
+}
+.hz-scene[data-phase="drawing"] .hz-burst {
+  animation: hz-burst 3s ease-out both;
+}
+@keyframes hz-burst {
+  0%, 62% { opacity: 0; transform: scale(0.5); }
+  66% { opacity: 1; }
+  100% { opacity: 0; transform: scale(2.6); }
+}
+
+/* a streak of light across the face of the card as it turns */
+.hz-flip-front {
+  overflow: hidden;
+  border-radius: 6% / 3.6%;
+}
+.hz-flip-front::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 38%, rgb(255 255 255 / 0.7) 50%, transparent 62%);
+  transform: translateX(-130%);
+}
+.hz-scene[data-phase="drawing"] .hz-flip-front::after {
+  animation: hz-sweep 3s ease-in-out both;
+}
+@keyframes hz-sweep {
+  0%, 66% { transform: translateX(-130%); }
+  92%, 100% { transform: translateX(130%); }
+}
+
+/* the crystal ball answers: it surges while the card rises */
+.hz-scene[data-phase="drawing"] .hz-glow-ball {
+  animation: hz-surge 3s ease-in-out both;
+}
+@keyframes hz-surge {
+  0% { opacity: 0.6; transform: scale(0.96); }
+  30% { opacity: 1; transform: scale(1.7); }
+  75% { opacity: 1; transform: scale(2.2); }
+  100% { opacity: 0.6; transform: scale(1); }
+}
+
+/* motes of light drifting up through the candlelight of the room */
+.hz-motes {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+.hz-motes i {
+  position: absolute;
+  left: var(--x);
+  bottom: 18%;
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffe7a6, rgb(255 190 90 / 0.4) 55%, transparent 70%);
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: hz-mote var(--dur) var(--delay) linear infinite;
+}
+@keyframes hz-mote {
+  0% { opacity: 0; transform: translate(0, 0); }
+  15% { opacity: 0.9; }
+  50% { transform: translate(3vw, -22cqw); }
+  85% { opacity: 0.7; }
+  100% { opacity: 0; transform: translate(-2vw, -40cqw); }
+}
+
+/* ------------------------------------------------------------------ resting: the card on the table, the sign with the clock */
+.hz-restcard {
+  position: absolute;
+  z-index: 3;
+  left: 33%;
+  width: 11.5%;
+  bottom: 21%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  filter: drop-shadow(0 6px 8px rgb(0 0 0 / 0.55));
+  transition: transform 0.25s ease;
+}
+.hz-restcard:hover {
+  transform: translateY(-1.2%) rotate(-1.5deg);
+}
+.hz-sign {
+  position: absolute;
+  z-index: 3;
+  right: 2.5%;
+  top: 5%;
+  width: 25%;
+  aspect-ratio: 449 / 623;
+}
+.hz-sign > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 8px 10px rgb(0 0 0 / 0.5));
+}
+.hz-sign-text {
+  position: absolute;
+  inset: 8% 11% 24% 11%;
+  transform: skewX(-5.3deg); /* the board leans: about 5 degrees, measured on easel.webp */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #4a2a0a;
+}
+.hz-sign-big {
+  margin: 0;
+  font: italic 700 calc(3.3cqw * var(--k)) / 1 var(--font-hz-body), Georgia, serif;
+}
+.hz-sign-small {
+  margin: calc(0.8cqw * var(--k)) 0 calc(1.4cqw * var(--k));
+  font: italic 500 calc(2cqw * var(--k)) / 1.1 var(--font-hz-body), Georgia, serif;
+}
+.hz-clock {
+  margin: 0;
+  padding: calc(0.6cqw * var(--k)) calc(1.2cqw * var(--k));
+  border-radius: calc(0.8cqw * var(--k));
+  background: #5a1832;
+  border: 2px solid var(--gold);
+  color: #f6e6c2;
+  font: 700 calc(1.2cqw * var(--k)) / 1.3 var(--font-hz-display), Georgia, serif;
+  letter-spacing: 0.04em;
+}
+.hz-clock time {
+  display: block;
+  font-size: 1.45em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ the tarot card */
+.hz-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 484 / 805;
+  container-type: inline-size;
+}
+/* Where the arched window of card-front.webp is (the same numbers as CARD_ART in share-card.ts). */
+.hz-card-art {
+  position: absolute;
+  left: 9.2%;
+  top: 12.3%;
+  width: 82%;
+  height: 62.7%;
+  overflow: hidden;
+  border-radius: 50% 50% 0 0 / 39% 39% 0 0;
+  background: #2b0f1e;
+}
+.hz-card-art img {
+  object-position: 50% 20%;
+}
+.hz-card-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.hz-card-num {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 6.6%;
+  transform: translateY(-50%);
+  text-align: center;
+  font: 800 6cqw / 1 var(--font-hz-display), Georgia, serif;
+  color: #5a3a12;
+}
+.hz-card-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ the reading */
+.hz-reading {
+  position: absolute;
+  z-index: 3;
+  inset: 25% 4.5% 3.5%;
+  display: grid;
+  grid-template-columns: 27cqw minmax(0, 1fr);
+  gap: 3cqw;
+  align-items: center;
+}
+.hz-reading-card {
+  position: relative;
+  filter: drop-shadow(0 14px 18px rgb(0 0 0 / 0.55));
+  animation: hz-arrive 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both, hz-float 7s 0.9s ease-in-out infinite;
+}
+.hz-reading-card::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -12% -26%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(255 214 120 / 0.38), rgb(190 130 255 / 0.2) 45%, transparent 68%);
+  animation: hz-breathe 5s ease-in-out infinite;
+}
+@keyframes hz-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1.4%); }
+}
+@keyframes hz-breathe {
+  0%, 100% { opacity: 0.65; transform: scale(0.97); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+.hz-reading-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(1.1cqw * var(--k));
+  animation: hz-arrive 0.7s 0.15s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes hz-arrive {
+  from { opacity: 0; transform: translateY(2.5%) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+.hz-panel {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  border: solid transparent;
+  border-width: calc(4.2cqw * var(--k));
+  border-image: url(/horoscope/parchment.webp) 80 fill / calc(4.2cqw * var(--k)) stretch;
+  padding: 0 calc(1cqw * var(--k)) calc(0.4cqw * var(--k));
+  filter: drop-shadow(0 12px 16px rgb(0 0 0 / 0.5));
+}
+.hz-close {
+  position: absolute;
+  top: calc(-2.5cqw * var(--k));
+  right: calc(-2.5cqw * var(--k));
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  background: #5a1832;
+  color: #f6e6c2;
+  font: 400 26px/1 Georgia, serif;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.4);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.hz-close:hover {
+  background: #8c1421;
+}
+.hz-card-title {
+  margin: 0;
+  font: 800 calc(3.1cqw * var(--k)) / 1.05 var(--font-hz-display), Georgia, serif;
+  color: #3b1d08;
+}
+.hz-meaning {
+  margin: calc(0.5cqw * var(--k)) 0 calc(1.2cqw * var(--k));
+  font: italic 500 calc(1.55cqw * var(--k)) / 1.25 var(--font-hz-body), Georgia, serif;
+  color: #5b3a18;
+}
+.hz-text {
+  margin: 0;
+  padding: calc(1.2cqw * var(--k)) 0;
+  border-top: 1px solid rgb(120 80 30 / 0.35);
+  font: 500 calc(2.2cqw * var(--k)) / 1.28 var(--font-hz-body), Georgia, serif;
+}
+.hz-rows {
+  margin: 0;
+  display: grid;
+  gap: calc(0.6cqw * var(--k));
+  padding: calc(0.9cqw * var(--k)) 0;
+  border-top: 1px solid rgb(120 80 30 / 0.35);
+}
+.hz-rows > div {
+  display: grid;
+  grid-template-columns: calc(7.2cqw * var(--k)) 1fr;
+  align-items: center;
+  gap: calc(1.2cqw * var(--k));
+}
+.hz-rows dd {
+  margin: 0;
+  font: 500 calc(1.85cqw * var(--k)) / 1.25 var(--font-hz-body), Georgia, serif;
+}
+.hz-tag {
+  padding: 0.45em 1.5em 0.45em 0.9em;
+  clip-path: polygon(0 0, 86% 0, 100% 50%, 86% 100%, 0 100%);
+  font: 800 calc(1.2cqw * var(--k)) / 1 var(--font-hz-display), Georgia, serif;
+  letter-spacing: 0.05em;
+  color: #fff;
+}
+.hz-tag-do {
+  background: #3f6e3e;
+}
+.hz-tag-avoid {
+  background: #a3222b;
+}
+.hz-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(1cqw * var(--k));
+  padding: calc(0.9cqw * var(--k)) 0;
+  border-top: 1px solid rgb(120 80 30 / 0.35);
+}
+.hz-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(0.8cqw * var(--k));
+  padding: calc(0.45cqw * var(--k)) calc(1.4cqw * var(--k));
+  border-radius: 999px;
+  background: #ead9f2;
+  border: 1.5px solid #7b5a99;
+  font: 700 calc(1.35cqw * var(--k)) / 1.1 var(--font-hz-body), Georgia, serif;
+  color: #3b2410;
+  text-decoration: none;
+}
+.hz-extra {
+  margin: 0;
+  padding: calc(0.8cqw * var(--k)) 0;
+  border-top: 1px solid rgb(120 80 30 / 0.35);
+  font: italic 500 calc(1.55cqw * var(--k)) / 1.3 var(--font-hz-body), Georgia, serif;
+  color: #5b3a18;
+}
+.hz-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: calc(1.2cqw * var(--k));
+}
+.hz-hint,
+.hz-error {
+  margin: 0;
+  text-align: center;
+  font: italic 500 max(13px, calc(1.3cqw * var(--k))) / 1.3 var(--font-hz-body), Georgia, serif;
+  color: #f1dfb9;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.7);
+}
+.hz-error {
+  color: #ffb4b4;
+}
+
+/* arriving through the mist of the crystal ball: the room settles in from a little too close and a little too bright */
+.hz[data-arrive] .hz-stage {
+  animation: hz-settle 1.7s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+}
+.hz[data-arrive] .hz-bg {
+  animation: hz-settle-bg 1.9s ease backwards;
+}
+@keyframes hz-settle {
+  from { transform: scale(1.16); filter: blur(5px) brightness(1.5); }
+  to { transform: none; filter: none; }
+}
+@keyframes hz-settle-bg {
+  from { transform: scale(1.12); filter: brightness(1.4); }
+  to { transform: none; filter: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hz[data-arrive] .hz-stage,
+  .hz[data-arrive] .hz-bg {
+    animation: none;
+  }
+  .hz-glow,
+  .hz-motes i,
+  .hz-reading-card,
+  .hz-reading-card::before,
+  .hz-reading-main {
+    animation: none;
+  }
+  .hz-motes {
+    display: none;
+  }
+  .hz-pose,
+  .hz-btn,
+  .hz-restcard {
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------------ phones: a tall stage, the same pieces rearranged */
+@media (max-width: 767px) {
+  .hz {
+    --k: 2.6;
+    display: block;
+  }
+  .hz-bg {
+    background-image: url(/horoscope/scene-tall.webp);
+  }
+  .hz-stage {
+    width: 100%;
+    aspect-ratio: auto;
+    height: max(100svh, 168vw);
+  }
+  .hz-stage[data-phase="reading"] {
+    height: auto;
+    min-height: 100svh;
+  }
+
+  .hz-back {
+    top: 8px;
+    left: 8px;
+    padding: 7px 11px;
+    font-size: 12px;
+  }
+  .hz-title {
+    top: 4.5%;
+    left: 10%;
+    width: 80%;
+  }
+
+  .hz-fock {
+    left: 10%;
+    width: 80%;
+    top: 22.5%;
+  }
+  .hz-table {
+    left: -40%;
+    width: 180%;
+    bottom: 17%;
+  }
+  .hz-flip {
+    left: 49.5%;
+    top: 37%;
+    width: 11%;
+  }
+  .hz-ask {
+    left: 3%;
+    width: 94%;
+    bottom: 2%;
+  }
+  .hz-restcard {
+    left: 7%;
+    width: 27%;
+    bottom: 27%;
+  }
+  .hz-sign {
+    right: 3%;
+    width: 50%;
+    top: 31%;
+  }
+
+  .hz-reading {
+    position: relative;
+    inset: auto;
+    display: block;
+    padding: 44vw 3% 10vw;
+  }
+  .hz-reading-card {
+    width: 62%;
+    margin: 0 auto 6vw;
+  }
+  .hz-panel {
+    width: 100%;
+  }
+  .hz-close {
+    top: calc(-2.2cqw * var(--k));
+    right: calc(-2.2cqw * var(--k));
+  }
+  .hz-actions {
+    margin-top: 5vw;
+  }
+  .hz-hint {
+    margin-top: 3vw;
+  }
+}

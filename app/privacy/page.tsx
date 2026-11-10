@@ -78,7 +78,7 @@ const sections: LegalSection[] = [
           </li>
         </ul>
         <p>
-          The site also uses your browser’s storage to remember your chosen passport photo (as a fallback) and whether you ticked “I use a Ledger”. None of
+          The site also uses your browser’s storage to remember your chosen passport photo (as a fallback), whether you ticked “I use a Ledger”, and, on the MAD Horoscope page, the day you last drew your card and whether you switched its sound off. None of
           this is used for tracking, which is why there is
           no cookie banner.
         </p>
