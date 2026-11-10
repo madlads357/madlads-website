@@ -3,7 +3,8 @@
 // Substack is unreachable, so the homepage always builds.
 import { news as fallback, type NewsItem } from "@/data/news";
 
-const ARCHIVE = "https://news.madlads.com/api/v1/archive?sort=new&offset=0&limit=12";
+// No `offset` param: Substack now rejects it with a 400 (pagination moved to a cursor).
+const ARCHIVE = "https://news.madlads.com/api/v1/archive?sort=new&limit=12";
 export const NEWS_REVALIDATE = 60 * 60 * 6;
 
 type SubstackPost = {
@@ -23,7 +24,9 @@ export async function getLatestNews(limit = 3): Promise<NewsItem[]> {
   try {
     const res = await fetch(ARCHIVE, { next: { revalidate: NEWS_REVALIDATE }, headers: { Accept: "application/json" } });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const posts = (await res.json()) as SubstackPost[];
+    // The API now wraps the list as { posts, nextCursor }; it used to return a bare array.
+    const body = (await res.json()) as SubstackPost[] | { posts?: SubstackPost[] };
+    const posts = Array.isArray(body) ? body : (body.posts ?? []);
     const items = posts
       .filter((p) => p.title && p.canonical_url && p.post_date && p.audience !== "only_paid")
       .slice(0, limit)
