@@ -177,15 +177,15 @@ function Items({ onOpen }: { onOpen: (w: BagWindow) => void }) {
     slots.forEach((slot) => {
       const r = slot.getBoundingClientRect();
       const col = slots.filter((s) => Math.round(s.offsetTop) === Math.round(slot.offsetTop)).indexOf(slot);
-      const lead = col * 0.12 * r.height; // matches "entry calc(var(--col) * 12%)" in bag.css
+      const lead = col * 0.18 * r.height; // matches "entry calc(var(--col) * 18%)" in bag.css
       let fy: number;
       let d: number;
       if (desktop && m) {
         // The bag is sticky: its opening stays at the same height on screen while the page scrolls.
-        // When the fall starts, the slot's center is at vh + h/2 - lead; the page then scrolls h - lead.
+        // When the fall starts, the slot's center is at vh + h/2 - lead; the page then scrolls h (the window is h long, shifted by lead).
         const mouthY = STICKY.top + STICKY.pad + (m.top - bags[0].getBoundingClientRect().top);
         fy = mouthY - (vh + r.height / 2 - lead);
-        d = r.height - lead;
+        d = r.height;
       } else {
         // Phones: the bag scrolls with the page, so the path is in page coordinates (no scroll to make up).
         fy = m ? Math.max(m.top - (r.top + r.height / 2), -0.7 * vh) : -0.5 * vh;

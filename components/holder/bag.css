@@ -1,6 +1,6 @@
 /* The backpack profile (components/holder/HolderProfile.tsx).
    Each object falls out of the bag as its slot scrolls into view: the scroll drives the animation.
-   Three nested elements: sideways (eased out, thrown), down (gravity), and spin/grow/squash on landing.
+   Three nested elements: sideways (late, once it has dropped), down (fast, then settling), and spin/grow/squash on landing.
    --fx / --fy = distance from the slot to the bag's opening, --d = scroll during the fall,
    --col = position in its row; all measured in JS (HolderProfile.tsx, measure()). */
 
@@ -25,8 +25,9 @@
     animation-fill-mode: both;
     animation-duration: auto;
     /* From "slot top reaches the bottom of the screen" to "slot fully on screen", so it lands below the
-       bag's opening. Objects in the same row leave the bag one after another (--col, set in JS). */
-    animation-range: entry calc(var(--col, 0) * 12%) entry 100%;
+       bag's opening. Objects in the same row go one after another (--col, set in JS): each starts and lands 18% of
+       its height of scrolling after the one before, so the farthest from the bag lands first, before the others slide in. */
+    animation-range: entry calc(var(--col, 0) * 18%) entry calc(100% + var(--col, 0) * 18%);
   }
   .bag-fall-x {
     animation-name: bag-x;
@@ -47,37 +48,80 @@
   }
 }
 
-/* Sideways: thrown out of the bag, fast first then slowing (ease-out). */
+/* Sideways: held back, then slides in late (ease-in). The object drops out of the bag first, beside the list, and only
+   moves over the list once it is down in its own row, so it does not cross the row that has just landed above it. */
 @keyframes bag-x {
   from {
     transform: translateX(var(--fx));
-    animation-timing-function: cubic-bezier(0.2, 0.55, 0.4, 1);
+    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 1);
   }
   to {
     transform: none;
   }
 }
-/* Down: on screen the object falls with gravity, y = mouth + (landing - mouth) * p².
-   The page scrolls up meanwhile, so the transform is that path minus the slot's own movement:
-   T(p) = fy * (1 - p²) + d * (p - p²), with d = how far the page scrolls during the fall. */
+/* Down: drops fast out of the bag, then settles (ease-out, g(p) = 1 - (1 - p)^2.2), y = mouth + (landing - mouth) * g(p).
+   The page scrolls up meanwhile, so the transform is that path minus the slot itself moving:
+   T(p) = fy * (1 - g) + d * (p - g), with d = how far the page scrolls during the fall. Sampled every 5% (linear in between). */
 @keyframes bag-y {
   0% {
     transform: translateY(var(--fy));
   }
+  5% {
+    transform: translateY(calc(var(--fy) * 0.893 + var(--d) * -0.057));
+  }
+  10% {
+    transform: translateY(calc(var(--fy) * 0.793 + var(--d) * -0.107));
+  }
+  15% {
+    transform: translateY(calc(var(--fy) * 0.699 + var(--d) * -0.151));
+  }
   20% {
-    transform: translateY(calc(var(--fy) * 0.96 + var(--d) * 0.16));
+    transform: translateY(calc(var(--fy) * 0.612 + var(--d) * -0.188));
+  }
+  25% {
+    transform: translateY(calc(var(--fy) * 0.531 + var(--d) * -0.219));
+  }
+  30% {
+    transform: translateY(calc(var(--fy) * 0.456 + var(--d) * -0.244));
+  }
+  35% {
+    transform: translateY(calc(var(--fy) * 0.388 + var(--d) * -0.262));
   }
   40% {
-    transform: translateY(calc(var(--fy) * 0.84 + var(--d) * 0.24));
+    transform: translateY(calc(var(--fy) * 0.325 + var(--d) * -0.275));
+  }
+  45% {
+    transform: translateY(calc(var(--fy) * 0.268 + var(--d) * -0.282));
+  }
+  50% {
+    transform: translateY(calc(var(--fy) * 0.218 + var(--d) * -0.282));
+  }
+  55% {
+    transform: translateY(calc(var(--fy) * 0.173 + var(--d) * -0.277));
   }
   60% {
-    transform: translateY(calc(var(--fy) * 0.64 + var(--d) * 0.24));
+    transform: translateY(calc(var(--fy) * 0.133 + var(--d) * -0.267));
+  }
+  65% {
+    transform: translateY(calc(var(--fy) * 0.099 + var(--d) * -0.251));
+  }
+  70% {
+    transform: translateY(calc(var(--fy) * 0.071 + var(--d) * -0.229));
+  }
+  75% {
+    transform: translateY(calc(var(--fy) * 0.047 + var(--d) * -0.203));
   }
   80% {
-    transform: translateY(calc(var(--fy) * 0.36 + var(--d) * 0.16));
+    transform: translateY(calc(var(--fy) * 0.029 + var(--d) * -0.171));
+  }
+  85% {
+    transform: translateY(calc(var(--fy) * 0.015 + var(--d) * -0.135));
   }
   90% {
-    transform: translateY(calc(var(--fy) * 0.19 + var(--d) * 0.09));
+    transform: translateY(calc(var(--fy) * 0.006 + var(--d) * -0.094));
+  }
+  95% {
+    transform: translateY(calc(var(--fy) * 0.001 + var(--d) * -0.049));
   }
   100% {
     transform: none;
