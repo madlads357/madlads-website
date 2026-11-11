@@ -12,7 +12,7 @@ type Holder = Omit<HolderSession, "exp">;
 // development test logins, their fixed name).
 function fallbackName(holder: { id: string; wallet?: string }) {
   if (holder.wallet) return shortAddress(holder.wallet);
-  return holder.id.startsWith("mock:") ? "Test LAD" : "MAD LAD";
+  return holder.id.startsWith("mock:") ? "Jeff" : "MAD LAD";
 }
 
 export function applyAccounts(holder: Holder, accounts: LinkedAccount[]): Holder {

@@ -4,6 +4,7 @@ import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { HORIZONTAL } from "@/components/Logo";
+import { siteHost } from "@/lib/site-url";
 
 export const ogSize = { width: 1200, height: 630 };
 export const ogContentType = "image/png";
@@ -34,7 +35,7 @@ export async function renderOg({ eyebrow, title, subtitle, images }: { eyebrow: 
             <div style={{ display: "flex", color: "#ffffff", fontSize: 80, fontWeight: 700, lineHeight: 0.95, letterSpacing: -3, marginTop: 18, maxWidth: 600 }}>{title}</div>
             <div style={{ display: "flex", color: "#b9b2a6", fontSize: 28, fontWeight: 400, lineHeight: 1.35, marginTop: 22, maxWidth: 560 }}>{subtitle}</div>
           </div>
-          <div style={{ display: "flex", color: "#8f877c", fontSize: 22 }}>madlads.com</div>
+          <div style={{ display: "flex", color: "#8f877c", fontSize: 22 }}>{siteHost}</div>
         </div>
         <div style={{ width: 470, height: "100%", display: "flex", flexWrap: "wrap" }}>
           {pics.map((src, i) => (

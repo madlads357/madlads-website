@@ -1,5 +1,6 @@
 // Fills the holder map with made-up holders, to see how it looks with data (development only).
 //   npm run db:seed-map -- --yes             adds about 1,100 test holders (re-running replaces them)
+//   npm run db:seed-map -- --few --yes       adds only 30 test holders (10 in Europe, 10 in the US, 10 in Asia), one pin each
 //   npm run db:seed-map -- --remove --yes    removes every test holder again
 // Test holders have ids like "test:12" and are the only rows this script ever touches. It runs against
 // DATABASE_URL (from .env.local): check it is your development database, which is why --yes is needed.
@@ -35,7 +36,13 @@ if (remove) {
 // City, country, how many holders. Real cities from the same list the pin search uses (data/cities.json).
 const cities = JSON.parse(readFileSync("data/cities.json", "utf8")); // [name, ascii, cc, region, lat, lng, pop]
 const find = (name, cc) => cities.find((c) => c[0] === name && c[2] === cc);
-const spots = [
+const few = process.argv.includes("--few");
+const fewSpots = [
+  ["Amsterdam", "NL", 1], ["Paris", "FR", 1], ["London", "GB", 1], ["Berlin", "DE", 1], ["Lisbon", "PT", 1], ["Barcelona", "ES", 1], ["Rome", "IT", 1], ["Stockholm", "SE", 1], ["Warsaw", "PL", 1], ["Vienna", "AT", 1],
+  ["New York City", "US", 1], ["Los Angeles", "US", 1], ["San Francisco", "US", 1], ["Miami", "US", 1], ["Austin", "US", 1], ["Chicago", "US", 1], ["Seattle", "US", 1], ["Denver", "US", 1], ["Boston", "US", 1], ["Atlanta", "US", 1],
+  ["Tokyo", "JP", 1], ["Seoul", "KR", 1], ["Singapore", "SG", 1], ["Hong Kong", "HK", 1], ["Bangkok", "TH", 1], ["Taipei", "TW", 1], ["Mumbai", "IN", 1], ["Hanoi", "VN", 1], ["Manila", "PH", 1], ["Kuala Lumpur", "MY", 1],
+];
+const spots = few ? fewSpots : [
   ["Tokyo", "JP", 38], ["Osaka", "JP", 9], ["Amsterdam", "NL", 30], ["Utrecht", "NL", 6], ["Paris", "FR", 24], ["Lyon", "FR", 4], ["Hanoi", "VN", 16], ["Ho Chi Minh City", "VN", 8],
   ["New York City", "US", 22], ["Los Angeles", "US", 14], ["San Francisco", "US", 12], ["Miami", "US", 9], ["Austin", "US", 7], ["Chicago", "US", 5], ["Lisbon", "PT", 13], ["Porto", "PT", 3],
   ["London", "GB", 18], ["Manchester", "GB", 4], ["Berlin", "DE", 11], ["Munich", "DE", 5], ["Seoul", "KR", 10], ["Singapore", "SG", 12], ["Sydney", "AU", 7], ["Melbourne", "AU", 5],
@@ -46,7 +53,7 @@ const spots = [
   ["Auckland", "NZ", 2], ["Bogotá", "CO", 3], ["Santiago", "CL", 2], ["Lima", "PE", 2],
 ];
 // Plus a scatter of smaller cities, one to three holders each.
-const small = cities.filter((c) => c[6] > 150_000).slice(60, 400);
+const small = few ? [] : cities.filter((c) => c[6] > 150_000).slice(60, 400);
 
 let seed = 7;
 const rand = () => ((seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296);

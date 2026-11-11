@@ -5,6 +5,7 @@ import sharp from "sharp";
 import { HORIZONTAL } from "@/components/Logo";
 import { originalImage, thumbImage } from "@/lib/madlads";
 import { collection, ladTraits } from "@/lib/madlads-server";
+import { siteHost } from "@/lib/site-url";
 
 // Link preview of one Lad's page: the Lad large on the right, its number and key traits on the left.
 // Made the first time it is asked for, then kept.
@@ -60,7 +61,7 @@ export default async function Image({ params }: { params: Promise<{ id: string }
               ))}
             </div>
           </div>
-          <div style={{ display: "flex", color: "#8f877c", fontSize: 22 }}>madlads.com</div>
+          <div style={{ display: "flex", color: "#8f877c", fontSize: 22 }}>{siteHost}</div>
         </div>
         {pic ? (
           // eslint-disable-next-line @next/next/no-img-element

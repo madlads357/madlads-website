@@ -5,3 +5,6 @@
 export const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ??
   (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000");
+
+// The same address as text, without "https://" and "www." (e.g. "madlads.com"): what is printed on the passport.
+export const siteHost = new URL(siteUrl).host.replace(/^www\./, "");

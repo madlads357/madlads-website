@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { LogoHorizontal, LogoStacked } from "@/components/Logo";
+import { siteHost } from "@/lib/site-url";
 import { ONE_OF_ONE_TYPES, loadCollection, thumbImage, type Collection } from "@/lib/madlads";
 import { Curious, FockIt, HolderSeal, Issued, Lassie, OnTheMap, OneOfOne, Role, SkullClub, Tier } from "./Stamps";
 import { fmtDate, identityFields } from "./format";
@@ -203,7 +204,7 @@ function IdentityPage({ data }: { data: PassportData }) {
         ))}
       </span>
 
-      <span className="mt-auto text-center text-[2.6cqw] font-semibold tracking-[0.34em] text-muted">MADLADS.COM · FOCK IT.</span>
+      <span className="mt-auto text-center text-[2.6cqw] font-semibold tracking-[0.34em] text-muted">{siteHost.toUpperCase()} · FOCK IT.</span>
     </span>
   );
 }

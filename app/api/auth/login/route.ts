@@ -23,8 +23,8 @@ export async function GET(request: Request) {
     const saved = (await getSettings(id).catch(() => null))?.photo;
     await setSession({
       id,
-      name: "Test LAD",
-      handle: "testlad",
+      name: "Jeff",
+      handle: "jeff",
       since: "2023-04-21",
       roles: ["OG", "Mad Coach"],
       lads,

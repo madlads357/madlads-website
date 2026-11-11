@@ -8,6 +8,7 @@
 // centre (0.9–2.1 s) → stamps land one by one (from 2.3 s) → hold on the open passport.
 import { HORIZONTAL, STACKED } from "@/components/Logo";
 import { thumbImage } from "@/lib/madlads";
+import { siteHost } from "@/lib/site-url";
 import { identityFields } from "./format";
 import type { PassportData } from "./Passport";
 
@@ -232,7 +233,7 @@ async function identityLayer(data: PassportData, paper: HTMLImageElement, photo:
     text(ctx, f.value, fx, fy + 3.4 * CQ + 0.8 * CQ + 4.6 * CQ, 4.6 * CQ, { color: C.ink, spacing: -0.02 });
   });
 
-  text(ctx, "MADLADS.COM · FOCK IT.", PAGE_W / 2, PAGE_H - 8 * CQ, 2.6 * CQ, { weight: 600, color: C.muted, spacing: 0.34, align: "center" });
+  text(ctx, `${siteHost.toUpperCase()} · FOCK IT.`, PAGE_W / 2, PAGE_H - 8 * CQ, 2.6 * CQ, { weight: 600, color: C.muted, spacing: 0.34, align: "center" });
   return { canvas: c, photoBottom };
 }
 
@@ -382,7 +383,7 @@ async function buildScene(root: HTMLElement, data: PassportData): Promise<Scene>
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, SIZE, SIZE);
     text(ctx, "MAD LADS PASSPORT", SIZE / 2, 82, 22, { weight: 700, color: C.accent, spacing: 0.32, align: "center" });
-    text(ctx, "madlads.com · Fock it.", SIZE / 2, SIZE - 58, 22, { weight: 600, color: C.muted, align: "center" });
+    text(ctx, `${siteHost} · Fock it.`, SIZE / 2, SIZE - 58, 22, { weight: 600, color: C.muted, align: "center" });
 
     // opening: 0 = closed, 1 = open
     const open = ease(clamp((t - 0.9) / 1.2));

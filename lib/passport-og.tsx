@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { HORIZONTAL } from "@/components/Logo";
 import { thumbImage } from "@/lib/madlads";
+import { siteHost } from "@/lib/site-url";
 import type { SharedPassport } from "@/lib/passport-share";
 
 // The preview of a shared passport on X, Discord, iMessage…: "I'm Mad." and the passport's identity page.
@@ -46,7 +47,7 @@ export async function renderPassportOg(p: SharedPassport | null) {
               </div>
             )}
           </div>
-          <div style={{ display: "flex", fontSize: 24, color: "rgba(255,255,255,0.7)" }}>madlads.com · Fock it.</div>
+          <div style={{ display: "flex", fontSize: 24, color: "rgba(255,255,255,0.7)" }}>{`${siteHost} · Fock it.`}</div>
         </div>
 
         {/* right: the identity page, slightly tilted, with a stamp */}

@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false, // don't advertise the framework
+  // Browser code (the passport prints the site address, lib/site-url.ts) only sees NEXT_PUBLIC_ values, so hand it
+  // Vercel's production domain too when NEXT_PUBLIC_SITE_URL is not set.
+  env: process.env.NEXT_PUBLIC_SITE_URL || !process.env.VERCEL_PROJECT_PRODUCTION_URL ? {} : { NEXT_PUBLIC_SITE_URL: `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` },
   // Basic security headers on every page. No Content-Security-Policy yet: the site uses inline
   // scripts (intro, structured data) and YouTube embeds, so a CSP needs its own careful pass.
   headers: async () => [
