@@ -8,6 +8,7 @@ export type IrlPhoto = { src: string; alt: string; caption: string; where: strin
 export type IrlVideo = { id: string; title: string; where: string };
 
 export const irlPhotos: IrlPhoto[] = [
+  { src: "/irl/breakpoint-london-backpack.jpg", w: 1536, h: 2048, where: "London", caption: "Red bags on the Tube, Breakpoint week", alt: "A MAD LADS bomber and red Backpack bags walking down the platform at Old Street station in London" },
   { src: "/irl/breakpoint-amsterdam-booth.jpg", w: 1600, h: 2132, where: "Amsterdam", caption: "The MAD LADS booth at Breakpoint", alt: "MAD LADS and Backpack booth at Breakpoint Amsterdam with two Skull standees" },
   { src: "/irl/mount-fuji.jpg", w: 544, h: 680, where: "Mount Fuji", caption: "LADS on top of Mt Fuji", alt: "Group of MAD LADS holders with a flag at the summit of Mount Fuji" },
   { src: "/irl/nft-paris-2025.jpg", w: 800, h: 442, where: "Paris", caption: "The red bags line up at NFT Paris 2025", alt: "Row of MAD LADS holders with red Backpack bags in front of the Grande Halle de la Villette at NFT Paris 2025" },
@@ -25,6 +26,7 @@ export const irlPhotos: IrlPhoto[] = [
   { src: "/irl/pub-cardboard-lads.jpg", w: 979, h: 776, where: "Around the world", caption: "Pub time with the LADS", alt: "Friends at a pub table surrounded by cardboard MAD LADS cut-outs" },
   { src: "/irl/tokyo-sticker.jpg", w: 1348, h: 1458, where: "Tokyo", caption: "Spotted in the streets", alt: "MAD LADS sticker on a pole in a Tokyo street" },
   { src: "/irl/fock-it-hoodie.jpg", w: 1536, h: 2048, where: "Singapore", caption: "Fock it, in real life", alt: "Holder wearing a black hoodie with Fock it written on it" },
+  { src: "/irl/breakpoint-london-jacket.jpg", w: 1320, h: 1757, where: "London", caption: "“Nice jacket”", alt: "Back of a black MAD LADS bomber jacket in a crowded venue, next to a man in a bowler hat and pinstripe suit" },
 ];
 
 export const irlVideos: IrlVideo[] = [
