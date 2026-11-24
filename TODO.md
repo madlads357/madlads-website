@@ -15,7 +15,7 @@ Every setting is described in `.env.example`.
 | `DATABASE_URL` | Set by Vercel's Neon integration. Check it is the database you expect (see the next step). |
 | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET` | **New.** From the Discord developer portal → your app → OAuth2. |
 | `MADLADS_DISCORD_SERVER_ID` | Check it is set (the ID is in `.env.local`). |
-| `MADLADS_STAMP_ROLES` | **New.** The roles that earn a passport stamp, most important first, as `role id:Stamp name` (e.g. `1234567890123456:OG,2345678901234567:Mad Coach`). Without it, Discord links but gives no stamps. |
+| `MADLADS_STAMP_ROLES` | **New.** The roles that earn a passport stamp, most important first, as `role id:Stamp name` (e.g. `1234567890123456:King,2345678901234567:Duke`). Without it, Discord links but gives no stamps. |
 | `X_API_KEY`, `X_API_SECRET` | **New.** The app's "API Key and Secret" (consumer keys) from the X Developer Console. |
 | `MAPBOX_TOKEN` | **New.** A **public** Mapbox token (`pk.…`) for the holder map. No `NEXT_PUBLIC_` in the name: the server only gives it to logged-in holders. Restrict it by URL (see "Provider portals"). |
 | `MAPBOX_STYLE` | Optional. A custom Mapbox Studio style URL (`mapbox://styles/<user>/<id>`). Empty: the default light style, tinted cream in code. |

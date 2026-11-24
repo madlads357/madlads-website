@@ -11,14 +11,13 @@ import { accountsAvailable } from "./available";
 const API = "https://discord.com/api/v10";
 const SCOPE = "identify guilds.members.read";
 const TIMEOUT_MS = 8000;
-const MAX_STAMPS = 2; // the passport has room for two role stamps
 
 const env = process.env;
 export const discordEnabled = () => !!(env.DISCORD_CLIENT_ID && env.DISCORD_CLIENT_SECRET) && accountsAvailable();
 const redirectUri = (origin: string) => `${origin}/api/accounts/discord/callback`;
 
 // MADLADS_STAMP_ROLES: the roles that earn a stamp, most important first, as "role id:Stamp name".
-// Discord only returns role ids, so the names come from here. e.g. "1234567890:OG,2345678901:Mad Coach"
+// Discord only returns role ids, so the names come from here. e.g. "1234567890:King,2345678901:Duke"
 // (Discord: Server Settings → Roles → right-click a role → Copy Role ID, with Developer Mode on).
 export function stampRoles(): { id: string; name: string }[] {
   return (env.MADLADS_STAMP_ROLES ?? "")
@@ -68,8 +67,7 @@ export async function discordAccount(origin: string, code: string): Promise<Link
       const held = new Set(member.body?.roles ?? []);
       roles = stampRoles()
         .filter((r) => held.has(r.id))
-        .map((r) => r.name)
-        .slice(0, MAX_STAMPS);
+        .map((r) => r.name);
     }
 
     return { provider: "discord", accountId: user.body.id, name: user.body.global_name || user.body.username, roles };

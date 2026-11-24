@@ -26,7 +26,7 @@ export async function GET(request: Request) {
       name: "Jeff",
       handle: "jeff",
       since: "2023-04-21",
-      roles: ["OG", "Mad Coach"],
+      roles: ["King", "Duke"],
       lads,
       photo: saved && lads.includes(saved) ? saved : undefined,
     });

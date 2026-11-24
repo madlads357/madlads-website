@@ -17,8 +17,7 @@ export type HolderSession = {
   handle?: string; // X handle, for the passport (linked X account, or Matrica)
   discord?: string; // linked Discord account's name (its stamp roles are in `roles`)
   since?: string; // "holder since" date, ISO (from Helius, cached in the database)
-  roles?: string[]; // Mad Lads Discord roles that earn a passport stamp (at most two)
-  photo?: number; // the Lad chosen as passport photo (saved in the database)
+  roles?: string[]; // Mad Lads Discord roles that earn a passport stamp  photo?: number; // the Lad chosen as passport photo (saved in the database)
   exp: number; // expiry, ms since epoch
 };
 

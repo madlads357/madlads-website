@@ -5,7 +5,8 @@ import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from
 import { LogoHorizontal, LogoStacked } from "@/components/Logo";
 import { siteHost } from "@/lib/site-url";
 import { ONE_OF_ONE_TYPES, loadCollection, thumbImage, type Collection } from "@/lib/madlads";
-import { Curious, FockIt, HolderSeal, Issued, Lassie, OnTheMap, OneOfOne, Role, SkullClub, Tier } from "./Stamps";
+import { Curious, FockIt, HolderSeal, Issued, Lassie, OG, OnTheMap, OneOfOne, SkullClub, Tier } from "./Stamps";
+import { RoleStamp } from "./RoleStamps";
 import { fmtDate, identityFields } from "./format";
 import "./passport.css";
 
@@ -60,6 +61,34 @@ const SLOTS_MAX: { x: number; y: number; w: number; r: number }[] = [
   { x: 64, y: 69, w: 34, r: 4 }, // issued
 ];
 
+// More stamps than SLOTS_MAX (many Discord roles): an even grid of small stamps, the page filled top to bottom.
+function gridSlots(n: number): { x: number; y: number; w: number; r: number }[] {
+  const cols = n > 24 ? 6 : n > 15 ? 5 : 4;
+  const rows = Math.ceil(n / cols);
+  const cellW = 100 / cols;
+  const cellH = 90 / rows; // leaves room for the "STAMPS" title
+  const w = cellW - 3;
+  return Array.from({ length: n }, (_, i) => {
+    const row = Math.floor(i / cols);
+    const left = (i % cols) * cellW + 1.5;
+    return { x: left + ((row % 2) * cellW) / 10, y: 8 + row * cellH + (i % 2) * 1.5, w: w - 2, r: ((i * 7) % 17) - 8 };
+  });
+}
+
+// Like a real passport, some stamps land half on top of the one before (ink is multiplied, so the overlap shows
+// both). Every third stamp or so slides over its neighbour, a little crooked; the same every time.
+type Slot = { x: number; y: number; w: number; r: number };
+function overlapped(slots: Slot[]): Slot[] {
+  return slots.map((s, i) => {
+    const prev = slots[i - 1];
+    if (i < 2 || (i * 5 + 1) % 3 !== 0) return s;
+    const close = Math.abs(prev.x - s.x) < s.w * 1.7 && Math.abs(prev.y - s.y) < s.w * 0.9;
+    const x = close ? s.x + (prev.x - s.x) * 0.22 : s.x;
+    const y = close ? s.y + (prev.y - s.y) * 0.22 : s.y - 3;
+    return { ...s, x: Math.max(0, Math.min(100 - s.w, x)), y: Math.max(6, y), r: s.r + (i % 2 ? 6 : -6) };
+  });
+}
+
 type Ink = "red" | "black" | "blue" | "gold";
 type StampItem = { key: string; ink: Ink; el: ReactNode };
 
@@ -86,16 +115,18 @@ export function Passport({ data, autoOpen, onDark }: { data: PassportData; autoO
     const out: StampItem[] = [{ key: "fock", ink: "red", el: <FockIt /> }];
     out.push({ key: "seal", ink: "red", el: <HolderSeal year={data.since ? data.since.slice(0, 4) : "2023"} /> });
     out.push({ key: "tier", ink: "black", el: <Tier count={data.count ?? data.lads.length} /> });
+    if (data.since && Number(data.since.slice(0, 4)) <= 2023) out.push({ key: "og", ink: "black", el: <OG /> }); // holding since the mint year
     const kinds = data.kinds ?? (collection ? kindsOf(collection, data.lads) : null);
-    if (kinds?.skull) out.push({ key: "skull", ink: "black", el: <SkullClub /> });
+    const skullRole = (data.roles ?? []).some((r) => r.trim().toLowerCase() === "skull"); // that role is drawn as Skull Club too
+    if (kinds?.skull && !skullRole) out.push({ key: "skull", ink: "black", el: <SkullClub /> });
     if (kinds?.oneOfOne) out.push({ key: "one", ink: "gold", el: <OneOfOne /> });
     if (kinds?.lassie) out.push({ key: "lassie", ink: "red", el: <Lassie /> });
-    (data.roles ?? []).slice(0, 2).forEach((r, i) => out.push({ key: `role-${r}`, ink: i ? "red" : "black", el: <Role name={r} shape={i ? "tri" : "hex"} /> }));
+    (data.roles ?? []).forEach((r, i) => out.push({ key: `role-${r}`, ink: i % 2 ? "red" : "black", el: <RoleStamp name={r} index={i} /> }));
     if (data.onMap) out.push({ key: "map", ink: "blue", el: <OnTheMap /> });
     if (data.curious) out.push({ key: "curious", ink: "red", el: <Curious /> });
     const issued = data.issued ?? today;
     if (issued) out.push({ key: "issued", ink: "blue", el: <Issued date={fmtDate(issued, { day: "2-digit", month: "short", year: "numeric" })} /> });
-    return out.slice(0, SLOTS_MAX.length);
+    return out;
   }, [collection, data, today]);
 
   const identity = <IdentityPage data={data} />;
@@ -210,7 +241,15 @@ function IdentityPage({ data }: { data: PassportData }) {
 }
 
 function StampsPage({ stamps }: { stamps: StampItem[] }) {
-  const slots = stamps.length > SLOTS_FULL.length ? SLOTS_MAX : stamps.length > SLOTS.length ? SLOTS_FULL : SLOTS;
+  const slots = overlapped(
+    stamps.length > SLOTS_MAX.length
+      ? gridSlots(stamps.length)
+      : stamps.length > SLOTS_FULL.length
+        ? SLOTS_MAX
+        : stamps.length > SLOTS.length
+          ? SLOTS_FULL
+          : SLOTS,
+  );
   return (
     <span className="pp-paper relative block h-full">
       <span className="absolute top-[4cqw] left-[7cqw] text-[3cqw] font-semibold tracking-[0.3em] text-muted">STAMPS</span>

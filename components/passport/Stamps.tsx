@@ -1,19 +1,7 @@
 // The rubber stamps of the Lads Passport, drawn in SVG (single ink colour = currentColor).
 // The worn-ink look comes from the .pp-ink mask in passport.css, not from these shapes.
-import { useId, type ReactNode } from "react";
-
-const font = { fontFamily: "var(--font-sans)", fontWeight: 800 } as const;
-
-// Shrinks long words so they fit a given width (rough: bold caps ≈ 0.62em per letter).
-const fit = (text: string, width: number, max: number) => Math.min(max, width / (text.length * 0.62));
-
-function Svg({ w, h, children }: { w: number; h: number; children: ReactNode }) {
-  return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="block h-auto w-full" fill="none" stroke="currentColor" aria-hidden>
-      {children}
-    </svg>
-  );
-}
+import { useId } from "react";
+import { Svg, fit, font } from "./stamp-kit";
 
 export function FockIt() {
   return (
@@ -62,6 +50,29 @@ export function Tier({ count }: { count: number }) {
       </text>
       <text x="110" y="102" textAnchor="middle" fill="currentColor" stroke="none" fontSize="20" letterSpacing="3" style={font}>
         {count} {count === 1 ? "LAD" : "LADS"}
+      </text>
+    </Svg>
+  );
+}
+
+// OG: holders since 2023, the year of the mint. Round seal, "OG" in the middle, "ORIGINAL LAD" around.
+export function OG() {
+  const ring = useId();
+  return (
+    <Svg w={200} h={200}>
+      <defs>
+        <path id={ring} d="M100,100 m-72,0 a72,72 0 1,1 144,0 a72,72 0 1,1 -144,0" />
+      </defs>
+      <circle cx="100" cy="100" r="94" strokeWidth="6" />
+      <circle cx="100" cy="100" r="58" strokeWidth="2.5" />
+      <text fill="currentColor" stroke="none" fontSize="17" style={font}>
+        <textPath href={`#${ring}`} textLength="448" lengthAdjust="spacing">ORIGINAL LAD · ORIGINAL LAD · ORIGINAL LAD · </textPath>
+      </text>
+      <text x="100" y="116" textAnchor="middle" fill="currentColor" stroke="none" fontSize="56" letterSpacing="-1" style={font}>
+        OG
+      </text>
+      <text x="100" y="138" textAnchor="middle" fill="currentColor" stroke="none" fontSize="12" letterSpacing="4" style={font}>
+        2023
       </text>
     </Svg>
   );

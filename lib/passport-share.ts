@@ -65,7 +65,7 @@ export function shareFromSession(s: HolderSession, photo: number, onMap = false,
     name: s.name,
     handle: s.handle,
     since: s.since,
-    roles: s.roles?.slice(0, 2),
+    roles: s.roles,
     ...(onMap && { onMap: true }),
     ...(curious && { curious: true }),
     photo: s.lads.includes(photo) ? photo : s.lads[0],
@@ -118,7 +118,7 @@ export const isBot = (userAgent: string | null) => !userAgent || /bot|crawl|spid
 // (the rest of the passport is left as it was). No link, or a withdrawn one: nothing to do.
 export async function updateShareIdentity(holderId: string, who: { name: string; handle?: string; roles?: string[] }) {
   if (!db) return;
-  const patch = JSON.stringify({ name: who.name, ...(who.handle && { handle: who.handle }), ...(who.roles?.length && { roles: who.roles.slice(0, 2) }) });
+  const patch = JSON.stringify({ name: who.name, ...(who.handle && { handle: who.handle }), ...(who.roles?.length && { roles: who.roles }) });
   await db`update share_links set passport = (passport - 'handle' - 'roles') || ${patch}::jsonb, updated_at = now()
            where holder_id = ${holderId} and deleted_at is null`;
 }

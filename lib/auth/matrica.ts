@@ -39,9 +39,9 @@ async function madLadsRoles(session: MatricaSession): Promise<string[] | undefin
     .filter((r) => r.guildId === discordServerId && r.name !== "@everyone")
     .map((r) => r.name)
     .filter((name) => !stampRoles.length || stampRoles.some((s) => s.toLowerCase() === name.toLowerCase()));
-  // keep the order of the list when there is one: the first roles get the stamps
+  // keep the order of the list when there is one: the most important roles come first
   if (stampRoles.length) names.sort((a, b) => stampRoles.findIndex((s) => s.toLowerCase() === a.toLowerCase()) - stampRoles.findIndex((s) => s.toLowerCase() === b.toLowerCase()));
-  return names.length ? names.slice(0, 2) : undefined;
+  return names.length ? names : undefined;
 }
 
 export async function holderFromCode(code: string, verifier: string): Promise<Omit<HolderSession, "exp">> {
